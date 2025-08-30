@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Adaptive Exam Preparation AI
 
 ## 1️⃣ Overview
