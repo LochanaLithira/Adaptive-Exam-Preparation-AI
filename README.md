@@ -17,4 +17,12 @@ The system is composed of three AI agents:
 | **Quiz Generator Agent** | Creates quizzes based on topics & difficulty | Generates questions, answers, and explanations using NLP & LLM |
 | **Performance Tracker Agent** | Tracks user performance and adapts difficulty | Monitors quiz results, recommends revisions, and provides insights |
 
-#
+## Architecture
+
+```mermaid
+flowchart TD
+    A[User Input (exam subject, topics)] --> B[Planner Agent]
+    B --> C[Quiz Generator Agent]
+    C --> D[Performance Tracker Agent]
+    D --> E[Streamlit Frontend (Dashboard, quizzes, analytics)]
+    D --> C
