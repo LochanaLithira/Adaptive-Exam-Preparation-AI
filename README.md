@@ -80,5 +80,17 @@ flowchart TD
 
 ## 4️⃣ Communication Between Agents
 
+| Agents | Communication Method | Description / Implementation |
+|--------|--------------------|-----------------------------|
+| Planner → Quiz Generator | Direct function call / pipeline | Planner outputs the study plan or today’s topic. Quiz Generator receives it as input to generate relevant quizzes. |
+| Quiz Generator → Performance Tracker | Direct function call / pipeline | Quiz Generator outputs quizzes and correct answers. Performance Tracker receives user responses to calculate scores and feedback. |
+| Performance Tracker → Planner | Direct function call / pipeline | Performance Tracker analyzes user performance and sends feedback to Planner to adjust the next study plan (adaptive scheduling). |
+
+**Implementation Notes:**
+- Use Python functions/classes for each agent.
+- Maintain data in **Streamlit’s `st.session_state`** to preserve user progress across pages.
+- Optional: use a REST API for fully decoupled agents if needed.
+
+
 
 ## 5️⃣ Security & Responsible AI
