@@ -34,3 +34,46 @@ flowchart TD
 - Quiz Generator → Performance Tracker: Sends quiz results for evaluation.
 
 - Performance Tracker → Planner Agent: Suggests updates to study plan based on performance.
+
+## 3️⃣ Agent Details & Implementation
+
+### Planner Agent
+
+**Functions:**
+- Take user input: exam subject, topics, and available study time.
+- Use an LLM to generate a structured study plan.
+- Optionally summarize topic explanations for easier understanding.
+- Output: Personalized study plan tailored to the user.
+
+**Tools & Techniques:**
+- Python
+- Large Language Models (OpenAI API, HuggingFace LLaMA, etc.)
+- NLP techniques (optional) for summarization and topic simplification
+
+  ### Quiz Generator Agent
+
+**Functions:**
+- Generate quizzes based on topics or the learner’s weak areas.
+- Use NLP to extract key points and important concepts from topics.
+- Leverage an LLM to generate multiple-choice or short-answer questions.
+- Optionally adapt question difficulty based on user performance.
+
+**Tools & Techniques:**
+- Python
+- NLP libraries (e.g., spaCy, NLTK) for key point extraction
+- LLMs (OpenAI API, HuggingFace LLaMA) for question generation
+- Adaptive logic to vary difficulty dynamically
+
+  ### Performance Tracker Agent
+
+**Functions:**
+- Track user answers and quiz scores.
+- Analyze strengths and weaknesses across topics.
+- Suggest topic revision or adjust quiz difficulty based on performance.
+- Optionally provide detailed feedback explanations using embeddings + LLM.
+
+**Tools & Techniques:**
+- Python
+- Simple scoring and analytics logic (Pandas/Numpy)
+- Optional: embeddings + LLM for generating personalized feedback
+- Streamlit for visualizing performance metrics and progress
