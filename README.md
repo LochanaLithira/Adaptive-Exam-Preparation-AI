@@ -37,7 +37,7 @@ flowchart TD
 
 ## 3️⃣ Agent Details & Implementation
 
-### Planner Agent
+### 1. Planner Agent
 
 **Functions:**
 - Take user input: exam subject, topics, and available study time.
@@ -50,7 +50,7 @@ flowchart TD
 - Large Language Models (OpenAI API, HuggingFace LLaMA, etc.)
 - NLP techniques (optional) for summarization and topic simplification
 
-  ### Quiz Generator Agent
+### 2. Quiz Generator Agent
 
 **Functions:**
 - Generate quizzes based on topics or the learner’s weak areas.
@@ -64,7 +64,7 @@ flowchart TD
 - LLMs (OpenAI API, HuggingFace LLaMA) for question generation
 - Adaptive logic to vary difficulty dynamically
 
-  ### Performance Tracker Agent
+### 3. Performance Tracker Agent
 
 **Functions:**
 - Track user answers and quiz scores.
