@@ -1,19 +1,18 @@
 <<<<<<< HEAD
 # Adaptive Exam Preparation AI
 
-1️⃣ Overview of Your System
+## 1️⃣ Overview
 
-Goal: Help students prepare for exams by:
+The goal of this system is to assist students in exam preparation by:
 
-Planning study schedules
+- Planning personalized study schedules  
+- Generating quizzes based on knowledge gaps  
+- Tracking performance and adapting difficulty  
 
-Generating quizzes based on knowledge gaps
+The system is composed of three AI agents:
 
-Tracking performance and adapting difficulty
-
-Agents:
-
-Agent	Role	Core Functions
-Planner Agent	Generates personalized study plans	Suggests topics, sets schedule, adapts plan based on progress
-Quiz Generator Agent	Creates quizzes based on topics & difficulty	Generates questions, answers, and explanations using NLP & LLM
-Performance Tracker Agent	Tracks user performance and adapts difficulty	Monitors quiz results, recommends revisions, provides insights
+| Agent | Role | Core Functions |
+|-------|------|----------------|
+| **Planner Agent** | Generates personalized study plans | Suggests topics, sets schedules, and adapts plans based on progress |
+| **Quiz Generator Agent** | Creates quizzes based on topics & difficulty | Generates questions, answers, and explanations using NLP & LLM |
+| **Performance Tracker Agent** | Tracks user performance and adapts difficulty | Monitors quiz results, recommends revisions, and provides insights |
