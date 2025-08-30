@@ -17,7 +17,7 @@ The system is composed of three AI agents:
 | **Quiz Generator Agent** | Creates quizzes based on topics & difficulty | Generates questions, answers, and explanations using NLP & LLM |
 | **Performance Tracker Agent** | Tracks user performance and adapts difficulty | Monitors quiz results, recommends revisions, and provides insights |
 
-##2️⃣ System Architecture
+## 2️⃣ System Architecture
 
 High-Level Flow:
 
