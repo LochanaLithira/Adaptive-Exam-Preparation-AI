@@ -27,4 +27,4 @@ flowchart TD
     B --> C["Quiz Generator Agent"]
     C --> D["Performance Tracker Agent"]
     D --> E["Streamlit Frontend (Dashboard, quizzes, analytics)"]
-    D --> C
+    D --> B
