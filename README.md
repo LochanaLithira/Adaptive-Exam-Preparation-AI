@@ -21,8 +21,8 @@ The system is composed of three AI agents:
 
 ```mermaid
 flowchart TD
-    A[User Input (exam subject, topics)] --> B[Planner Agent]
-    B --> C[Quiz Generator Agent]
-    C --> D[Performance Tracker Agent]
-    D --> E[Streamlit Frontend (Dashboard, quizzes, analytics)]
+    A["User Input (exam subject, topics)"] --> B["Planner Agent"]
+    B --> C["Quiz Generator Agent"]
+    C --> D["Performance Tracker Agent"]
+    D --> E["Streamlit Frontend (Dashboard, quizzes, analytics)"]
     D --> C
