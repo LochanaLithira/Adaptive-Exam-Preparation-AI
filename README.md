@@ -28,3 +28,9 @@ flowchart TD
     C --> D["Performance Tracker Agent"]
     D --> E["Streamlit Frontend (Dashboard, quizzes, analytics)"]
     D --> B
+```
+- Planner Agent → Quiz Generator: Decides what topics/questions to generate.
+
+- Quiz Generator → Performance Tracker: Sends quiz results for evaluation.
+
+- Performance Tracker → Planner Agent: Suggests updates to study plan based on performance.
