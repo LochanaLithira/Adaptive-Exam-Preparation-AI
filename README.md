@@ -1,8 +1,19 @@
 <<<<<<< HEAD
 # Adaptive Exam Preparation AI
 
-This project aims to provide adaptive tools and resources for exam preparation using AI technologies.
-=======
-# Adaptive-Exam-Preparation-AI
-IRWA Assignment
->>>>>>> aa7dab51c0fb30e32be7b10c047b613d93696184
+1️⃣ Overview of Your System
+
+Goal: Help students prepare for exams by:
+
+Planning study schedules
+
+Generating quizzes based on knowledge gaps
+
+Tracking performance and adapting difficulty
+
+Agents:
+
+Agent	Role	Core Functions
+Planner Agent	Generates personalized study plans	Suggests topics, sets schedule, adapts plan based on progress
+Quiz Generator Agent	Creates quizzes based on topics & difficulty	Generates questions, answers, and explanations using NLP & LLM
+Performance Tracker Agent	Tracks user performance and adapts difficulty	Monitors quiz results, recommends revisions, provides insights
