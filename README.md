@@ -77,3 +77,8 @@ flowchart TD
 - Simple scoring and analytics logic (Pandas/Numpy)
 - Optional: embeddings + LLM for generating personalized feedback
 - Streamlit for visualizing performance metrics and progress
+
+## 4️⃣ Communication Between Agents
+
+
+## 5️⃣ Security & Responsible AI
