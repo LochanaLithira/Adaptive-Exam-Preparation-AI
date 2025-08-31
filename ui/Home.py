@@ -7,42 +7,43 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from security.auth import init_session_state, check_authentication, login_required
 from ui.LoginUI import main as login_main
+from ui.icons import get_svg_icon, icon_text, info_message
 
 def show_dashboard():
     """Main dashboard for authenticated users"""
-    st.title("📚 Adaptive Exam Preparation Dashboard")
+    st.markdown(icon_text("book", "Adaptive Exam Preparation Dashboard", 24), unsafe_allow_html=True)
     
     # User welcome message
     user_data = st.session_state.user_data
-    st.write(f"Welcome back, **{user_data['full_name']}**! 👋")
+    st.markdown(icon_text("wave", f"Welcome back, **{user_data['full_name']}**!", 20), unsafe_allow_html=True)
     
     # Navigation menu
     st.markdown("---")
-    st.subheader("🎯 What would you like to do today?")
+    st.markdown(icon_text("target", "What would you like to do today?", 20), unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("📝 Take Quiz", use_container_width=True, type="primary"):
+        if st.button("Take Quiz", use_container_width=True, type="primary"):
             st.session_state.current_page = "quiz"
             st.rerun()
         st.markdown("*Test your knowledge with adaptive quizzes*")
     
     with col2:
-        if st.button("📊 View Performance", use_container_width=True, type="primary"):
+        if st.button("View Performance", use_container_width=True, type="primary"):
             st.session_state.current_page = "performance"
             st.rerun()
         st.markdown("*Track your progress and analytics*")
     
     with col3:
-        if st.button("📋 Study Planner", use_container_width=True, type="primary"):
+        if st.button("Study Planner", use_container_width=True, type="primary"):
             st.session_state.current_page = "planner"
             st.rerun()
         st.markdown("*Plan your study schedule*")
     
     # Recent activity section
     st.markdown("---")
-    st.subheader("📈 Recent Activity")
+    st.markdown(icon_text("analytics", "Recent Activity", 20), unsafe_allow_html=True)
     
     # User-specific activity (placeholder for now)
     user_data = st.session_state.get('user_data', {})
@@ -51,9 +52,9 @@ def show_dashboard():
         col1, col2 = st.columns([2, 1])
         
         with col1:
-            st.info("🎯 Welcome to your personalized learning dashboard!")
-            st.info("📚 Start by taking your first quiz to begin tracking progress")
-            st.info("📈 Your performance analytics will appear here after completing quizzes")
+            info_message("Welcome to your personalized learning dashboard!")
+            info_message("Start by taking your first quiz to begin tracking progress")
+            info_message("Your performance analytics will appear here after completing quizzes")
         
         with col2:
             st.metric("Quizzes Completed", "0", "0")
@@ -62,45 +63,45 @@ def show_dashboard():
     
     # Quick actions
     st.markdown("---")
-    st.subheader("⚡ Quick Actions")
+    st.subheader("Quick Actions")
     
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button("🔄 Start First Quiz"):
+        if st.button("Start First Quiz"):
             st.session_state.current_page = "quiz"
             st.rerun()
     
     with col2:
-        if st.button("📈 View Progress"):
+        if st.button("View Progress"):
             st.session_state.current_page = "performance"
             st.rerun()
     
     with col3:
-        if st.button("💡 Study Plan"):
+        if st.button("Study Plan"):
             st.session_state.current_page = "planner"
             st.rerun()
     
     with col4:
-        if st.button("⚙️ Settings"):
+        if st.button("Settings"):
             st.session_state.current_page = "settings"
             st.rerun()
 
 def show_navigation():
     """Show navigation sidebar"""
     with st.sidebar:
-        st.title("📚 Navigation")
+        st.markdown(icon_text("book", "Navigation", 20), unsafe_allow_html=True)
         
         user_data = st.session_state.user_data
-        st.write(f"👤 {user_data['username']}")
+        st.markdown(icon_text("user", user_data['username'], 16), unsafe_allow_html=True)
         
         # Navigation menu
         pages = {
-            "🏠 Dashboard": "dashboard",
-            "📝 Quiz": "quiz", 
-            "📊 Performance": "performance",
-            "📋 Planner": "planner",
-            "⚙️ Settings": "settings"
+            "Dashboard": "dashboard",
+            "Quiz": "quiz", 
+            "Performance": "performance",
+            "Planner": "planner",
+            "Settings": "settings"
         }
         
         current_page = st.session_state.get('current_page', 'dashboard')
@@ -114,7 +115,7 @@ def show_navigation():
         st.markdown("---")
         
         # Logout button
-        if st.button("🚪 Logout", use_container_width=True, type="secondary"):
+        if st.button("Logout", use_container_width=True, type="secondary"):
             from ui.LoginUI import logout_user
             logout_user()
 
@@ -122,7 +123,7 @@ def main():
     """Main application entry point"""
     st.set_page_config(
         page_title="Adaptive Exam Preparation AI",
-        page_icon="📚",
+        page_icon="🎓",
         layout="wide",
         initial_sidebar_state="expanded"
     )
@@ -130,10 +131,21 @@ def main():
     # Initialize session state
     init_session_state()
     
-    # Check authentication
-    if not check_authentication():
+    # Check authentication with error handling
+    try:
+        authentication_status = check_authentication()
+    except Exception as e:
+        st.error(f"❌ Authentication system error: {str(e)}")
+        st.info("💡 This might be due to database connection issues. Please check MongoDB connection.")
+        return
+    
+    if not authentication_status:
         # Show login page
-        login_main()
+        try:
+            login_main()
+        except Exception as e:
+            st.error(f"❌ Login interface error: {str(e)}")
+            st.info("💡 There was an error loading the login interface.")
         return
     
     # Show authenticated interface
@@ -145,19 +157,19 @@ def main():
     if current_page == 'dashboard':
         show_dashboard()
     elif current_page == 'quiz':
-        st.title("📝 Quiz Module")
+        st.markdown(icon_text("quiz", "Quiz Module", 24), unsafe_allow_html=True)
         st.info("Quiz module will be integrated here")
         # Quiz functionality will be added when QuizUI is implemented
     elif current_page == 'performance':
-        st.title("📊 Performance Analytics")
+        st.markdown(icon_text("chart", "Performance Analytics", 24), unsafe_allow_html=True)
         st.info("Performance module will be integrated here")
         # Performance tracking will be added when PerformanceUI is implemented
     elif current_page == 'planner':
-        st.title("📋 Study Planner")
+        st.markdown(icon_text("planner", "Study Planner", 24), unsafe_allow_html=True)
         st.info("Planner module will be integrated here")
         # Study planning will be added when PlannerUI is implemented
     elif current_page == 'settings':
-        st.title("⚙️ Settings")
+        st.markdown(icon_text("settings", "Settings", 24), unsafe_allow_html=True)
         st.info("Settings page - coming soon!")
     
 if __name__ == "__main__":

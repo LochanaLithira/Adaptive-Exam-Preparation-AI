@@ -1,4 +1,3 @@
-# performance_ui.py
 import streamlit as st
 import sys
 import os
@@ -6,12 +5,12 @@ import os
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from agents.performance_tracker_agent import track_performance, get_feedback
 from security.auth import login_required, init_session_state
+from ui.icons import get_svg_icon, icon_text, info_message
 
 @login_required
 def performance_dashboard():
-    st.title("📊 Performance Tracker")
+    st.markdown(icon_text("chart", "Performance Tracker", 24), unsafe_allow_html=True)
     
     # Check if user has any quiz data
     user_data = st.session_state.get('user_data', {})
@@ -22,7 +21,7 @@ def performance_dashboard():
         return
     
     # Performance tracking dashboard
-    st.info("📈 Performance tracking will show your quiz results and progress here.")
+    info_message("Performance tracking will show your quiz results and progress here.")
     st.write("Features coming soon:")
     st.write("- Quiz score history")
     st.write("- Topic-wise performance analysis") 
