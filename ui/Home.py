@@ -9,13 +9,21 @@ from security.auth import init_session_state, check_authentication, login_requir
 from ui.LoginUI import main as login_main
 from ui.icons import get_svg_icon, icon_text, info_message
 
+# ✅ set_page_config must be the very first Streamlit command in this file
+st.set_page_config(
+    page_title="Adaptive Exam Preparation AI",
+    page_icon="🎓",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 def show_dashboard():
     """Main dashboard for authenticated users"""
     st.markdown(icon_text("book", "Adaptive Exam Preparation Dashboard", 24), unsafe_allow_html=True)
     
     # User welcome message
     user_data = st.session_state.user_data
-    st.markdown(icon_text("wave", f"Welcome back, **{user_data['full_name']}**!", 20), unsafe_allow_html=True)
+    st.markdown(icon_text("wave", f"Welcome back, *{user_data['full_name']}*!", 20), unsafe_allow_html=True)
     
     # Navigation menu
     st.markdown("---")
@@ -27,19 +35,19 @@ def show_dashboard():
         if st.button("Take Quiz", use_container_width=True, type="primary"):
             st.session_state.current_page = "quiz"
             st.rerun()
-        st.markdown("*Test your knowledge with adaptive quizzes*")
+        st.markdown("Test your knowledge with adaptive quizzes")
     
     with col2:
         if st.button("View Performance", use_container_width=True, type="primary"):
             st.session_state.current_page = "performance"
             st.rerun()
-        st.markdown("*Track your progress and analytics*")
+        st.markdown("Track your progress and analytics")
     
     with col3:
         if st.button("Study Planner", use_container_width=True, type="primary"):
             st.session_state.current_page = "planner"
             st.rerun()
-        st.markdown("*Plan your study schedule*")
+        st.markdown("Plan your study schedule")
     
     # Recent activity section
     st.markdown("---")
@@ -121,13 +129,6 @@ def show_navigation():
 
 def main():
     """Main application entry point"""
-    st.set_page_config(
-        page_title="Adaptive Exam Preparation AI",
-        page_icon="🎓",
-        layout="wide",
-        initial_sidebar_state="expanded"
-    )
-    
     # Initialize session state
     init_session_state()
     
@@ -159,18 +160,15 @@ def main():
     elif current_page == 'quiz':
         st.markdown(icon_text("quiz", "Quiz Module", 24), unsafe_allow_html=True)
         st.info("Quiz module will be integrated here")
-        # Quiz functionality will be added when QuizUI is implemented
     elif current_page == 'performance':
         st.markdown(icon_text("chart", "Performance Analytics", 24), unsafe_allow_html=True)
         st.info("Performance module will be integrated here")
-        # Performance tracking will be added when PerformanceUI is implemented
     elif current_page == 'planner':
         st.markdown(icon_text("planner", "Study Planner", 24), unsafe_allow_html=True)
         st.info("Planner module will be integrated here")
-        # Study planning will be added when PlannerUI is implemented
     elif current_page == 'settings':
         st.markdown(icon_text("settings", "Settings", 24), unsafe_allow_html=True)
         st.info("Settings page - coming soon!")
-    
+
 if __name__ == "__main__":
     main()
