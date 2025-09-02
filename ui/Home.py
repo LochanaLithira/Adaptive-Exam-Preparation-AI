@@ -164,8 +164,9 @@ def main():
         st.markdown(icon_text("chart", "Performance Analytics", 24), unsafe_allow_html=True)
         st.info("Performance module will be integrated here")
     elif current_page == 'planner':
-        st.markdown(icon_text("planner", "Study Planner", 24), unsafe_allow_html=True)
-        st.info("Planner module will be integrated here")
+        from ui.PlannerUI import show_planner
+        student_id = st.session_state.user_data['username']  # can be 'S001' for testing
+        show_planner(student_id)
     elif current_page == 'settings':
         st.markdown(icon_text("settings", "Settings", 24), unsafe_allow_html=True)
         st.info("Settings page - coming soon!")
