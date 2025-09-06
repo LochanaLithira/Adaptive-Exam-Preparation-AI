@@ -8,6 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from security.auth import init_session_state, check_authentication, login_required
 from ui.LoginUI import main as login_main
 from ui.icons import get_svg_icon, icon_text, info_message
+from ui.QuizUI import quiz_dashboard
 
 # ✅ set_page_config must be the very first Streamlit command in this file
 st.set_page_config(
@@ -158,8 +159,7 @@ def main():
     if current_page == 'dashboard':
         show_dashboard()
     elif current_page == 'quiz':
-        st.markdown(icon_text("quiz", "Quiz Module", 24), unsafe_allow_html=True)
-        st.info("Quiz module will be integrated here")
+        quiz_dashboard()
     elif current_page == 'performance':
         st.markdown(icon_text("chart", "Performance Analytics", 24), unsafe_allow_html=True)
         st.info("Performance module will be integrated here")
