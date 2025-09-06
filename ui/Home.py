@@ -162,8 +162,11 @@ def main():
     elif current_page == 'quiz':
         quiz_dashboard()
     elif current_page == 'performance':
-        st.markdown(icon_text("chart", "Performance Analytics", 24), unsafe_allow_html=True)
-        st.info("Performance module will be integrated here")
+        try:
+            performance_dashboard()
+        except Exception as e:
+            st.error(f"❌ Performance dashboard error: {str(e)}")
+            st.info("💡 There was an error loading the performance dashboard. Please check the database connection.")
     elif current_page == 'planner':
         from ui.PlannerUI import show_planner
         student_id = st.session_state.user_data['username']  # can be 'S001' for testing
