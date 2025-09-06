@@ -8,6 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from security.auth import init_session_state, check_authentication, login_required
 from ui.LoginUI import main as login_main
 from ui.icons import get_svg_icon, icon_text, info_message
+from ui.PerformanceUI import performance_dashboard, PerformanceAnalytics
 from ui.QuizUI import quiz_dashboard
 
 # ✅ set_page_config must be the very first Streamlit command in this file
