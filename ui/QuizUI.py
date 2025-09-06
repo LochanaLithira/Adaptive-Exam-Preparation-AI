@@ -133,6 +133,7 @@ def quiz_dashboard():
                     "user_answer": st.session_state.responses.get(q["id"]),
                     "options": q["options"]
                 })
+            #Dummy API call
             try:
                 response = requests.post(
                     "http://localhost:5000/track_performance",
