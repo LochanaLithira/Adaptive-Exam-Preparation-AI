@@ -14,70 +14,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from security.auth import login_required, init_session_state
 from ui.icons import get_svg_icon, icon_text, info_message
+from services.llm_service import generate_quiz, parse_quiz
 
-# ---------------- Gemini Quiz Setup ----------------
-try:
-    from google import genai
-    client = genai.Client(api_key="AIzaSyCCr_GZOX_2G46jwCWSP4ZyWfqaEbNK9VI")
-except ImportError:
-    st.error("Google Gemini API client not found. Install `google-generative-ai` or adjust import.")
 
-# ---------------- Load Dataset ----------------
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_PATH = os.path.join(BASE_DIR, "..", "services", "cleaned_dataset.csv") #Cleaned dataset
-DATA_PATH = os.path.abspath(DATA_PATH)
-
-if not os.path.exists(DATA_PATH):
-    st.error(f"CSV file not found at: {DATA_PATH}")
-    df = pd.DataFrame()  # Empty placeholder
-else:
-    df = pd.read_csv(DATA_PATH)
-    st.success(f"Loaded dataset from: {DATA_PATH}")
-
-#Quiz generator
-def generate_quiz(num_questions=5):
-    if df.empty:
-        return "No data available to generate quiz."
-    
-    sample_data = df.sample(min(num_questions * 2, len(df)))
-    prompt = f"""
-    Based on this cleaned dataset:
-    {sample_data.to_string(index=False)}
-
-    Generate {num_questions} multiple-choice quiz questions.
-
-    Each question must include its related category.
-
-    Format response exactly like this:
-    Q1: [Question text]
-    Category: [category_name]
-    A) option 1
-    B) option 2
-    C) option 3
-    D) option 4
-    Answer: B (explanation...)
-    """
-    response = client.models.generate_content(
-        model="gemini-1.5-flash",
-        contents=prompt
-    )
-    return response.text
-
-def parse_quiz(text):
-    quiz = []
-    pattern = r"Q\d+: (.*?)\nCategory: (.*?)\nA\) (.*?)\nB\) (.*?)\nC\) (.*?)\nD\) (.*?)\nAnswer: ([A-D])"
-    matches = re.findall(pattern, text, re.DOTALL)
-
-    for i, match in enumerate(matches, 1):
-        question, category, a, b, c, d, answer = match
-        quiz.append({
-            "id": i,
-            "question": question.strip(),
-            "category": category.strip() if category else "None",
-            "options": {"A": a.strip(), "B": b.strip(), "C": c.strip(), "D": d.strip()},
-            "correct_answer": answer.strip()
-        })
-    return quiz
 
 # ---------------- Dashboard & Quiz ----------------
 @login_required
