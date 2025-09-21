@@ -20,7 +20,7 @@ results_col = db[COLLECTIONS["quiz_results"]]
 # Pydantic model for input
 # -----------------------------
 class QuizResult(BaseModel):
-    user_id: int
+    user_id: str  # Changed from int to str to handle MongoDB ObjectIds
     quiz_id: int
     topic: str
     answers: dict           # {"Q1": "A"}
