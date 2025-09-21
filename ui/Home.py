@@ -10,6 +10,7 @@ from ui.LoginUI import main as login_main
 from ui.icons import get_svg_icon, icon_text, info_message
 from ui.PerformanceUI import performance_dashboard, PerformanceAnalytics
 from ui.QuizUI import quiz_dashboard
+from ui.QuizHistoryUI import quiz_history_dashboard
 
 # ✅ set_page_config must be the very first Streamlit command in this file
 st.set_page_config(
@@ -167,6 +168,12 @@ def main():
         except Exception as e:
             st.error(f"❌ Performance dashboard error: {str(e)}")
             st.info("💡 There was an error loading the performance dashboard. Please check the database connection.")
+    elif current_page == 'quiz_history':
+        try:
+            quiz_history_dashboard()
+        except Exception as e:
+            st.error(f"❌ Quiz history error: {str(e)}")
+            st.info("💡 There was an error loading the quiz history. Please check the database connection.")
     elif current_page == 'planner':
         from ui.PlannerUI import show_planner
         student_id = st.session_state.user_data['username']  # can be 'S001' for testing
@@ -174,6 +181,9 @@ def main():
     elif current_page == 'settings':
         st.markdown(icon_text("settings", "Settings", 24), unsafe_allow_html=True)
         st.info("Settings page - coming soon!")
+
+# Make main function available for import
+__all__ = ['main']
 
 if __name__ == "__main__":
     main()
