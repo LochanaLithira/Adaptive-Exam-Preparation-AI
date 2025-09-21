@@ -15,7 +15,7 @@ genai.configure(api_key=GEN_API_KEY)
 try:
     df = pd.read_csv('services/cleaned_dataset.csv')
 except FileNotFoundError:
-    print("Warning: cleaned_dataset.csv not found. Quiz generation may not work.")
+    # Dataset not found - quiz generation will use fallback methods
     df = pd.DataFrame()
 
 def generate_explanation(question_text: str, student_ans: str, correct_ans: str) -> str:
@@ -66,7 +66,6 @@ def test_generate_explanation():
     correct_answer = "4"
     
     explanation = generate_explanation(question, student_answer, correct_answer)
-    print(f"Explanation: {explanation}")
     return explanation
 
 

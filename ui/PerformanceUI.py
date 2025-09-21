@@ -6,7 +6,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 from typing import Dict, List, Any
-import requests
 
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -14,6 +13,18 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from security.auth import login_required, init_session_state
 from ui.icons import get_svg_icon, icon_text, info_message
 from utils.config import get_database, COLLECTIONS
+
+# CSS Constants for reusable styling
+GLASS_CARD_STYLE = "background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%); border-radius: 15px; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0,0,0,0.1); transition: all 0.3s ease; margin-bottom: 1rem;"
+
+# Gradient backgrounds for different themes
+GRADIENT_BACKGROUNDS = {
+    "primary": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "success": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+    "warning": "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
+    "error": "linear-gradient(135deg, #ff6b6b 0%, #ffa8a8 100%)",
+    "subtle": "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)"
+}
 
 class PerformanceAnalytics:
     """Enhanced Performance Analytics with MongoDB integration"""
@@ -142,88 +153,112 @@ class PerformanceAnalytics:
         
         return streak
 
+
+# Navigation and UI helper functions
+def navigate_to_page(page: str):
+    """Reusable navigation function"""
+    st.session_state.current_page = page
+    st.rerun()
+
+
+def render_action_buttons(layout="horizontal"):
+    """Reusable action buttons with consistent styling"""
+    if layout == "horizontal":
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            if st.button("Take New Quiz", use_container_width=True, type="primary"):
+                navigate_to_page("quiz")
+        
+        with col2:
+            if st.button("📚 Quiz History", use_container_width=True, type="secondary"):
+                navigate_to_page("quiz_history")
+        
+        with col3:
+            if st.button("Study Plan", use_container_width=True, type="secondary"):
+                navigate_to_page("planner")
+        
+        with col4:
+            if st.button("Refresh Data", use_container_width=True, type="secondary"):
+                st.rerun()
+    
+    elif layout == "vertical":
+        if st.button("Take First Quiz", type="primary", use_container_width=True):
+            navigate_to_page('quiz')
+        
+        if st.button("📚 View Quiz History", type="secondary", use_container_width=True):
+            navigate_to_page('quiz_history')
+        
+        if st.button("View Study Planner", type="secondary", use_container_width=True):
+            navigate_to_page('planner')
+
+
+# Performance metrics rendering functions
+    
+    def _calculate_study_streak(self, results: List[Dict]) -> int:
+        """Calculate current study streak in days"""
+        if not results:
+            return 0
+        
+        # Simple streak calculation based on quiz dates
+        dates = []
+        for result in results:
+            if result.get("_id"):
+                dates.append(result["_id"].generation_time.date())
+        
+        if not dates:
+            return 0
+        
+        dates = sorted(set(dates), reverse=True)
+        streak = 0
+        current_date = datetime.now().date()
+        
+        for date in dates:
+            if (current_date - date).days == streak:
+                streak += 1
+            else:
+                break
+        
+        return streak
+
 def render_performance_metrics(metrics: Dict[str, Any]):
     """Render enhanced performance metrics with modern cards"""
-    st.markdown("""
-    <style>
-    .metric-card {
-        background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-        border-radius: 15px;
-        padding: 1.5rem;
-        border: 1px solid rgba(255,255,255,0.1);
-        backdrop-filter: blur(10px);
-        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        text-align: center;
-        transition: all 0.3s ease;
-        margin-bottom: 1rem;
-    }
-    
-    .metric-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-        border: 1px solid rgba(255,255,255,0.2);
-    }
-    
-    .metric-value {
-        font-size: 2.5rem;
-        font-weight: 700;
-        background: linear-gradient(45deg, #667eea, #764ba2);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin: 0.5rem 0;
-    }
-    
-    .metric-label {
-        color: rgba(255,255,255,0.8);
-        font-size: 0.9rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    
-    .metric-icon {
-        margin-bottom: 0.5rem;
-        opacity: 0.8;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-    
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
         st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-icon">{get_svg_icon('quiz', 32, '#667eea')}</div>
-            <div class="metric-value">{metrics['total_quizzes']}</div>
-            <div class="metric-label">Quizzes Completed</div>
+        <div style="{GLASS_CARD_STYLE} text-align: center;">
+            <div style="margin-bottom: 0.5rem; opacity: 0.8;">{get_svg_icon('quiz', 32, '#667eea')}</div>
+            <div style="font-size: 2.5rem; font-weight: 700; background: linear-gradient(45deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0.5rem 0;">{metrics['total_quizzes']}</div>
+            <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Quizzes Completed</div>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
         accuracy_color = '#22c55e' if metrics['accuracy_percentage'] >= 70 else '#f59e0b' if metrics['accuracy_percentage'] >= 50 else '#ef4444'
         st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-icon">{get_svg_icon('target', 32, accuracy_color)}</div>
-            <div class="metric-value">{metrics['accuracy_percentage']:.1f}%</div>
-            <div class="metric-label">Average Score</div>
+        <div style="{GLASS_CARD_STYLE} text-align: center;">
+            <div style="margin-bottom: 0.5rem; opacity: 0.8;">{get_svg_icon('target', 32, accuracy_color)}</div>
+            <div style="font-size: 2.5rem; font-weight: 700; color: {accuracy_color}; margin: 0.5rem 0;">{metrics['accuracy_percentage']:.1f}%</div>
+            <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Average Score</div>
         </div>
         """, unsafe_allow_html=True)
     
     with col3:
         st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-icon">{get_svg_icon('timer', 32, '#8b5cf6')}</div>
-            <div class="metric-value">{metrics['study_streak']}</div>
-            <div class="metric-label">Study Streak (Days)</div>
+        <div style="{GLASS_CARD_STYLE} text-align: center;">
+            <div style="margin-bottom: 0.5rem; opacity: 0.8;">{get_svg_icon('timer', 32, '#8b5cf6')}</div>
+            <div style="font-size: 2.5rem; font-weight: 700; color: #8b5cf6; margin: 0.5rem 0;">{metrics['study_streak']}</div>
+            <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Study Streak (Days)</div>
         </div>
         """, unsafe_allow_html=True)
     
     with col4:
         st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-icon">{get_svg_icon('chart', 32, '#06b6d4')}</div>
-            <div class="metric-value">{metrics['total_questions']}</div>
-            <div class="metric-label">Total Questions</div>
+        <div style="{GLASS_CARD_STYLE} text-align: center;">
+            <div style="margin-bottom: 0.5rem; opacity: 0.8;">{get_svg_icon('chart', 32, '#06b6d4')}</div>
+            <div style="font-size: 2.5rem; font-weight: 700; color: #06b6d4; margin: 0.5rem 0;">{metrics['total_questions']}</div>
+            <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Total Questions</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -330,46 +365,87 @@ def render_topic_analysis(metrics: Dict[str, Any]):
             st.success("Great job! No weak areas identified.")
 
 def render_recent_activity(metrics: Dict[str, Any]):
-    """Render recent quiz activity timeline"""
+    """Render recent quiz activity timeline with expandable view"""
     st.markdown(icon_text("history", "Recent Activity", 20), unsafe_allow_html=True)
     
     if not metrics['recent_activity']:
         st.info("Take some quizzes to see your recent activity!")
         return
     
-    for activity in metrics['recent_activity']:
-        accuracy = (activity['score'] / activity['total']) * 100
+    recent_activity = metrics['recent_activity']
+    
+    # Show first 3 activities as cards
+    st.markdown("### 📊 Latest Quiz Results")
+    
+    # Display first 3 activities in a grid
+    num_to_show = min(3, len(recent_activity))
+    if num_to_show > 0:
+        cols = st.columns(num_to_show)
         
-        # Color coding based on performance
-        if accuracy >= 80:
-            color = "success"
-            icon = "check_circle"
-        elif accuracy >= 60:
-            color = "warning"
-            icon = "target"
-        else:
-            color = "error"
-            icon = "refresh"
-        
-        with st.container():
-            st.markdown(f"""
-            <div style="
-                background: rgba(255,255,255,0.05);
-                border-radius: 10px;
-                padding: 1rem;
-                margin: 0.5rem 0;
-                border-left: 4px solid {'#22c55e' if color == 'success' else '#f59e0b' if color == 'warning' else '#ef4444'};
-            ">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    {get_svg_icon(icon, 20, '#22c55e' if color == 'success' else '#f59e0b' if color == 'warning' else '#ef4444')}
-                    <strong>{activity['topic']}</strong>
-                    <span style="margin-left: auto;">{accuracy:.1f}%</span>
+        for i in range(num_to_show):
+            activity = recent_activity[i]
+            accuracy = (activity['score'] / activity['total']) * 100
+            
+            # Color coding based on performance
+            if accuracy >= 80:
+                color = "#22c55e"
+                icon = "check_circle"
+                status = "Excellent"
+            elif accuracy >= 60:
+                color = "#f59e0b"
+                icon = "target"
+                status = "Good"
+            else:
+                color = "#ef4444"
+                icon = "refresh"
+                status = "Needs Work"
+            
+            with cols[i]:
+                st.markdown(f"""
+                <div style="{GLASS_CARD_STYLE} border-left: 4px solid {color}; height: 180px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                            {get_svg_icon(icon, 18, color)}
+                            <span style="font-size: 0.9rem; color: {color}; font-weight: 600;">{status}</span>
+                        </div>
+                        <h4 style="color: #e2e8f0; margin: 0 0 8px 0; font-size: 1rem;">
+                            {activity['topic'][:20]}{'...' if len(activity['topic']) > 20 else ''}
+                        </h4>
+                        <div style="font-size: 2rem; font-weight: bold; color: {color}; margin: 8px 0;">
+                            {accuracy:.1f}%
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">
+                            Score: {activity['score']}/{activity['total']}
+                        </div>
+                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 4px;">
+                            {activity['date'].strftime('%b %d, %Y')}
+                        </div>
+                    </div>
                 </div>
-                <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-top: 0.5rem;">
-                    Score: {activity['score']}/{activity['total']} • {activity['date'].strftime('%B %d, %Y')}
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
+    
+    # Add navigation button to detailed quiz history
+    st.markdown("---")
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("📚 View Complete Quiz History", type="primary", use_container_width=True, key="view_quiz_history"):
+            st.session_state.current_page = "quiz_history"
+            st.rerun()
+    
+    # Alternative: Show count of total quizzes available
+    total_quizzes = len(recent_activity)
+    if total_quizzes > 3:
+        st.markdown(f"""
+        <div style="text-align: center; margin-top: 1rem;">
+            <span style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+                Showing latest 3 of {total_quizzes} total quizzes • 
+                <a href="#" style="color: #667eea; text-decoration: none;">View all with detailed analytics ↗</a>
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
 
 def render_ai_insights(metrics: Dict[str, Any]):
     """Render AI-powered insights and recommendations"""
@@ -530,51 +606,9 @@ def performance_dashboard():
     st.markdown("---")
     st.markdown(icon_text("rocket", "Quick Actions", 20), unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        if st.button(f"{get_svg_icon('quiz', 20)} Take New Quiz", use_container_width=True, type="primary"):
-            st.session_state.current_page = "quiz"
-            st.rerun()
-    
-    with col2:
-        if st.button(f"{get_svg_icon('study', 20)} Study Plan", use_container_width=True, type="secondary"):
-            st.session_state.current_page = "planner"
-            st.rerun()
-    
-    with col3:
-        if st.button(f"{get_svg_icon('refresh', 20)} Refresh Data", use_container_width=True, type="secondary"):
-            st.rerun()
+    render_action_buttons("horizontal")
 
-# Demo data function for testing without MongoDB
-def render_demo_dashboard():
-    """Render demo dashboard when no data is available"""
-    st.markdown(icon_text("info", "Demo Performance Dashboard", 20), unsafe_allow_html=True)
-    
-    # Demo metrics
-    demo_metrics = {
-        'total_quizzes': 15,
-        'accuracy_percentage': 78.5,
-        'study_streak': 5,
-        'total_questions': 150
-    }
-    
-    render_performance_metrics(demo_metrics)
-    
-    st.info("""
-    🚀 **This is a demo of your Performance Dashboard!**
-    
-    Once you complete quizzes, you'll see:
-    - Real-time performance analytics
-    - Interactive charts and trends
-    - Topic-wise analysis
-    - AI-powered insights and recommendations
-    - Study streak tracking
-    - Personalized improvement suggestions
-    
-    Take your first quiz to unlock the full dashboard experience!
-    """)
-
+# Consolidated no-data dashboard with demo features
 def render_no_data_dashboard(user_data: Dict[str, Any]):
     """Render dashboard for users with no quiz data yet"""
     st.markdown("---")
@@ -582,7 +616,7 @@ def render_no_data_dashboard(user_data: Dict[str, Any]):
     # Welcome message for new users
     st.markdown(f"""
     <div style="
-        background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        background: {GRADIENT_BACKGROUNDS['subtle']};
         border-radius: 15px;
         padding: 2rem;
         margin: 1rem 0;
@@ -602,9 +636,9 @@ def render_no_data_dashboard(user_data: Dict[str, Any]):
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown("""
+        st.markdown(f"""
         <div style="
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: {GRADIENT_BACKGROUNDS['primary']};
             border-radius: 10px;
             padding: 1.5rem;
             text-align: center;
@@ -617,9 +651,9 @@ def render_no_data_dashboard(user_data: Dict[str, Any]):
         """, unsafe_allow_html=True)
     
     with col2:
-        st.markdown("""
+        st.markdown(f"""
         <div style="
-            background: linear-gradient(45deg, #f093fb, #f5576c);
+            background: {GRADIENT_BACKGROUNDS['secondary']};
             border-radius: 10px;
             padding: 1.5rem;
             text-align: center;
@@ -632,9 +666,9 @@ def render_no_data_dashboard(user_data: Dict[str, Any]):
         """, unsafe_allow_html=True)
     
     with col3:
-        st.markdown("""
+        st.markdown(f"""
         <div style="
-            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            background: {GRADIENT_BACKGROUNDS['tertiary']};
             border-radius: 10px;
             padding: 1.5rem;
             text-align: center;
@@ -667,13 +701,7 @@ def render_no_data_dashboard(user_data: Dict[str, Any]):
         """)
     
     with col2:
-        if st.button("🎯 Take First Quiz", type="primary", use_container_width=True):
-            st.session_state.current_page = 'quiz'
-            st.rerun()
-        
-        if st.button("📚 View Study Planner", type="secondary", use_container_width=True):
-            st.session_state.current_page = 'planner'
-            st.rerun()
+        render_action_buttons("vertical")
         
         st.metric("Ready to Start", "100%", "Let's go! 🚀")
 
