@@ -70,12 +70,13 @@ def test_generate_explanation():
 
 
 # Quiz generator
-def generate_quiz(num_questions=5):
+def generate_quiz(num_questions=5, difficulty='easy'):
     """
     Generate quiz questions using the dataset and Gemini API
     
     Args:
         num_questions (int): Number of questions to generate
+        difficulty (str): Difficulty level - 'easy', 'medium', or 'difficult'
         
     Returns:
         str: Generated quiz text
@@ -83,12 +84,22 @@ def generate_quiz(num_questions=5):
     if df.empty:
         return "No data available to generate quiz."
     
-    sample_data = df.sample(min(num_questions * 2, len(df)))
+    if "difficulty" in df.columns:
+        filtered_df = df[df["difficulty"].str.lower() == difficulty.lower()]
+    else:
+        filtered_df = df.sample(min(num_questions * 2, len(df)))
+    
+    if filtered_df.empty:
+        return f"No data available for {difficulty} level quiz."
+
+    
+    sample_data = df.sample(min(num_questions * 2, len(filtered_df)))
+
     prompt = f"""
-    Based on this cleaned dataset:
+    Based on this cleaned dataset (difficulty level: {difficulty}):
     {sample_data.to_string(index=False)}
 
-    Generate {num_questions} multiple-choice quiz questions.
+    Generate {num_questions} multiple-choice quiz questions of {difficulty} difficulty.
 
     Each question must include its related category.
 
