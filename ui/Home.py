@@ -11,6 +11,7 @@ from ui.icons import get_svg_icon, icon_text, info_message
 from ui.PerformanceUI import performance_dashboard, PerformanceAnalytics
 from ui.QuizUI import quiz_dashboard
 from ui.QuizHistoryUI import quiz_history_dashboard
+from ui.PlannerUI import run_planner_ui
 
 # ✅ set_page_config must be the very first Streamlit command in this file
 st.set_page_config(
@@ -48,9 +49,8 @@ def show_dashboard():
     
     with col3:
         if st.button("Study Planner", use_container_width=True, type="primary"):
-            st.session_state.current_page = "planner"
-            st.rerun()
-        st.markdown("Plan your study schedule")
+           st.session_state.current_page = "planner"
+           st.rerun()
     
     # Recent activity section
     st.markdown("---")
@@ -175,9 +175,7 @@ def main():
             st.error(f"❌ Quiz history error: {str(e)}")
             st.info("💡 There was an error loading the quiz history. Please check the database connection.")
     elif current_page == 'planner':
-        from ui.PlannerUI import show_planner
-        student_id = st.session_state.user_data['username']  # can be 'S001' for testing
-        show_planner(student_id)
+        run_planner_ui()
     elif current_page == 'settings':
         st.markdown(icon_text("settings", "Settings", 24), unsafe_allow_html=True)
         st.info("Settings page - coming soon!")

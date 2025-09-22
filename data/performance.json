@@ -1,0 +1,58 @@
+[
+  {
+    "user_id": 1,
+    "quiz_id": 101,
+    "topic": "Linear Regression",
+    "answers": {"Q1": "C","Q2": "B","Q3": "D","Q4": "A"},
+    "result": {"score": 0,"total": 4,"accuracy": 0.0,"feedback": "Work hard!!."},
+    "wrong_questions": {"Q1":"A","Q2": "C","Q3":"A","Q4":"B"}
+  },
+  {
+    "user_id": 1,
+    "quiz_id": 102,
+    "topic": "Decision Trees",
+    "answers": {"Q1": "B","Q2": "A","Q3": "C"},
+    "result": {"score": 3,"total": 3,"accuracy": 100.0,"feedback": "Excellent! You mastered Decision Trees!."},
+    "wrong_questions": {}
+  },
+  {
+    "user_id": 1,
+    "quiz_id": 103,
+    "topic": "Neural Networks",
+    "answers": {"Q1": "B","Q2": "C","Q3": "A","Q4": "D"},
+    "result": {"score": 2,"total": 4,"accuracy": 50.0,"feedback": "Review activation functions and backpropagation."},
+    "wrong_questions": {"Q2": "B","Q3": "C"}
+  },
+  {
+    "user_id": 1,
+    "quiz_id": 104,
+    "topic": "Support Vector Machines",
+    "answers": {"Q1": "A","Q2": "C","Q3": "B"},
+    "result": {"score": 2,"total": 3,"accuracy": 66.67,"feedback": "Solid start! Review kernel tricks (Q2)."},
+    "wrong_questions": {"Q2": "A"}
+  },
+  {
+    "user_id": 1,
+    "quiz_id": 105,
+    "topic": "Clustering (K-Means)",
+    "answers": {"Q1": "D","Q2": "B","Q3": "C"},
+    "result": {"score": 2,"total": 3,"accuracy": 90.0,"feedback": "Keep up!"},
+    "wrong_questions": {"Q2": "A"}
+  },
+  {
+    "user_id": 1,
+    "quiz_id": 106,
+    "topic": "Principal Component Analysis",
+    "answers": {"Q1": "C","Q2": "D","Q3": "A"},
+    "result": {"score": 1,"total": 3,"accuracy": 33.33,"feedback": "Focus on eigenvectors and variance explained."},
+    "wrong_questions": {"Q1":"B","Q2":"C"}
+  },
+  {
+    "user_id": 1,
+    "quiz_id": 107,
+    "topic": "Random Forests",
+    "answers": {"Q1": "A","Q2": "C","Q3": "B"},
+    "result": {"score": 3,"total": 3,"accuracy": 100.0,"feedback": "Excellent! Fully mastered Random Forests."},
+    "wrong_questions": {}
+  }
+]
