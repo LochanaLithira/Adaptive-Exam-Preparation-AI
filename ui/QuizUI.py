@@ -62,56 +62,30 @@ def quiz_dashboard():
         st.markdown("---")
         if st.button("✅ Finish Quiz"):
             st.markdown("## 📤 Submitting Your Responses...")
-            
-            # Get user data for submission
-            user_data = st.session_state.get('user_data', {})
-            user_id = user_data.get('_id', 'anonymous')
-            
-            # Prepare data for FastAPI performance tracker
-            answers = {}
-            correct_answers = {}
-            questions_text = {}
-            
+            submission = []
             for q in st.session_state.quiz:
-                q_key = f"Q{q['id']}"
-                answers[q_key] = st.session_state.responses.get(q["id"], "")
-                correct_answers[q_key] = q["correct_answer"]
-                questions_text[q_key] = q["question"]
-            
-            # Determine topic from questions (use first question's category)
-            topic = st.session_state.quiz[0]["category"] if st.session_state.quiz else "General"
-            
-            # Prepare payload for FastAPI /track endpoint
-            payload = {
-                "user_id": str(user_id),
-                "quiz_id": hash(str(st.session_state.quiz)) % 10000,  # Generate quiz ID
-                "topic": topic,
-                "answers": answers,
-                "correct_answers": correct_answers,
-                "questions_text": questions_text
-            }
-            
+                submission.append({
+                    "id": q["id"],
+                    "question": q["question"],
+                    "category": q["category"],
+                    "correct_answer": q["correct_answer"],
+                    "user_answer": st.session_state.responses.get(q["id"]),
+                    "options": q["options"]
+                })
+            #Dummy API call
             try:
-                # Call FastAPI performance tracker
                 response = requests.post(
-                    "http://localhost:8000/track",  # FastAPI endpoint
-                    json=payload,
-                    timeout=10
+                    "http://localhost:5000/track_performance",
+                    json={"results": submission},
+                    timeout=5
                 )
-                
                 if response.status_code == 200:
-                    result_data = response.json()
-                    st.success("✅ Quiz submitted successfully!")
-                    
-                    
+                    st.success("✅ Submission sent successfully!")
+                    st.json(response.json())
                 else:
                     st.error(f"⚠️ Failed to submit. Status code: {response.status_code}")
-                    
-            except requests.exceptions.ConnectionError:
-                st.error("❌ Could not connect to performance tracker API. Please ensure the FastAPI server is running on port 8000.")
-                st.info("💡 To start the server, run: `uvicorn agents.performance_tracker_agent:app --reload --port 8000`")
             except Exception as e:
-                st.error(f"❌ Error submitting quiz: {e}")
+                st.error(f"❌ Could not reach tracker API: {e}")
 
 # ---------------- Main ----------------
 if __name__ == "__main__":
