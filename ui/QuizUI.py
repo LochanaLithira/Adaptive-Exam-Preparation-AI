@@ -42,18 +42,14 @@ def quiz_dashboard():
         st.session_state.responses = {}
 
     # ---------------- Quiz Settings ----------------
-    st.markdown("### ⚙️ Quiz Settings")
-
-    col1, col2 = st.columns([1, 1])
-    with col1:
-        num_questions = st.slider("Select number of questions:", min_value=1, max_value=20, value=5)
-    with col2:
-        difficulty = st.radio(
-            "Select difficulty level:",
-            ["Easy", "Medium", "Difficult"],
-            index=0,
-            horizontal=True
-        )
+    with st.container():
+        st.markdown("### ⚙️ Quiz Settings")
+        st.divider()
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            num_questions = st.slider("Number of questions:", min_value=1, max_value=20, value=5)
+        with col2:
+            difficulty = st.selectbox("Difficulty level:", ["Easy", "Medium", "Difficult"])
 
     # ---------------- Generate Quiz ----------------
     if st.button("📝 Generate Quiz", use_container_width=True):
@@ -78,51 +74,42 @@ def quiz_dashboard():
                 index=None,
                 key=f"q{q['id']}"
             )
+            st.divider()
 
-        st.markdown("---")
+
+        #Submit Quiz
         if st.button("✅ Finish Quiz", use_container_width=True):
-            st.markdown("## 📤 Submitting Your Responses...")
-
             unanswered = [q["id"] for q in st.session_state.quiz if st.session_state.responses.get(q["id"]) is None]
 
             if unanswered:
-                with st.container():
-                    st.markdown(
-                    """
-                    <div style="background-color:#ffdddd;padding:15px;border-radius:10px;
-                            border:2px solid red;text-align:center;">
-                        <h3 style="color:red;">❌ Alert</h3>
-                        <p>You must answer all questions before submitting.</p>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+                st.error("❌ You must answer all questions before submitting.")
+                st.info(f"Unanswered: {', '.join(['Q'+str(i) for i in unanswered])}")
             else:
                 submission = []
-            for q in st.session_state.quiz:
-                submission.append({
-                    "id": q["id"],
-                    "question": q["question"],
-                    "category": q["category"],
-                    "correct_answer": q["correct_answer"],
-                    "user_answer": st.session_state.responses.get(q["id"]),
-                    "options": q["options"]
-                })
+                for q in st.session_state.quiz:
+                    submission.append({
+                        "id": q["id"],
+                        "question": q["question"],
+                        "category": q["category"],
+                        "correct_answer": q["correct_answer"],
+                        "user_answer": st.session_state.responses.get(q["id"]),
+                        "options": q["options"]
+                    })
 
-            # Dummy API call
-            try:
-                response = requests.post(
-                    "http://localhost:5000/track_performance",
-                    json={"results": submission},
-                    timeout=5
-                )
-                if response.status_code == 200:
-                    st.success("✅ Submission sent successfully!")
-                    st.json(response.json())
-                else:
-                    st.error(f"⚠️ Failed to submit. Status code: {response.status_code}")
-            except Exception as e:
-                st.error(f"❌ Could not reach tracker API: {e}")
+                # API call (dummy)
+                try:
+                    response = requests.post(
+                        "http://localhost:5000/track_performance",
+                        json={"results": submission},
+                        timeout=5
+                    )
+                    if response.status_code == 200:
+                        st.success("✅ Submission sent successfully!")
+                        st.dataframe(pd.DataFrame(submission))
+                    else:
+                        st.error(f"⚠️ Failed to submit. Status code: {response.status_code}")
+                except Exception as e:
+                    st.error(f"❌ Could not reach tracker API: {e}")
 
             
 
