@@ -5,17 +5,14 @@ import streamlit as st
 import sys
 import os
 import pandas as pd
-import random
-import re
 import requests
 
 # Add parent directory to path for auth modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from security.auth import login_required, init_session_state
-from ui.icons import get_svg_icon, icon_text, info_message
+from ui.icons import icon_text, info_message
 from services.llm_service import generate_quiz, parse_quiz
-
 
 
 # ---------------- Dashboard & Quiz ----------------
@@ -40,6 +37,8 @@ def quiz_dashboard():
         st.session_state.quiz = []
     if "responses" not in st.session_state:
         st.session_state.responses = {}
+    if "submission_preview" not in st.session_state:
+        st.session_state.submission_preview = []
 
     # ---------------- Quiz Settings ----------------
     with st.container():
@@ -57,6 +56,7 @@ def quiz_dashboard():
             quiz_text = generate_quiz(num_questions, difficulty.lower())  # ✅ pass difficulty
             st.session_state.quiz = parse_quiz(quiz_text)
             st.session_state.responses = {}
+            st.session_state.submission_preview = []
             if not st.session_state.quiz:
                 st.warning("⚠️ Could not generate quiz. Please try again.")
 
@@ -76,42 +76,55 @@ def quiz_dashboard():
             )
             st.divider()
 
-
-        #Submit Quiz
+        # Step 1: Finish Quiz → Review answers
         if st.button("✅ Finish Quiz", use_container_width=True):
-            unanswered = [q["id"] for q in st.session_state.quiz if st.session_state.responses.get(q["id"]) is None]
+            # Prepare preview list
+            st.session_state.submission_preview = []
+            for q in st.session_state.quiz:
+                st.session_state.submission_preview.append({
+                    "id": q["id"],
+                    "question": q["question"],
+                    "category": q["category"],
+                    "correct_answer": q["correct_answer"],
+                    "user_answer": st.session_state.responses.get(q["id"]),
+                    "options": q["options"]
+                })
 
-            if unanswered:
-                st.error("❌ You must answer all questions before submitting.")
-                st.info(f"Unanswered: {', '.join(['Q'+str(i) for i in unanswered])}")
-            else:
-                submission = []
-                for q in st.session_state.quiz:
-                    submission.append({
-                        "id": q["id"],
-                        "question": q["question"],
-                        "category": q["category"],
-                        "correct_answer": q["correct_answer"],
-                        "user_answer": st.session_state.responses.get(q["id"]),
-                        "options": q["options"]
-                    })
+    # ---------------- Review Screen ----------------
+    if st.session_state.submission_preview:
+        st.markdown("## 📋 Review Your Answers")
+        df = pd.DataFrame([
+            {
+                "QID": item["id"],
+                "Question": item["question"],
+                "Your Answer": (
+                    f"{item['user_answer']}) {item['options'][item['user_answer']]}"
+                    if item["user_answer"] else "❌ Not Answered"
+                ),
+                "Saved": "✅ Yes" if item["user_answer"] else "❌ No"
+            }
+            for item in st.session_state.submission_preview
+        ])
+        st.dataframe(df)
 
-                # API call (dummy)
-                try:
-                    response = requests.post(
-                        "http://localhost:5000/track_performance",
-                        json={"results": submission},
-                        timeout=5
-                    )
-                    if response.status_code == 200:
-                        st.success("✅ Submission sent successfully!")
-                        st.dataframe(pd.DataFrame(submission))
-                    else:
-                        st.error(f"⚠️ Failed to submit. Status code: {response.status_code}")
-                except Exception as e:
-                    st.error(f"❌ Could not reach tracker API: {e}")
+        # Final Submit button
+        if st.button("🚀 Submit Your Answers", use_container_width=True):
+            try:
+                response = requests.post(
+                    "http://localhost:5000/track_performance",
+                    json={"results": st.session_state.submission_preview},
+                    timeout=5
+                )
+                if response.status_code == 200:
+                    st.success("✅ Submission sent successfully!")
+                    st.dataframe(pd.DataFrame(st.session_state.submission_preview))
+                    # Clear preview after submission
+                    st.session_state.submission_preview = []
+                else:
+                    st.error(f"⚠️ Failed to submit. Status code: {response.status_code}")
+            except Exception as e:
+                st.error(f"❌ Could not reach tracker API: {e}")
 
-            
 
 # ---------------- Main ----------------
 if __name__ == "__main__":
