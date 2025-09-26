@@ -8,7 +8,7 @@ import pandas as pd
 import google.generativeai as genai
 
 # Configure Gemini API
-GEN_API_KEY = os.getenv("GEN_API_KEY", "AIzaSyAbWWRLNsdEJfxgSbuTdEjTujJL0fSsawk")
+GEN_API_KEY = os.getenv("GEN_API_KEY", "AIzaSyB_BCM8i2fnDwJmIze07aQhcWgUQ1Pw8EQ")
 genai.configure(api_key=GEN_API_KEY)
 
 # Load dataset for quiz generation
@@ -40,14 +40,14 @@ def generate_explanation(question_text: str, student_ans: str, correct_ans: str)
 
     try:
         # Initialize the Gemini model
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
         # Generate response
         response = model.generate_content(
             prompt,
             generation_config=genai.types.GenerationConfig(
                 temperature=0.7,
-                max_output_tokens=15000,
+                max_output_tokens=150,
             )
         )
         
@@ -104,14 +104,14 @@ def generate_quiz(num_questions=5):
     
     try:
         # Initialize the Gemini model
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
         # Generate response
         response = model.generate_content(
             prompt,
             generation_config=genai.types.GenerationConfig(
                 temperature=0.7,
-                max_output_tokens=15000,
+                max_output_tokens=1000,
             )
         )
         
