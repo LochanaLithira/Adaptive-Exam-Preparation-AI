@@ -40,7 +40,7 @@ def generate_explanation(question_text: str, student_ans: str, correct_ans: str)
 
     try:
         # Initialize the Gemini model
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         
         # Generate response
         response = model.generate_content(
@@ -104,7 +104,7 @@ def generate_quiz(num_questions=5):
     
     try:
         # Initialize the Gemini model
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         
         # Generate response
         response = model.generate_content(
