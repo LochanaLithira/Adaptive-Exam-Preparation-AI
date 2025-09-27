@@ -26,9 +26,9 @@ flowchart TD
     %% User Layer
     subgraph UI["🎨 Streamlit UI Layer"]
         UI_Home["🏠 Home Dashboard"]
-        UI_Planner["📅 Planner UI"]
         UI_Quiz["📝 Quiz UI"]
         UI_Performance["📊 Performance UI"]
+        UI_Planner["📅 Planner UI"]
     end
 
     %% Agent Layer
@@ -50,17 +50,17 @@ flowchart TD
         DOCS["📘 Reference Docs / Notes"]
     end
 
-    %% Flow
-    UI_Home --> UI_Planner
+    %% UI Navigation
     UI_Home --> UI_Quiz
     UI_Home --> UI_Performance
+    UI_Home --> UI_Planner
 
     %% User to Agents
-    UI_Planner --> B
     UI_Quiz --> C
     UI_Performance --> D
+    UI_Planner --> B
 
-    %% Agent flows
+    %% Main Agent Flow
     C --> D
     D --> B
     B --> C
@@ -75,7 +75,6 @@ flowchart TD
     D <--> DB
     B <--> DB
     IR --> DOCS
-
 
 ```
 - Planner Agent → Quiz Generator: Decides what topics/questions to generate.
