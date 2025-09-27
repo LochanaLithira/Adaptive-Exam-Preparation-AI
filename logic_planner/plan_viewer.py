@@ -1,12 +1,16 @@
-# logic/plan_viewer.py
 import streamlit as st
 import os
 import json
 import datetime
+import streamlit.components.v1 as components
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, ListFlowable, ListItem
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import A4
+from io import BytesIO
 from logic_planner.resources import resources
 
-
 SAVE_FILE = "completed_days.json"
+
 
 def load_completed_days():
     if os.path.exists(SAVE_FILE):
@@ -14,19 +18,14 @@ def load_completed_days():
             return json.load(f)
     return {}
 
+
 def save_completed_days(data):
     with open(SAVE_FILE, "w") as f:
         json.dump(data, f)
 
 
-# Calculate total minutes
-
 def calculate_total_minutes(plan, completed_days):
-    study_schedule = {
-        "Learn": 30,
-        "Practice": 30,
-        "Review": 15
-    }  # minutes
+    study_schedule = {"Learn": 30, "Practice": 30, "Review": 15}
     total = 0
     for day in plan:
         day_num = str(day['Day'])
@@ -34,7 +33,49 @@ def calculate_total_minutes(plan, completed_days):
             total += sum(study_schedule.values())
     return total
 
-# Display all saved plans
+
+def generate_plan_pdf(plan_json):
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    styles = getSampleStyleSheet()
+    story = []
+
+    story.append(Paragraph("📄 Study Plan", styles["Title"]))
+    story.append(Spacer(1, 12))
+
+    plan = plan_json.get("plan", [])
+    for day in plan:
+        day_num = day.get("Day", "?")
+        date_display = day.get("Date", "No Date")
+        topic = day.get("Topic", "No Topic")
+
+        story.append(Paragraph(f"📅 Day {day_num} - {date_display}", styles["Heading2"]))
+        story.append(Paragraph(f"Topic: {topic}", styles["Normal"]))
+
+        story.append(Paragraph("Schedule:", styles["Heading3"]))
+        schedule_items = [
+            ListItem(Paragraph("Learn Concepts: 30 min", styles["Normal"])),
+            ListItem(Paragraph("Practice: 1 hour (20 mins × 3)", styles["Normal"])),
+            ListItem(Paragraph("Review: 15 min", styles["Normal"]))
+        ]
+        story.append(ListFlowable(schedule_items, bulletType="bullet"))
+        story.append(Spacer(1, 12))
+
+        story.append(Paragraph("Resources:", styles["Heading3"]))
+        res_items = []
+        for res in resources.get(topic, []):
+            res_items.append(ListItem(Paragraph(f"{res['title']} ({res['type'].capitalize()}) - {res['url']}", styles["Normal"])))
+        if res_items:
+            story.append(ListFlowable(res_items, bulletType="bullet"))
+        else:
+            story.append(Paragraph("No resources available", styles["Normal"]))
+
+        story.append(Spacer(1, 20))
+
+    doc.build(story)
+    buffer.seek(0)
+    return buffer
+
 
 def display_all_plans(base_dir):
     plans_dir = os.path.join(base_dir, "saved_plans")
@@ -42,7 +83,6 @@ def display_all_plans(base_dir):
         st.info("No saved plans found.")
         return
 
-    # Load persistent completed_days once
     if "completed_days_store" not in st.session_state:
         st.session_state.completed_days_store = load_completed_days()
 
@@ -51,80 +91,84 @@ def display_all_plans(base_dir):
     for file_name in files:
         file_path = os.path.join(plans_dir, file_name)
         with open(file_path, "r") as f:
-            plan_data = f.read()
-            plan_json = eval(plan_data) if isinstance(plan_data, str) else plan_data
+            plan_json = json.load(f)
 
         timestamp = plan_json.get("timestamp", "Unknown Time")
         plan = plan_json.get("plan", [])
-
         plan_key = file_name.replace(".json", "")
 
-        # Ensure storage exists for this plan
         if plan_key not in st.session_state.completed_days_store:
             st.session_state.completed_days_store[plan_key] = {}
 
         with st.expander(f"Plan created on {timestamp}"):
             total_time_placeholder = st.empty()
 
-            # 7 columns for 7 days
-            cols = st.columns(7)
+            # PDF download button
+            pdf_file = generate_plan_pdf(plan_json)
+            st.download_button(
+                label="📥 Download Plan as PDF",
+                data=pdf_file,
+                file_name=f"study_plan_{timestamp}.pdf",
+                mime="application/pdf",
+            )
 
-            for i, day in enumerate(plan):
-                day_num = str(day['Day'])
-                topic = day["Topic"]
-                checkbox_key = f"{plan_key}_day_{day_num}"
+            # Show cards (3 per row)
+            for week_start in range(0, len(plan), 3):
+                week = plan[week_start:week_start + 3]
+                cols = st.columns(len(week), gap="large")
 
-                # Get saved state
-                saved_value = st.session_state.completed_days_store[plan_key].get(day_num, False)
+                for i, day in enumerate(week):
+                    with cols[i]:
+                        day_num = str(day['Day'])
+                        topic = day.get("Topic", "No Topic")
 
-                # Place each day in its column (checkbox + card)
-                with cols[i]:
-                    completed = st.checkbox(
-                        "Mark Status",
-                        key=checkbox_key,
-                        value=saved_value
-                    )
+                        date_str = day.get("Date")
+                        if date_str:
+                            date_display = datetime.datetime.strptime(date_str, "%Y-%m-%d").strftime("%d %b %Y")
+                        else:
+                            date_display = (datetime.date.today() + datetime.timedelta(days=day["Day"])).strftime(
+                                "%d %b %Y"
+                            )
 
-                    # Update persistent state if changed
-                    if completed != saved_value:
-                        st.session_state.completed_days_store[plan_key][day_num] = completed
-                        save_completed_days(st.session_state.completed_days_store)
+                        checkbox_key = f"{plan_key}_day_{day_num}"
+                        saved_value = st.session_state.completed_days_store[plan_key].get(day_num, False)
+                        completed = st.checkbox("Mark Done", key=checkbox_key, value=saved_value)
 
-                    # Display day info
-                    st.markdown(
-                        f"""
-                        <div style='padding: 10px; border-radius: 8px; background-color:black;
-                                    border: 1px solid #ccc; min-height: 300px;'>
-                            <h4 style='text-align:center;'>Day {day_num}</h4>
-                            <b>Topic:</b> {topic}<br>
+                        if completed != saved_value:
+                            st.session_state.completed_days_store[plan_key][day_num] = completed
+                            save_completed_days(st.session_state.completed_days_store)
+
+                        bg_color = "#1e1e1e" if not completed else "#0a3d0a"
+                        border_color = "#ccc" if not completed else "#4caf50"
+
+                        html_content = f"""
+                        <div style='padding: 15px; border-radius: 12px; background-color:{bg_color};
+                                    border: 2px solid {border_color}; min-height: 380px; color:white;
+                                    box-shadow: 0 4px 8px rgba(0,0,0,0.3); position:relative;'>
+
+                            <h3 style='text-align:center;'>📅 Day {day_num} - {date_display}</h3>
+                            <h4 style='color:#ffd700; text-align:center;'>Topic: {topic}</h4>
                             <b>Schedule:</b>
                             <ul>
                                 <li>Learn Concepts: 30 min</li>
-                                <li>Practice: 1 hour
-                                (Morning/Afternoon
-                                /Night:
-                                20 mins each)</li>
+                                <li>Practice: 1 hour (20 mins × 3)</li>
                                 <li>Review: 15 min</li>
                             </ul>
                             <b>Resources:</b>
                             <ul>
-                        """,
-                        unsafe_allow_html=True
-                    )
+                        """
 
-                    topic_resources = resources.get(topic, [])
-                    if topic_resources:
-                        for res in topic_resources:
-                            st.markdown(
-                                f"- <a href='{res['url']}' target='_blank'>{res['title']}</a> ({res['type'].capitalize()})",
-                                unsafe_allow_html=True
-                            )
-                    else:
-                        st.markdown("- No resources available", unsafe_allow_html=True)
+                        topic_resources = resources.get(topic, [])
+                        if topic_resources:
+                            for res in topic_resources:
+                                html_content += f"<li><a href='{res['url']}' target='_blank' style='color:lightblue;'>{res['title']}</a> ({res['type'].capitalize()})</li>"
+                        else:
+                            html_content += "<li>No resources available</li>"
 
-                    st.markdown("</ul></div>", unsafe_allow_html=True)
+                        html_content += "</ul></div>"
 
-            # Update total study time dynamically
+                        components.html(html_content, height=420, scrolling=True)
+
             total_minutes = calculate_total_minutes(plan, st.session_state.completed_days_store[plan_key])
             hours, minutes = divmod(total_minutes, 60)
             total_time_placeholder.markdown(
@@ -132,51 +176,3 @@ def display_all_plans(base_dir):
                 f"text-align:right; font-weight:bold;'>⏱️ Total Study Time: {hours}h {minutes}m</div>",
                 unsafe_allow_html=True
             )
-
-#generate plan
-def generate_plan(records):
-    """
-    Generates a 7-day study plan based on performance records.
-    Each day includes:
-    - Topic
-    - Guidance (focus notes)
-    - Schedule (Learn/Practice/Review with allocated times)
-    - Resources (clickable links)
-    """
-    from .planner import calculate_weights  # assuming you have this function
-    weights = calculate_weights(records)
-    sorted_topics = sorted(weights, key=lambda x: x['weight'], reverse=True)
-    top_topics = sorted_topics[:7]
-
-    study_schedule_minutes = {"Learn": 30, "Practice": 30, "Review": 15}
-    start_time = datetime.datetime.combine(datetime.date.today(), datetime.time(8, 0))  # 8 AM
-
-    plan = []
-
-    for i, topic_info in enumerate(top_topics, start=1):
-        topic = topic_info['topic']
-        guidance = f"Concentrate on weak areas in {topic}."
-
-        # Allocate time slots
-        current_time = start_time
-        schedule_list = []
-        for key, minutes in study_schedule_minutes.items():
-            end_time = current_time + datetime.timedelta(minutes=minutes)
-            schedule_list.append(f"{key} ({current_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')})")
-            current_time = end_time
-
-        # Resources for topic
-        topic_resources = resources.get(topic, [])
-
-        # Construct day plan
-        day_plan = {
-            "Day": i,
-            "Topic": topic,
-            "Guidance": guidance,
-            "Schedule": schedule_list,
-            "Resources": topic_resources
-        }
-
-        plan.append(day_plan)
-
-    return plan

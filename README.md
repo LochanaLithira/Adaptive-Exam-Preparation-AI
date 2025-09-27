@@ -22,12 +22,64 @@ The system is composed of three AI agents:
 High-Level Flow:
 
 ```mermaid
+
 flowchart TD
-    A["User Input (exam subject, topics)"] --> B["Planner Agent"]
-    B --> C["Quiz Generator Agent"]
-    C --> D["Performance Tracker Agent"]
-    D --> E["Streamlit Frontend (Dashboard, quizzes, analytics)"]
+    %% User Layer
+    subgraph UI["🎨 Streamlit UI Layer"]
+        UI_Home["🏠 Home Dashboard"]
+        UI_Quiz["📝 Quiz UI"]
+        UI_Performance["📊 Performance UI"]
+        UI_Planner["📅 Planner UI"]
+    end
+
+    %% Agent Layer
+    subgraph AGENTS["🧩 Agent Layer"]
+        C["📝 Quiz Generator Agent"]
+        D["📊 Performance Tracker Agent"]
+        B["📅 Planner Agent"]
+    end
+
+    %% Intelligence Layer
+    subgraph AI["🧠 Intelligence Layer"]
+        LLM["🤖 LLM Service (Gemini)"]
+        IR["📚 IR Service (Context Retrieval)"]
+    end
+
+    %% Data Layer
+    subgraph DATA["💾 Data Layer"]
+        DB["🗄️ MongoDB (Users, Quizzes, Results, Plans)"]
+        DOCS["📘 Reference Docs / Notes"]
+    end
+
+    %% UI Navigation
+    UI_Home --> UI_Quiz
+    UI_Home --> UI_Performance
+    UI_Home --> UI_Planner
+
+    %% User to Quiz Agent
+    UI_Quiz --> C
+
+    %% Main Agent Flow
+    C --> D
     D --> B
+    B --> C
+
+    %% Feedback to UI
+    C --> UI_Performance
+    D --> UI_Planner
+
+    %% Intelligence integration
+    C <--> LLM
+    D <--> LLM
+    D <--> IR
+
+    %% Data connections
+    C <--> DB
+    D <--> DB
+    B <--> DB
+    IR --> DOCS
+
+
 ```
 - Planner Agent → Quiz Generator: Decides what topics/questions to generate.
 
@@ -82,7 +134,6 @@ flowchart TD
 
 | Agents | Communication Method | Description / Implementation |
 |--------|--------------------|-----------------------------|
-| Planner → Quiz Generator | Direct function call / pipeline | Planner outputs the study plan or today’s topic. Quiz Generator receives it as input to generate relevant quizzes. |
 | Quiz Generator → Performance Tracker | Direct function call / pipeline | Quiz Generator outputs quizzes and correct answers. Performance Tracker receives user responses to calculate scores and feedback. |
 | Performance Tracker → Planner | Direct function call / pipeline | Performance Tracker analyzes user performance and sends feedback to Planner to adjust the next study plan (adaptive scheduling). |
 
