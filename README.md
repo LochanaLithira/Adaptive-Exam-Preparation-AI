@@ -15,7 +15,8 @@ The system is composed of three AI agents:
 |-------|------|----------------|
 | **Planner Agent** | Generates personalized study plans | Personalized Plans for 7 days, allow study time monitoring and adapts plans based on individual progress|
 | **Quiz Generator Agent** | Creates quizzes based on topics & difficulty | Generates questions, answers, and explanations using NLP & LLM |
-| **Performance Tracker Agent** | Evaluates student performance, provides feedback, and informs adaptive study plans | - Evaluates MCQ quiz results and calculates scores, accuracy, and feedback.|
+| **Performance Tracker Agent** | Evaluates student performance, provides feedback, and informs adaptive study plans |
+- Use performance data to monitor which areas need to be improved. |
 
 ## 2️⃣ System Architecture
 
