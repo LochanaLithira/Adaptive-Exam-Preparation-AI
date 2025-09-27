@@ -23,27 +23,29 @@ High-Level Flow:
 
 ```mermaid
 flowchart TD
-    subgraph UI["User Layer"]
-        A["Student (via Streamlit Dashboard)"]
+    %% User Layer
+    A["👩‍🎓 Student (Streamlit UI)"]
+
+    %% Agent Layer
+    subgraph AGENTS["🧩 Agent Layer"]
+        B["📅 Planner Agent"]
+        C["📝 Quiz Generator Agent"]
+        D["📊 Performance Tracker Agent"]
     end
 
-    subgraph AGENTS["Agent Layer (FastAPI Services)"]
-        B["Planner Agent"]
-        C["Quiz Generator Agent"]
-        D["Performance Tracker Agent"]
+    %% Intelligence Layer
+    subgraph AI["🧠 Intelligence Layer"]
+        LLM["🤖 LLM Service (Gemini)"]
+        IR["📚 IR Service (Context Retrieval)"]
     end
 
-    subgraph AI["Intelligence Layer"]
-        LLM["LLM Service (Gemini)"]
-        IR["IR Service (Context Retrieval)"]
+    %% Data Layer
+    subgraph DATA["💾 Data Layer"]
+        DB["🗄️ MongoDB (Users, Quizzes, Results, Plans)"]
+        DOCS["📘 Reference Docs / Notes"]
     end
 
-    subgraph DATA["Data Layer"]
-        DB["MongoDB (Users, Quizzes, Results, Study Plans)"]
-        DOCS["Reference Docs / Notes"]
-    end
-
-    %% Flow
+    %% User Flow
     A --> B
     B --> C
     C --> A
@@ -55,19 +57,15 @@ flowchart TD
     D --> B
 
     %% Intelligence integration
-    D --> LLM
-    LLM --> D
-    C --> LLM
-    LLM --> C
-    D --> IR
-    IR --> DOCS
-    IR --> D
+    C <--> LLM
+    D <--> LLM
+    D <--> IR
 
-    %% Database
+    %% Data Layer connections
     B <--> DB
     C <--> DB
     D <--> DB
-
+    IR --> DOCS
 
 ```
 - Planner Agent → Quiz Generator: Decides what topics/questions to generate.
