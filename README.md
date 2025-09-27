@@ -65,7 +65,7 @@ flowchart TD
     B --> C
 
     %% Feedback to UI
-    C --> UI_Performance
+    D --> UI_Performance
     D --> UI_Planner
 
     %% Intelligence integration
