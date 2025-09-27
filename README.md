@@ -121,7 +121,7 @@ flowchart TD
 **Functions:**
 - Track user answers and quiz scores.
 - Analyze strengths and weaknesses across topics.
-- Suggest topic revision or adjust quiz difficulty based on performance.
+- Suggest topic revision or adjust quiz difficulty based on performance. (Future update)
 - Optionally provide detailed feedback explanations using embeddings + LLM.
 
 **Tools & Techniques:**
