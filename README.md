@@ -138,9 +138,11 @@ flowchart TD
 | Performance Tracker → Planner | REST API | Performance Tracker sends analyzed performance and recommendations to Planner API to update the study plan (adaptive scheduling). |
 
 **Implementation Notes:**
-- Use Python functions/classes for each agent.
-- Maintain data in **Streamlit’s `st.session_state`** to preserve user progress across pages.
-- Optional: use a REST API for fully decoupled agents if needed.
+- Each agent runs as a separate FastAPI service with its own endpoints.
+- Use JSON payloads for sending data between agents.
+- Maintain user session and progress in MongoDB or optionally in st.session_state for frontend continuity.
+- Frontend (Streamlit) calls Quiz Generator API for quizzes and Performance Tracker API for results/feedback.
+- Planner Agent API is called by Performance Tracker to adapt study plans automatically.
 
 
 
