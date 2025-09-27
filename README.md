@@ -211,3 +211,11 @@ flowchart TD
 * Log quiz attempts (time, score, difficulty) securely.
 * Monitor system errors (e.g., Gemini API failures) to detect misuse.
 * Provide partial success handling—return results even if DB write fails.
+
+
+## ## 6️⃣ Commercialization Plan
+
+| **Component**             | **Details** |
+| ------------------------- | ----------- |
+| **Pricing Model**         | **Freemium + Subscription** <br>• **Free tier:** Users can take a limited number of quizzes per day and receive basic feedback on performance. This allows students to explore the platform without any cost and encourages engagement. <br>• **Premium tier ($10/month or $100/year):** Provides unlimited quizzes, detailed AI-generated explanations for wrong answers, personalized adaptive study plans, and advanced performance analytics. The subscription ensures continuous learning and access to all advanced features. |
+| **Target Users / Market** | **Primary Users:** Undergraduate students preparing for IT, engineering, or other professional exams who need structured and adaptive study support. <br>**Secondary Users:** Teachers, tutoring centers, and educational institutions that want to monitor student performance, generate quizzes automatically, and offer personalized learning paths. These users benefit from scalable and automated AI-driven tools for student management and academic improvement. |
