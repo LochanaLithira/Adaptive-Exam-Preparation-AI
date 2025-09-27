@@ -22,62 +22,7 @@ The system is composed of three AI agents:
 High-Level Flow:
 
 ```mermaid
-flowchart TD
-    %% User Layer
-    subgraph UI["🎨 Streamlit UI Layer"]
-        UI_Home["🏠 Home Dashboard"]
-        UI_Quiz["📝 Quiz UI"]
-        UI_Performance["📊 Performance UI"]
-        UI_Planner["📅 Planner UI"]
-    end
-
-    %% Agent Layer
-    subgraph AGENTS["🧩 Agent Layer"]
-        C["📝 Quiz Generator Agent"]
-        D["📊 Performance Tracker Agent"]
-        B["📅 Planner Agent"]
-    end
-
-    %% Intelligence Layer
-    subgraph AI["🧠 Intelligence Layer"]
-        LLM["🤖 LLM Service (Gemini)"]
-        IR["📚 IR Service (Context Retrieval)"]
-    end
-
-    %% Data Layer
-    subgraph DATA["💾 Data Layer"]
-        DB["🗄️ MongoDB (Users, Quizzes, Results, Plans)"]
-        DOCS["📘 Reference Docs / Notes"]
-    end
-
-    %% UI Navigation
-    UI_Home --> UI_Quiz
-    UI_Home --> UI_Performance
-    UI_Home --> UI_Planner
-
-    %% User to Quiz Agent
-    UI_Quiz --> C
-
-    %% Main Agent Flow
-    C --> D
-    D --> B
-
-    %% Feedback to UI
-    D --> UI_Performance
-    D --> UI_Planner
-
-    %% Intelligence integration
-    C <--> LLM
-    D <--> LLM
-    D <--> IR
-
-    %% Data connections
-    C <--> DB
-    D <--> DB
-    B <--> DB
-    IR --> DOCS
-
-
+flowchart TD %% User Layer subgraph UI["🎨 Streamlit UI Layer"] UI_Home["🏠 Home Dashboard"] UI_Quiz["📝 Quiz UI"] UI_Performance["📊 Performance UI"] UI_Planner["📅 Planner UI"] end %% Agent Layer subgraph AGENTS["🧩 Agent Layer"] C["📝 Quiz Generator Agent"] D["📊 Performance Tracker Agent"] B["📅 Planner Agent"] end %% Intelligence Layer subgraph AI["🧠 Intelligence Layer"] LLM["🤖 LLM Service (Gemini)"] IR["📚 IR Service (Context Retrieval)"] end %% Data Layer subgraph DATA["💾 Data Layer"] DB["🗄️ MongoDB (Users, Quizzes, Results, Plans)"] DOCS["📘 Reference Docs / Notes"] end %% UI Navigation UI_Home --> UI_Quiz UI_Home --> UI_Performance UI_Home --> UI_Planner %% User to Quiz Agent UI_Quiz --> C %% Main Agent Flow C --> D D --> B B --> C %% Feedback to UI C --> UI_Performance D --> UI_Planner %% Intelligence integration C <--> LLM D <--> LLM D <--> IR %% Data connections C <--> DB D <--> DB B <--> DB IR --> DOCS
 ```
 - Planner Agent → Quiz Generator: Decides what topics/questions to generate.
 
