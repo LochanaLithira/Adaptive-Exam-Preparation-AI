@@ -24,7 +24,12 @@ High-Level Flow:
 ```mermaid
 flowchart TD
     %% User Layer
-    A["👩‍🎓 Student (Streamlit UI)"]
+    subgraph UI["🎨 Streamlit UI Layer"]
+        UI_Home["🏠 Home Dashboard"]
+        UI_Planner["📅 Planner UI"]
+        UI_Quiz["📝 Quiz UI"]
+        UI_Performance["📊 Performance UI"]
+    end
 
     %% Agent Layer
     subgraph AGENTS["🧩 Agent Layer"]
@@ -46,8 +51,16 @@ flowchart TD
     end
 
     %% Flow
-    A --> C
-    C --> A
+    UI_Home --> UI_Planner
+    UI_Home --> UI_Quiz
+    UI_Home --> UI_Performance
+
+    %% User to Agents
+    UI_Planner --> B
+    UI_Quiz --> C
+    UI_Performance --> D
+
+    %% Agent flows
     C --> D
     D --> B
     B --> C
