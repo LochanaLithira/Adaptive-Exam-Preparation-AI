@@ -118,7 +118,6 @@ flowchart TD
 
 | Agents | Communication Method | Description / Implementation |
 |--------|--------------------|-----------------------------|
-| Planner → Quiz Generator | Direct function call / pipeline | Planner outputs the study plan or today’s topic. Quiz Generator receives it as input to generate relevant quizzes. |
 | Quiz Generator → Performance Tracker | Direct function call / pipeline | Quiz Generator outputs quizzes and correct answers. Performance Tracker receives user responses to calculate scores and feedback. |
 | Performance Tracker → Planner | Direct function call / pipeline | Performance Tracker analyzes user performance and sends feedback to Planner to adjust the next study plan (adaptive scheduling). |
 
