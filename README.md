@@ -28,9 +28,9 @@ flowchart TD
 
     %% Agent Layer
     subgraph AGENTS["🧩 Agent Layer"]
-        B["📅 Planner Agent"]
         C["📝 Quiz Generator Agent"]
         D["📊 Performance Tracker Agent"]
+        B["📅 Planner Agent"]
     end
 
     %% Intelligence Layer
@@ -45,27 +45,24 @@ flowchart TD
         DOCS["📘 Reference Docs / Notes"]
     end
 
-    %% User Flow
-    A --> B
-    B --> C
+    %% Flow
+    A --> C
     C --> A
-    A --> D
-    D --> A
-
-    %% Agent interactions
     C --> D
     D --> B
+    B --> C
 
     %% Intelligence integration
     C <--> LLM
     D <--> LLM
     D <--> IR
 
-    %% Data Layer connections
-    B <--> DB
+    %% Data connections
     C <--> DB
     D <--> DB
+    B <--> DB
     IR --> DOCS
+
 
 ```
 - Planner Agent → Quiz Generator: Decides what topics/questions to generate.
