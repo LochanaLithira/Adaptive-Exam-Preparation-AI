@@ -13,7 +13,7 @@ The system is composed of three AI agents:
 
 | Agent | Role | Core Functions |
 |-------|------|----------------|
-| **Planner Agent** | Generates personalized study plans | Suggests topics, sets schedules, and adapts plans based on progress |
+| **Planner Agent** | Generates personalized study plans | Personalized Plans for 7 days, allow study time monitoring and adapts plans based on individual progress|
 | **Quiz Generator Agent** | Creates quizzes based on topics & difficulty | Generates questions, answers, and explanations using NLP & LLM |
 | **Performance Tracker Agent** | Tracks user performance and adapts difficulty | Monitors quiz results, recommends revisions, and provides insights |
 
@@ -92,10 +92,10 @@ flowchart TD
 ### 1. Planner Agent
 
 **Functions:**
-- Take user input: exam subject, topics, and available study time.
-- Use an LLM to generate a structured study plan.
-- Optionally summarize topic explanations for easier understanding.
-- Output: Personalized study plan tailored to the user.
+- Use performance data to monitor which areas need to be improved. 
+- Generate a 7 day personalized study plan with resources based on user's performance. (Learn/Practice/Review method)
+- Allow users to save a plan once generated, monitor their study time and mark completion status for each day.
+- Provide a plan download option if necessary.
 
 **Tools & Techniques:**
 - Python
