@@ -61,10 +61,9 @@ flowchart TD
     %% Main Agent Flow
     C --> D
     D --> B
-    B --> C
 
     %% Feedback to UI
-    C --> UI_Performance
+    D --> UI_Performance
     D --> UI_Planner
 
     %% Intelligence integration
@@ -77,6 +76,7 @@ flowchart TD
     D <--> DB
     B <--> DB
     IR --> DOCS
+
 
 ```
 - Planner Agent → Quiz Generator: Decides what topics/questions to generate.
