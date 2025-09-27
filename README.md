@@ -146,7 +146,7 @@ flowchart TD
 
 
 
-## ## 5️⃣ Security & Responsible AI
+##  5️⃣ Security & Responsible AI
 
 ### Fairness & Bias
 
@@ -213,7 +213,7 @@ flowchart TD
 * Provide partial success handling—return results even if DB write fails.
 
 
-## ## 6️⃣ Commercialization Plan
+##  6️⃣ Commercialization Plan
 
 | **Component**             | **Details** |
 | ------------------------- | ----------- |
