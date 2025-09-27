@@ -57,6 +57,8 @@ flowchart TD
     %% Intelligence integration
     D --> LLM
     LLM --> D
+    C --> LLM
+    LLM --> C
     D --> IR
     IR --> DOCS
     IR --> D
@@ -65,6 +67,7 @@ flowchart TD
     B <--> DB
     C <--> DB
     D <--> DB
+
 
 ```
 - Planner Agent → Quiz Generator: Decides what topics/questions to generate.
