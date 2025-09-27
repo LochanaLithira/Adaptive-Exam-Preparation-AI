@@ -99,6 +99,7 @@ flowchart TD
 - Generate a 7 day personalized study plan with resources based on user's performance. (Learn/Practice/Review method)
 - Allow users to save a plan once generated, monitor their study time and mark completion status for each day.
 - Provide a plan download option if necessary.
+- Sends user performance data to quiz agent
 
 **Tools & Techniques:**
 - Python
