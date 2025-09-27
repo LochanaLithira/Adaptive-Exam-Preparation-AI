@@ -58,6 +58,7 @@ flowchart TD
 
     %% User to Quiz Agent
     UI_Quiz --> C
+    UI_Performance --> D
 
     %% Main Agent Flow
     C --> D
@@ -66,7 +67,7 @@ flowchart TD
 
     %% Feedback to UI
     D --> UI_Performance
-    D --> UI_Planner
+    B --> UI_Planner
 
     %% Intelligence integration
     C <--> LLM
