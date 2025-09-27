@@ -81,11 +81,14 @@ flowchart TD
     IR --> DOCS
 
 ```
-- Planner Agent → Quiz Generator: Decides what topics/questions to generate.
+- Planner Agent → Quiz Generator: Planner decides which topics and difficulty level the student should practice and sends this to Quiz Generator to create a tailored quiz.
 
 - Quiz Generator → Performance Tracker: Sends quiz results for evaluation.
 
-- Performance Tracker → Planner Agent: Suggests updates to study plan based on performance.
+- Performance Tracker → Planner Agent: Suggests updates to Study plan based on performance.
+
+- Performance Tracker → Planner → Quiz Generator → Student → Performance Tracker → ...
+
 
 ## 3️⃣ Agent Details & Implementation
 
