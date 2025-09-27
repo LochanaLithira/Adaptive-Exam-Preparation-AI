@@ -22,26 +22,23 @@ The system is composed of three AI agents:
 High-Level Flow:
 
 ```mermaid
-flowchart LR
+flowchart TD
     %% User Layer (Top)
-    subgraph UI["🎨 Streamlit UI Layer"]
-        UI_Home["🏠 Home Dashboard"]
-        UI_Quiz["📝 Quiz UI"]
-        UI_Performance["📊 Performance UI"]
-        UI_Planner["📅 Planner UI"]
+    subgraph UI["🎨 User Layer"]
+        A["👩‍🎓 Student (Streamlit UI)"]
     end
 
     %% Agent Layer (Middle)
     subgraph AGENTS["🧩 Agent Layer"]
-        C["📝 Quiz Generator Agent"]
-        D["📊 Performance Tracker Agent"]
-        B["📅 Planner Agent"]
+        QG["📝 Quiz Generator Agent"]
+        PT["📊 Performance Tracker Agent"]
+        PL["📅 Planner Agent"]
     end
 
-    %% Intelligence Layer (Middle-Right)
+    %% Intelligence Layer (Side)
     subgraph AI["🧠 Intelligence Layer"]
         LLM["🤖 LLM Service (Gemini)"]
-        IR["📚 IR Service (Context Retrieval)"]
+        IR["📚 IR Service"]
     end
 
     %% Data Layer (Bottom)
@@ -50,29 +47,25 @@ flowchart LR
         DOCS["📘 Reference Docs / Notes"]
     end
 
-    %% UI to Agents
-    UI_Quiz --> C
-    UI_Performance --> D
-    UI_Planner --> B
-
-    %% Linear Agent Flow
-    C --> D
-    D --> B
+    %% Main Flow (straight top to bottom)
+    A --> QG --> PT --> PL
 
     %% Feedback to UI
-    C --> UI_Performance
-    D --> UI_Planner
+    QG --> A
+    PT --> A
+    PL --> A
 
-    %% Intelligence integration
-    C <--> LLM
-    D <--> LLM
-    D <--> IR
+    %% Intelligence connections
+    QG <--> LLM
+    PT <--> LLM
+    PT <--> IR
 
     %% Data connections
-    C <--> DB
-    D <--> DB
-    B <--> DB
+    QG <--> DB
+    PT <--> DB
+    PL <--> DB
     IR --> DOCS
+
 
 ```
 - Planner Agent → Quiz Generator: Decides what topics/questions to generate.
