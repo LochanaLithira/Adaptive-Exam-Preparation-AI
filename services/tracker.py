@@ -28,13 +28,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger("tracker")
 
-# No file handler needed as we're only logging to console
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
-
 app = Flask(__name__)
 
 @app.route("/track_performance", methods=["POST"])
@@ -106,12 +99,13 @@ def track_performance():
         # Save to the performance tracker database anyway (even if API fails)
         response_summary["local_storage"] = "✅ Quiz results stored locally"
         
-        logger.info(f"Attempting to forward data to performance tracker at {PERFORMANCE_TRACKER_TRACK_ENDPOINT}")
+        # Fix URL format to ensure no malformation
+        logger.info(f"Attempting to forward data to performance tracker at http://localhost:8001/track")
         
         # Check if performance tracker is running
         services_status = verify_services_status()
         if not services_status["performance_tracker"]:
-            logger.warning("⚠️ Performance Tracker service may not be running. Will attempt forwarding anyway.")
+            logger.warning("⚠ Performance Tracker service may not be running. Will attempt forwarding anyway.")
         
         # Try to forward to the performance tracker API with configured timeout and retry logic
         retry_count = 3
@@ -123,8 +117,10 @@ def track_performance():
                 if attempt > 0:
                     logger.info(f"Retry attempt {attempt+1}/{retry_count}...")
                     
+                # Use the hardcoded URL to ensure no malformation
+                performance_tracker_endpoint = "http://localhost:8001/track"
                 performance_tracker_response = requests.post(
-                    PERFORMANCE_TRACKER_TRACK_ENDPOINT,
+                    performance_tracker_endpoint,
                     json=performance_data,
                     headers={"Content-Type": "application/json"},
                     timeout=DEFAULT_TIMEOUT
@@ -158,7 +154,7 @@ def track_performance():
                 response_summary["performance_tracker_error"] = error_data
             except:
                 pass
-            response_summary["performance_tracker"] = f"⚠️ Failed to forward to performance tracker. Status code: {performance_tracker_response.status_code}"
+            response_summary["performance_tracker"] = f"⚠ Failed to forward to performance tracker. Status code: {performance_tracker_response.status_code}"
     except requests.exceptions.ConnectionError:
         logger.error("Connection error: Performance tracker service is not running")
         response_summary["performance_tracker"] = "❌ Connection error: Performance tracker service is not running"

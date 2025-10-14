@@ -30,7 +30,7 @@ STREAMLIT_URL = f"http://{STREAMLIT_HOST}:{STREAMLIT_PORT}"
 # ==============================
 # API Timeout Configuration
 # ==============================
-DEFAULT_TIMEOUT = int(os.getenv("DEFAULT_API_TIMEOUT", "30"))  # 30 seconds (increased from 15)
+DEFAULT_TIMEOUT = int(os.getenv("DEFAULT_API_TIMEOUT", "120"))  # 120 seconds (increased to handle LLM processing)
 
 # ==============================
 # Function to verify services are running

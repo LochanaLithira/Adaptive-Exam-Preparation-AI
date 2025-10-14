@@ -1,181 +1,308 @@
 """
 Integrated Quiz Module - Dashboard + Gemini Quiz Generator
+Enhanced UI for Grade 11 Students - Settings in Main Screen
 """
 import streamlit as st
 import sys
 import os
 import pandas as pd
 import requests
+from pathlib import Path
 
 # Add parent directory to path for auth modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from security.auth import login_required, init_session_state
 from ui.icons import icon_text, info_message
-from services.llm_service import generate_quiz, parse_quiz
+from services.llm_service import GeminiClient
+from services.ir_retriever import SimpleIR, DATA_DIR
 
+# ---------------- Custom CSS ----------------
+def load_custom_css():
+    st.markdown("""
+        <style>
+        /* Main container */
+        .main {
+            background: #f8f9fa;
+        }
 
-# ---------------- Dashboard & Quiz ----------------
+        /* Settings card */
+        .settings-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        /* Section headers */
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin: 10px 0 20px 0;
+            font-weight: 600;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            text-align: center;
+        }
+
+        /* Quiz question styling */
+        .quiz-question-card h3 {
+            color: white !important;
+            font-size: 20px !important;
+            font-weight: bold !important;
+            margin: 0 0 8px 0 !important;
+            line-height: 1.3;
+        }
+
+        .quiz-question-card p {
+            color: white !important;
+            font-size: 18px !important;
+            font-weight: bold !important;
+            margin: 0 !important;
+            line-height: 1.5;
+        }
+
+        .quiz-question-card {
+            background: #1E1E1E;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Progress bar styling */
+        .stProgress > div > div > div {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Button styling */
+        .stButton>button {
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 12px 24px;
+        }
+
+        .stButton>button[kind="primary"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+
+        /* Divider */
+        .custom-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #667eea, transparent);
+            margin: 30px 0;
+        }
+
+        /* Progress text */
+        .progress-text {
+            text-align: center;
+            font-size: 16px;
+            color: #5a6c7d;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+# ---------------- Initialize Clients ----------------
+gemini = GeminiClient()
+ir = SimpleIR()
+
+# ---------------- Main Dashboard ----------------
 @login_required
 def quiz_dashboard():
     """Main quiz interface for authenticated users"""
-    st.markdown(icon_text("quiz", "🎓 Interactive Quiz Module", 28), unsafe_allow_html=True)
-    
-    # Check if user has session data
-    user_data = st.session_state.get('user_data', {})
-    user_id = user_data.get('_id')
-    
-    if not user_id:
-        st.error("⚠️ User session not found. Please log in again.")
-        return
-    
-    # Welcome info
-    info_message("Welcome to the Adaptive Quiz System! Choose difficulty & start learning!")
+    st.set_page_config(page_title="University Quiz", page_icon="🎓", layout="wide")
+    load_custom_css()
 
-    # Session state for quiz
-    if "quiz" not in st.session_state:
-        st.session_state.quiz = []
-    if "responses" not in st.session_state:
-        st.session_state.responses = {}
-    if "submission_preview" not in st.session_state:
-        st.session_state.submission_preview = []
+    # Header
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        st.markdown("# 🎓 Interactive Learning Quiz")
+        st.markdown("**Grade 11 - Personalized Assessment System**")
+    with col2:
+        user_data = st.session_state.get('user_data', {})
+
+    user_id = user_data.get('_id', "student_1")
+
+    st.markdown("<div class='custom-divider'></div>", unsafe_allow_html=True)
+
+    # Document Check
+    if not os.path.exists(DATA_DIR):
+        os.makedirs(DATA_DIR, exist_ok=True)
+
+    existing_files = [os.path.join(root, f) for root, _, files in os.walk(DATA_DIR) for f in files if f.endswith((".pdf", ".txt"))]
+    if not existing_files:
+        st.error("⚠️ No learning materials found. Please contact your instructor to add study materials.")
+        return
 
     # ---------------- Quiz Settings ----------------
-    with st.container():
-        st.markdown("### ⚙️ Quiz Settings")
-        st.divider()
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            num_questions = st.slider("Number of questions:", min_value=1, max_value=20, value=5)
-        with col2:
-            difficulty = st.selectbox("Difficulty level:", ["Easy", "Medium", "Hard"])
+    if "questions" not in st.session_state or not st.session_state.get("questions"):
+        st.markdown("<div class='section-header'>⚙️ Quiz Setup & Configuration</div>", unsafe_allow_html=True)
 
-    # ---------------- Generate Quiz ----------------
-    if st.button("📝 Generate Quiz", use_container_width=True):
-        status_placeholder = st.empty()
-        with status_placeholder.status("Generating quiz...") as status:
-            try:
-                # Display model info before generation
-                status.update(label="Connecting to AI model...", state="running")
-                
-                quiz_text = generate_quiz(num_questions, difficulty)  # ✅ pass difficulty
-                
-                if not quiz_text:
-                    status.update(label="Failed to generate quiz", state="error")
-                    st.error("⚠️ Empty response received. Please try again.")
-                elif quiz_text.startswith("Error") or quiz_text.startswith("No data"):
-                    status.update(label="Failed to generate quiz", state="error")
-                    st.error(quiz_text)
-                    st.info("💡 If you continue to have issues, try again in a few minutes as there may be temporary API limits.")
-                    
-                    # Suggest a different approach
-                    st.info("💡 Try using fewer questions or a different difficulty level.")
+        with st.container():
+            st.markdown("<div class='settings-card'>", unsafe_allow_html=True)
+
+            # Subject and Module selection
+            col1, col2 = st.columns(2)
+            with col1:
+                subject_folders = [f for f in os.listdir(DATA_DIR) if os.path.isdir(os.path.join(DATA_DIR, f))]
+                selected_subject = st.selectbox("📖 Choose Your Subject", options=subject_folders) if subject_folders else None
+
+            with col2:
+                selected_module = None
+                if selected_subject:
+                    subject_path = os.path.join(DATA_DIR, selected_subject)
+                    module_files = [f for f in os.listdir(subject_path) if f.endswith((".pdf", ".txt"))]
+                    module_names = [Path(f).stem.split('_', 1)[-1] for f in module_files]
+                    if module_names:
+                        selected_module = st.selectbox("📑 Choose Module/Unit", options=module_names)
+
+            # Quiz customization
+            num_questions = st.select_slider("Number of Questions", options=[5, 10, 15, 20], value=10)
+            difficulty_display = st.radio("Difficulty", options=["🟢 Easy", "🟡 Medium", "🔴 Hard"], index=1)
+            difficulty = difficulty_display.split(" ")[1]
+
+            query = f"{selected_subject} - {selected_module}" if selected_subject and selected_module else None
+
+            # Generate Button
+            if st.button("🚀 Generate My Quiz", use_container_width=True, type="primary"):
+                if not query:
+                    st.error("⚠️ Please select a subject and module to continue.")
                 else:
-                    status.update(label="Processing quiz data...", state="running")
-                    st.session_state.quiz = parse_quiz(quiz_text)
-                    st.session_state.responses = {}
-                    st.session_state.submission_preview = []
-                    
-                    if not st.session_state.quiz:
-                        status.update(label="Quiz format error", state="error")
-                        st.warning("⚠️ Could not parse quiz format. The AI response format may be incorrect.")
-                        with st.expander("Debug: Show raw AI response"):
-                            st.code(quiz_text)
+                    with st.spinner("🔍 Generating your personalized quiz..."):
+                        search_path = os.path.join(DATA_DIR, selected_subject)
+                        retrieved = ir.retrieve(query=query, topk=10, folder=search_path)
+                        passages = [p for p, _ in retrieved]
+
+                    if not passages:
+                        st.error("❌ No relevant content found.")
                     else:
-                        status.update(label=f"✅ Generated {len(st.session_state.quiz)} questions!", state="complete")
-                        st.success(f"✅ Successfully generated a {difficulty} quiz with {len(st.session_state.quiz)} questions!")
-            except Exception as e:
-                status.update(label="Error generating quiz", state="error")
-                st.error(f"⚠️ Error generating quiz: {str(e)}")
-                st.info("💡 Try refreshing the page or returning later if this issue persists.")
+                        try:
+                            client = GeminiClient()
+                            with st.spinner("🤖 Creating personalized questions..."):
+                                questions = client.generate_quiz_from_passages(passages, topic=query, max_questions=num_questions)
 
-    # ---------------- Display Quiz ----------------
-    if st.session_state.quiz:
-        st.markdown("---")
-        st.markdown(f"## 🧩 {difficulty} Quiz")
+                            if not questions:
+                                st.error("❌ Failed to generate questions.")
+                            else:
+                                st.success(f"✅ Quiz with {len(questions)} questions generated!")
+                                st.balloons()
+                                st.session_state["questions"] = questions
+                                st.session_state["user_answers"] = {}
+                                st.session_state["submitted"] = False
+                                st.session_state["selected_subject"] = selected_subject
+                                st.session_state["selected_module"] = selected_module
+                                st.session_state["difficulty"] = difficulty
+                                st.session_state["num_questions"] = num_questions
+                                st.rerun()
+                        except Exception as e:
+                            st.error(f"❌ Error generating quiz: {e}")
 
-        for q in st.session_state.quiz:
-            st.markdown(f"### Q{q['id']}: {q['question']}")
-            st.session_state.responses[q["id"]] = st.radio(
-                f"Select your answer for Q{q['id']}:",
-                list(q["options"].keys()),
-                format_func=lambda x: f"{x}) {q['options'][x]}",
-                index=None,
-                key=f"q{q['id']}"
+    # ---------------- Quiz Display ----------------
+    if "questions" in st.session_state and st.session_state["questions"]:
+        st.markdown("<div class='section-header'>📝 Your Personalized Quiz</div>", unsafe_allow_html=True)
+
+        answered = len(st.session_state.get("user_answers", {}))
+        total = len(st.session_state["questions"])
+        progress = answered / total if total > 0 else 0
+
+        st.progress(progress)
+        st.markdown(f"<div class='progress-text'>📊 Progress: {answered}/{total} answered ({int(progress*100)}%)</div>", unsafe_allow_html=True)
+
+        # Questions
+        for idx, q in enumerate(st.session_state["questions"]):
+            st.markdown(f"""
+                <div class='quiz-question-card'>
+                    <h3>❓ Question {idx+1} of {total}</h3>
+                    <p>{q['question']}</p>
+                </div>
+            """, unsafe_allow_html=True)
+
+            options = q.get("options", {})
+            option_values = [options[k] for k in sorted(options.keys())]
+            current_answer = st.session_state["user_answers"].get(idx)
+            choice = st.radio(
+                f"Select answer for Question {idx+1}:",
+                options=option_values,
+                key=f'q{idx}_radio',
+                index=option_values.index(current_answer) if current_answer in option_values else None,
+                label_visibility="collapsed"
             )
-            st.divider()
+            if choice:
+                st.session_state["user_answers"][idx] = choice
 
-        # Step 1: Finish Quiz → Review answers
-        if st.button("✅ Finish Quiz", use_container_width=True):
-            # Prepare preview list
-            st.session_state.submission_preview = []
-            for q in st.session_state.quiz:
-                st.session_state.submission_preview.append({
-                    "id": q["id"],
-                    "question": q["question"],
-                    "category": q["category"],
-                    "correct_answer": q["correct_answer"],
-                    "user_answer": st.session_state.responses.get(q["id"]),
-                    "options": q["options"]
-                })
+        st.markdown("<div class='custom-divider'></div>", unsafe_allow_html=True)
 
-    # ---------------- Review Screen ----------------
-    if st.session_state.submission_preview:
-        st.markdown("## 📋 Review Your Answers")
-        df = pd.DataFrame([
-            {
-                "QID": item["id"],
-                "Question": item["question"],
-                "Your Answer": (
-                    f"{item['user_answer']}) {item['options'][item['user_answer']]}"
-                    if item["user_answer"] else "❌ Not Answered"
-                ),
-                "Saved": "✅ Yes" if item["user_answer"] else "❌ No"
-            }
-            for item in st.session_state.submission_preview
-        ])
-        st.dataframe(df)
+        # Submission buttons
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col1:
+            if st.button("🔄 Start New Quiz"):
+                for key in ["questions", "user_answers", "submitted"]:
+                    if key in st.session_state:
+                        del st.session_state[key]
+                st.rerun()
 
-        # Final Submit button
-        if st.button("🚀 Submit Your Answers", use_container_width=True):
-            try:
-                # Import API configuration
-                from utils.api_config import FLASK_TRACKER_ENDPOINT, DEFAULT_TIMEOUT, verify_services_status
-                
-                # Check if services are running
-                services_status = verify_services_status()
-                if not services_status["flask_tracker"]:
-                    st.warning("⚠️ Flask Tracker service may not be running. Will attempt submission anyway.")
-                
-                # Get user_id from session state
-                user_data = st.session_state.get('user_data', {})
-                user_id = user_data.get('_id', 'current_user')
-                
-                response = requests.post(
-                    FLASK_TRACKER_ENDPOINT,
-                    json={"results": st.session_state.submission_preview},
-                    headers={"X-User-ID": user_id},  # Add user ID to headers
-                    timeout=DEFAULT_TIMEOUT
-                )
-                if response.status_code == 200:
-                    st.success("✅ Submission sent successfully!")
-                    st.dataframe(pd.DataFrame(st.session_state.submission_preview))
-                    # Clear preview after submission
-                    st.session_state.submission_preview = []
+        with col2:
+            all_answered = all(idx in st.session_state["user_answers"] for idx in range(len(st.session_state["questions"])))
+            if st.button("🔎 Check Progress"):
+                if all_answered:
+                    st.success("🎉 All questions answered!")
                 else:
-                    st.error(f"⚠️ Failed to submit. Status code: {response.status_code}")
-            except requests.exceptions.ConnectionError:
-                st.error("❌ Connection error: Make sure the tracker service (tracker.py) is running on port 5000")
-                st.info("To start the tracker service, run: python services/tracker.py")
-            except requests.exceptions.Timeout:
-                st.error("❌ Connection timeout: The tracker API took too long to respond")
-                st.info("This might be due to high processing load or network issues")
-            except Exception as e:
-                st.error(f"❌ Could not reach tracker API: {e}")
+                    unanswered = [idx+1 for idx in range(len(st.session_state["questions"])) if idx not in st.session_state["user_answers"]]
+                    st.warning(f"⚠️ Unanswered questions: {', '.join(map(str, unanswered))}")
 
+        with col3:
+            if st.button("📩 Submit Quiz", type="primary", disabled=not all_answered):
+                st.session_state["submitted"] = True
+
+                # ✅ Build quiz payload with option letters
+                quiz_payload = []
+                for idx, q in enumerate(st.session_state["questions"]):
+                    selected_text = st.session_state["user_answers"].get(idx)
+
+                    option_letter = None
+                    for letter, text in q.get("options", {}).items():
+                        if text == selected_text:
+                            option_letter = letter
+                            break
+
+                    quiz_payload.append({
+                        "id": idx + 1,
+                        "question": q["question"],
+                        "category": q.get("category", "General Topic"),
+                        "correct_answer": q["correct_answer"],
+                        "user_answer": option_letter
+                    })
+
+                try:
+                    from utils.api_config import FLASK_TRACKER_ENDPOINT, DEFAULT_TIMEOUT, verify_services_status
+                    response = requests.post(
+                        FLASK_TRACKER_ENDPOINT,
+                        json={"results": quiz_payload},
+                        headers={"X-User-ID": user_id},
+                        timeout=DEFAULT_TIMEOUT
+                    )
+
+                    if response.status_code == 200:
+                        st.success("✅ Quiz submitted successfully!")
+                        result = response.json()
+
+                        # 🟡 Show JSON only AFTER submission
+                        st.markdown("<div class='custom-divider'></div>", unsafe_allow_html=True)
+                        st.markdown("<div class='section-header'>🧪 API Debug Result</div>", unsafe_allow_html=True)
+                        st.json(result)
+                    else:
+                        st.error(f"❌ Submission failed. Code: {response.status_code}")
+                except Exception as e:
+                    st.error(f"❌ Could not submit quiz: {e}")
 
 # ---------------- Main ----------------
 if __name__ == "__main__":
-    st.set_page_config(page_title="University Quiz", page_icon="🎓", layout="centered")
     init_session_state()
     quiz_dashboard()
