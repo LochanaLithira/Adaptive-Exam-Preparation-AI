@@ -27,10 +27,17 @@ STREAMLIT_HOST = os.getenv("STREAMLIT_HOST", "localhost")
 STREAMLIT_PORT = int(os.getenv("STREAMLIT_PORT", "8501"))
 STREAMLIT_URL = f"http://{STREAMLIT_HOST}:{STREAMLIT_PORT}"
 
+# FastAPI planner agent (generates study plans based on performance data)
+PLANNER_AGENT_HOST = os.getenv("PLANNER_AGENT_HOST", "localhost")
+PLANNER_AGENT_PORT = int(os.getenv("PLANNER_AGENT_PORT", "8002"))
+PLANNER_AGENT_URL = f"http://{PLANNER_AGENT_HOST}:{PLANNER_AGENT_PORT}"
+PLANNER_AGENT_ENDPOINT = f"{PLANNER_AGENT_URL}/send_weak_data"
+PLANNER_AGENT_PING_ENDPOINT = f"{PLANNER_AGENT_URL}/ping"
+
 # ==============================
 # API Timeout Configuration
 # ==============================
-DEFAULT_TIMEOUT = int(os.getenv("DEFAULT_API_TIMEOUT", "120"))  # 120 seconds (increased to handle LLM processing)
+DEFAULT_TIMEOUT = int(os.getenv("DEFAULT_API_TIMEOUT", "180"))  # 120 seconds (increased to handle LLM processing)
 
 # ==============================
 # Function to verify services are running
@@ -48,6 +55,7 @@ def verify_services_status(verbose=False):
     status = {
         "flask_tracker": False,
         "performance_tracker": False,
+        "planner_agent": False,
         "streamlit_app": False,
     }
     
@@ -96,6 +104,30 @@ def verify_services_status(verbose=False):
             status["performance_tracker"] = True
             if verbose:
                 print("Performance Tracker port is open")
+        except:
+            pass
+    
+    # Check Planner Agent
+    try:
+        if verbose:
+            print(f"Checking Planner Agent at {PLANNER_AGENT_PING_ENDPOINT}...")
+        response = requests.get(PLANNER_AGENT_PING_ENDPOINT, timeout=3)
+        status["planner_agent"] = response.status_code == 200
+        if verbose:
+            print(f"Planner Agent response: {response.status_code}")
+    except Exception as e:
+        if verbose:
+            print(f"Planner Agent error: {str(e)}")
+        # Try checking if the port is open as fallback
+        try:
+            import socket
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(1)
+            s.connect((PLANNER_AGENT_HOST, PLANNER_AGENT_PORT))
+            s.close()
+            status["planner_agent"] = True
+            if verbose:
+                print("Planner Agent port is open")
         except:
             pass
     

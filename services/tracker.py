@@ -43,6 +43,10 @@ def track_performance():
     # Log the received data
     logger.info(f"Received {len(results)} quiz results")
     
+    # Debug: Log the first question to see what fields are received
+    if results:
+        logger.info(f"Sample question data: {results[0]}")
+    
     # Sort by question ID to keep numbering consistent
     results_sorted = sorted(results, key=lambda x: x["id"])
     num_digits = len(str(len(results_sorted)))
@@ -52,13 +56,16 @@ def track_performance():
         key = f"Q{str(q['id']).zfill(num_digits)} : {q.get('question')}"
         received_responses[key] = {
             "category": q.get("category"),
+            "subject": q.get("subject"),
             "correct_answer": q.get("correct_answer"),
             "user_answer": q.get("user_answer"),
+            "options": q.get("options", {})
         }
 
     response_summary = {
         "message": "✅ Data received successfully",
         "received_quiz_count": len(results_sorted),
+        "subject": results_sorted[0].get("subject") if results_sorted else "Unknown",
         "received_responses": received_responses
     }
     
@@ -84,6 +91,7 @@ def track_performance():
         "user_id": user_id,
         "quiz_id": 1,  # This should be replaced with the actual quiz ID
         "topic": results_sorted[0].get("category") if results_sorted else "General",
+        "subject": results_sorted[0].get("subject") if results_sorted else "Unknown",
         "answers": answers,
         "correct_answers": correct_answers,
         "questions_text": questions_text
