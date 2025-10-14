@@ -10,7 +10,7 @@ import pymongo.errors
 from utils.api_config import PERFORMANCE_TRACKER_PORT, verify_services_status
 
 # Import LLM service
-from services.llm_service import generate_explanation
+from services.llm_service import GeminiClient
 
 # Configure logging - only log to console, not to files
 logging.basicConfig(
@@ -24,6 +24,9 @@ logger = logging.getLogger("performance_tracker")
 logger.info("Logging to console only")
 
 app = FastAPI(title="Performance Tracker Agent")
+
+# Initialize LLM client
+llm_client = GeminiClient()
 
 # Log when the server starts
 logger.info("Performance Tracker Agent starting up")
@@ -134,11 +137,27 @@ def evaluate_mcq(answers: dict, correct_answers: dict):
 # -----------------------------
 def generate_feedback_with_llm(answers, correct_answers, questions_text):
     explanations = {}
+    wrong_questions = []
+    
+    # Collect all wrong answers for batch processing
     for q_id, student_ans in answers.items():
         correct_ans = correct_answers.get(q_id)
         if student_ans != correct_ans:
             question_text = questions_text.get(q_id, "")
-            explanations[q_id] = generate_explanation(question_text, student_ans, correct_ans)
+            wrong_questions.append({
+                'q_id': q_id,
+                'question': question_text,
+                'student_ans': student_ans,
+                'correct_ans': correct_ans
+            })
+    
+    # If there are wrong answers, generate explanations individually (for now)
+    # TODO: Implement batch processing to reduce API calls
+    for item in wrong_questions:
+        explanations[item['q_id']] = llm_client.generate_explanation(
+            item['question'], item['student_ans'], item['correct_ans']
+        )
+    
     return explanations
 
 # -----------------------------
