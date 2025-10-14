@@ -6,6 +6,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 from typing import Dict, List, Any
+import requests
+import json
 
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -13,6 +15,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from security.auth import login_required, init_session_state
 from ui.icons import get_svg_icon, icon_text, info_message
 from utils.config import get_database, COLLECTIONS
+from utils.api_config import PERFORMANCE_TRACKER_URL, DEFAULT_TIMEOUT
 
 # CSS Constants for reusable styling
 GLASS_CARD_STYLE = "background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%); border-radius: 15px; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0,0,0,0.1); transition: all 0.3s ease; margin-bottom: 1rem;"
@@ -161,10 +164,64 @@ def navigate_to_page(page: str):
     st.rerun()
 
 
+def test_planner_integration():
+    """Show JSON data being sent to planner"""
+    st.markdown("""
+    <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                padding: 1.5rem; border-radius: 15px; margin: 1rem 0;'>
+        <h3 style='color: white; text-align: center; margin: 0;'>
+            📤 Data Sent to Planner
+        </h3>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Get the actual logged-in user ID
+    user_data = st.session_state.get('user_data', {})
+    actual_user_id = user_data.get('id') or user_data.get('_id') if user_data else None
+    
+    if not actual_user_id:
+        st.error("❌ No user logged in! Please log in first to see your personalized weak areas.")
+        return
+    
+    st.info(f"👤 Testing for logged-in user: **{actual_user_id}**")
+    
+    with st.spinner("Getting planner data..."):
+        try:
+            # Call the debug endpoint with actual user ID
+            debug_url = f"{PERFORMANCE_TRACKER_URL}/debug/test_planner"
+            response = requests.post(debug_url, json={"user_id": actual_user_id}, timeout=DEFAULT_TIMEOUT)
+            
+            if response.status_code == 200:
+                result = response.json()
+                planner_result = result.get("planner_result", {})
+                
+                # Show only the JSON data being sent to planner
+                sent_data = planner_result.get("sent_data", {})
+                if sent_data:
+                    st.markdown("### � JSON Data Sent to Planner:")
+                    st.json(sent_data)
+                else:
+                    st.warning("No data found to send to planner")
+                    
+            else:
+                st.error(f"❌ Failed to get data. Status: {response.status_code}")
+                
+        except requests.exceptions.ConnectionError:
+            st.error("🔌 Performance Tracker service not running!")
+            st.info(f"Start service at: {PERFORMANCE_TRACKER_URL}")
+            
+        except Exception as e:
+            st.error(f"Error: {str(e)}")
+    
+    # Simple close button
+    if st.button("Close", type="secondary"):
+        st.rerun()
+
+
 def render_action_buttons(layout="horizontal"):
     """Reusable action buttons with consistent styling"""
     if layout == "horizontal":
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3, col4, col5 = st.columns(5)
         
         with col1:
             if st.button("Take New Quiz", use_container_width=True, type="primary"):
@@ -181,6 +238,10 @@ def render_action_buttons(layout="horizontal"):
         with col4:
             if st.button("Refresh Data", use_container_width=True, type="secondary"):
                 st.rerun()
+        
+        with col5:
+            if st.button("🐛 Debug Planner", use_container_width=True, type="secondary"):
+                test_planner_integration()
     
     elif layout == "vertical":
         if st.button("Take First Quiz", type="primary", use_container_width=True):

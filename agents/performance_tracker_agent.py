@@ -5,9 +5,10 @@ import logging
 import os
 import json
 import pymongo.errors
+import requests
 
 # Import API configuration
-from utils.api_config import PERFORMANCE_TRACKER_PORT, verify_services_status
+from utils.api_config import PERFORMANCE_TRACKER_PORT, verify_services_status, PLANNER_AGENT_ENDPOINT, DEFAULT_TIMEOUT
 
 # Import LLM service
 from services.llm_service import GeminiClient
@@ -106,6 +107,7 @@ class QuizResult(BaseModel):
     user_id: str  # Changed from int to str to handle MongoDB ObjectIds
     quiz_id: int
     topic: str
+    subject: str = "Unknown"  # Main subject area (Science, Math, English)
     answers: dict           # {"Q1": "A"}
     correct_answers: dict   # {"Q1": "B"}
     questions_text: dict    # {"Q1": "What is 2+2?"}
@@ -161,42 +163,258 @@ def generate_feedback_with_llm(answers, correct_answers, questions_text):
     return explanations
 
 # -----------------------------
+# Helper Functions for Planner Integration
+# -----------------------------
+def extract_topic_from_question(question_text: str) -> str:
+    """
+    Extract meaningful topic/area from question text
+    Enhanced version with better keyword matching and prioritized specific topics
+    """
+    question_lower = question_text.lower()
+    
+    # Define topic keywords with priority (more specific first)
+    topic_keywords = {
+        # Specific Science topics (higher priority)
+        'electrochemistry': ['electrochemistry', 'battery', 'electrode', 'electrolyte', 'ion', 'electrochemical', 'galvanic', 'voltaic'],
+        'photosynthesis': ['photosynthesis', 'chlorophyll', 'glucose', 'sunlight', 'carbon dioxide', 'plant', 'leaf'],
+        'molecular_structure': ['molecular', 'structure', 'formula', 'h2o', 'water', 'molecule', 'bond'],
+        
+        # General Science topics
+        'chemistry': ['chemical', 'reaction', 'atom', 'element', 'compound', 'acid', 'base', 'solution'],
+        'physics': ['force', 'energy', 'motion', 'wave', 'electricity', 'magnetic', 'gravity', 'mass'],
+        'biology': ['cell', 'organism', 'dna', 'gene', 'evolution', 'ecosystem', 'animal', 'living'],
+        
+        # Math topics  
+        'algebra': ['variable', 'equation', 'solve', 'x', 'y', 'polynomial', 'linear'],
+        'geometry': ['angle', 'triangle', 'circle', 'area', 'volume', 'perimeter', 'shape'],
+        'calculus': ['derivative', 'integral', 'limit', 'function', 'graph', 'slope'],
+        'statistics': ['probability', 'mean', 'median', 'data', 'distribution', 'average'],
+        
+        # General topics
+        'problem_solving': ['explain', 'principle', 'process', 'how', 'why', 'describe'],
+        'fundamentals': ['basic', 'definition', 'concept', 'theory', 'fundamental']
+    }
+    
+    # Find matching topics (prioritize more specific ones first)
+    matched_topics = []
+    for topic, keywords in topic_keywords.items():
+        matches = sum(1 for keyword in keywords if keyword in question_lower)
+        if matches > 0:
+            matched_topics.append((topic, matches))
+    
+    # Return the topic with most matches, or first match if tied
+    if matched_topics:
+        # Sort by number of matches (descending) and return the best match
+        matched_topics.sort(key=lambda x: x[1], reverse=True)
+        best_topic = matched_topics[0][0]
+        # Convert to proper case (e.g., "molecular_structure" -> "Molecular Structure")
+        return best_topic.replace('_', ' ').title()
+    
+    # Enhanced fallback: extract meaningful subject-specific terms
+    words = question_text.split()
+    meaningful_words = []
+    for word in words[:10]:  # Check first 10 words
+        word_clean = word.lower().strip('.,?!:;')
+        if len(word_clean) > 4 and word_clean not in ['what', 'explain', 'describe', 'which', 'basic']:
+            meaningful_words.append(word_clean.capitalize())
+    
+    if meaningful_words:
+        return " ".join(meaningful_words[:2])
+    
+    return "General Concepts"
+
+async def get_historical_weak_areas(user_id: str, subject: str = None) -> list:
+    """
+    Get historical weak areas for a user across all topics
+    Uses the same logic as Performance UI (topics with average < 60%)
+    """
+    try:
+        # Query user's historical performance - get ALL results like PerformanceUI does
+        results_col = db[COLLECTIONS["quiz_results"]]
+        
+        # Get all results for this user (not filtered by subject)
+        cursor = results_col.find({
+            "user_id": user_id
+        }).sort("_id", -1).limit(50)  # Last 50 quizzes for better data
+        
+        results = list(cursor)
+        
+        if not results:
+            return []
+        
+        # Calculate topic performance (same logic as PerformanceUI)
+        topic_performance = {}
+        
+        for result in results:
+            topic = result.get("topic", "Unknown")
+            result_data = result.get("result", {})
+            score = result_data.get("score", 0)
+            total = result_data.get("total", 1)
+            
+            if topic not in topic_performance:
+                topic_performance[topic] = {"scores": [], "total_questions": 0, "correct_answers": 0}
+            
+            # Calculate accuracy for this quiz
+            accuracy = (score / total) * 100 if total > 0 else 0
+            topic_performance[topic]["scores"].append(accuracy)
+            topic_performance[topic]["total_questions"] += total
+            topic_performance[topic]["correct_answers"] += score
+        
+        # Calculate averages and find weak areas (< 60% average)
+        weak_areas = []
+        for topic, data in topic_performance.items():
+            scores = data["scores"]
+            average = sum(scores) / len(scores) if scores else 0
+            
+            if average < 60:  # Same threshold as PerformanceUI
+                weak_areas.append(topic)
+        
+        return weak_areas
+        
+    except Exception as e:
+        logger.error(f"Error fetching historical weak areas: {e}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        return []
+
+def get_default_weak_areas_for_subject(subject: str) -> list:
+    """
+    Get default weak areas when no specific areas are identified
+    """
+    default_areas = {
+        'science': ['Scientific Method', 'Problem Solving'],
+        'math': ['Mathematical Reasoning', 'Problem Solving'],
+        'physics': ['Physics Concepts', 'Problem Solving'],
+        'chemistry': ['Chemistry Concepts', 'Chemical Reactions'],
+        'biology': ['Biology Concepts', 'Life Processes'],
+        'english': ['Grammar', 'Reading Comprehension'],
+        'history': ['Historical Analysis', 'Critical Thinking']
+    }
+    
+    subject_lower = subject.lower()
+    return default_areas.get(subject_lower, [f'{subject} Fundamentals'])
+
+# -----------------------------
+# Planner Integration Function
+# -----------------------------
+async def send_to_planner(subject: str, wrong_questions: list, questions_text: dict, user_id: str = None, debug_mode: bool = True):
+    """
+    Send performance data to planner API in the required format
+    Uses both current quiz wrong answers and historical weak areas from Performance UI logic
+    
+    Args:
+        subject: Subject name (e.g., "Science", "Math")
+        wrong_questions: List of question IDs that were answered incorrectly
+        questions_text: Dictionary mapping question IDs to question text
+        user_id: User ID to get historical performance data
+        debug_mode: Whether to log detailed debug information
+    
+    Returns:
+        dict: Response from planner API or error information
+    """
+    try:
+        # Get weak areas ONLY from "Areas for Improvement" (historical performance < 60%)
+        weak_areas = []
+        
+        if user_id:
+            try:
+                weak_areas = await get_historical_weak_areas(user_id, subject)
+            except Exception as e:
+                weak_areas = []
+        
+        # If no Areas for Improvement found, create meaningful defaults based on subject
+        if not weak_areas:
+            weak_areas = get_default_weak_areas_for_subject(subject)
+        
+        # Format data for planner API
+        planner_data = {
+            "subjects": [
+                {
+                    "subject": subject,
+                    "weak_areas": weak_areas  # Send ALL weak areas to planner
+                }
+            ]
+        }
+        
+        # Always include user_id if provided
+        if user_id is not None:
+            planner_data["user_id"] = user_id
+        
+        # Make POST request to planner API
+        response = requests.post(
+            PLANNER_AGENT_ENDPOINT,
+            json=planner_data,
+            timeout=DEFAULT_TIMEOUT,
+            headers={"Content-Type": "application/json"}
+        )
+        
+        if response.status_code == 200:
+            return {
+                "success": True,
+                "planner_response": response.json(),
+                "sent_data": planner_data
+            }
+        else:
+            return {
+                "success": False,
+                "error": f"Planner API returned status {response.status_code}: {response.text}",
+                "sent_data": planner_data
+            }
+            
+    except requests.exceptions.RequestException as e:
+        return {
+            "success": False,
+            "error": f"Failed to connect to planner API: {str(e)}",
+            "sent_data": planner_data if 'planner_data' in locals() else {}
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"Unexpected error in planner integration: {str(e)}",
+            "sent_data": planner_data if 'planner_data' in locals() else None
+        }
+
+# -----------------------------
 # FastAPI POST endpoint
 # -----------------------------
 @app.post("/track")
 async def track_performance(data: QuizResult, request: Request):
     try:
-        # Log the received request
-        logger.info(f"Received performance tracking request for user {data.user_id}")
-        logger.info(f"Quiz topic: {data.topic}, Quiz ID: {data.quiz_id}")
-        logger.info(f"Number of answers: {len(data.answers)}")
-        
-        # No need for raw request logging in production
-        
         # Validate the data
         if not data.answers or not data.correct_answers or not data.questions_text:
-            error_msg = "Missing required quiz data (answers, correct_answers, or questions_text)"
-            logger.error(error_msg)
-            raise HTTPException(status_code=400, detail=error_msg)
+            raise HTTPException(status_code=400, detail="Missing required quiz data")
         
-        logger.info("Evaluating quiz results...")
         # Evaluate MCQs
         score, total, accuracy, feedback, wrong_questions = evaluate_mcq(
             data.answers, data.correct_answers
         )
         
-        logger.info(f"Evaluation complete: {score}/{total} ({accuracy:.2f}%)")
-        
         # Generate explanations for wrong answers using LLM
-        logger.info(f"Generating explanations for {len(wrong_questions)} wrong answers")
         try:
             explanations = generate_feedback_with_llm(
                 data.answers, data.correct_answers, data.questions_text
             )
-            logger.info(f"Generated {len(explanations)} explanations")
         except Exception as e:
-            logger.error(f"Error generating explanations: {str(e)}")
             explanations = {"error": f"Failed to generate explanations: {str(e)}"}
+
+        # Send to planner if there are wrong questions or always send for tracking
+        planner_result = None
+        if hasattr(data, 'subject') and data.subject:
+            subject_name = data.subject
+        else:
+            # Fallback to topic if subject is not available
+            subject_name = data.topic
+            
+        try:
+            planner_result = await send_to_planner(
+                subject=subject_name,
+                wrong_questions=wrong_questions,
+                questions_text=data.questions_text,
+                user_id=data.user_id,
+                debug_mode=False
+            )
+        except Exception as e:
+            planner_result = {"success": False, "error": str(e)}
 
         # Prepare result
         result = {
@@ -205,41 +423,25 @@ async def track_performance(data: QuizResult, request: Request):
             "accuracy": accuracy,
             "feedback": feedback,
             "wrong_questions": wrong_questions,
-            "explanations": explanations
+            "explanations": explanations,
+            "planner_integration": planner_result  # Include planner result for debugging
         }
 
         # Save to MongoDB
         try:
-            logger.info("Saving results to MongoDB...")
-            
-            # Debug: Print database and collection information
-            db_name = db.name
-            col_name = results_col.name
-            logger.info(f"Using database: {db_name}, collection: {col_name}")
-            
-            # Create document to insert
             document = {
                 "user_id": data.user_id,
                 "quiz_id": data.quiz_id,
                 "topic": data.topic,
                 "answers": data.answers,
-                "correct_answers": data.correct_answers,  # Store correct answers for reference
+                "correct_answers": data.correct_answers,
                 "result": result,
-                "timestamp": logging.Formatter().converter()  # Add timestamp
+                "timestamp": logging.Formatter().converter()
             }
             
-            # Debug: Log the document structure before insertion
-            logger.info(f"Attempting to insert document with structure: user_id={data.user_id}, quiz_id={data.quiz_id}, topic={data.topic}, answers count={len(data.answers)}")
-            
-            # Use insert_one with explicit write concern to ensure proper write operations
-            insert_result = results_col.insert_one(
-                document, 
-                bypass_document_validation=False
-            )
+            insert_result = results_col.insert_one(document)
             
             if insert_result.acknowledged:
-                logger.info(f"Results saved to MongoDB with ID: {insert_result.inserted_id}")
-                # Add the MongoDB ID to the result
                 result["_id"] = str(insert_result.inserted_id)
                 result["db_save_status"] = "success"
             else:
@@ -268,21 +470,9 @@ async def track_performance(data: QuizResult, request: Request):
             "timestamp": logging.Formatter().converter()
         }
         
-        # Create an appropriate status based on database operations
-        status = "success"
-        if "db_save_error" in result:
-            status = "partial_success"
-            logger.warning("Returning partial success response (had database errors)")
-        else:
-            logger.info("Returning success response")
-            
-        return {
-            "status": status, 
-            "data": result
-        }
+        return result
 
     except Exception as e:
-        logger.error(f"Error processing performance tracking: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
         
 # -----------------------------
@@ -291,8 +481,86 @@ async def track_performance(data: QuizResult, request: Request):
 @app.get("/ping")
 def ping():
     """Simple endpoint to verify the service is running"""
-    logger.info("Ping received")
     return {"status": "ok", "message": "Performance Tracker Agent is running"}
+
+# -----------------------------
+# Debug endpoint to test planner integration
+# -----------------------------
+@app.post("/debug/test_planner")
+async def test_planner_integration(request: Request = None):
+    """
+    Debug endpoint to test planner integration with sample data
+    Can accept user_id in request body to test with actual user
+    """
+    try:
+        # Check if user_id is provided in request body
+        test_user_id = "test_user_123"  # Default
+        
+        if request:
+            try:
+                body = await request.json()
+                if body and "user_id" in body:
+                    test_user_id = body["user_id"]
+            except:
+                pass  # Use default if no body or parsing fails
+        
+        # Get actual weak areas for the user instead of sample data
+        if test_user_id != "test_user_123":
+            # Use real user data - get their actual weak areas
+            try:
+                test_subject = "Science"
+                actual_weak_topics = await get_historical_weak_areas(test_user_id, test_subject)
+                
+                if actual_weak_topics:
+                    # Generate sample questions for actual weak areas
+                    test_wrong_questions = [f"q_{i}" for i in range(min(3, len(actual_weak_topics)))]
+                    test_questions_text = {}
+                    for i, topic in enumerate(actual_weak_topics[:3]):
+                        test_questions_text[f"q_{i}"] = f"Sample question about {topic} for testing planner integration"
+                else:
+                    # No historical data, use minimal sample
+                    test_wrong_questions = ["q1"]
+                    test_questions_text = {"q1": "No historical data available - sample question for testing"}
+                
+            except Exception as e:
+                # Fallback to sample data
+                test_subject = "Science"
+                test_wrong_questions = ["q1"]
+                test_questions_text = {"q1": "Error getting real data - sample question for testing"}
+        else:
+            # Use sample test data for test user
+            test_subject = "Science"
+            test_wrong_questions = ["q1", "q2", "q3"]
+            test_questions_text = {
+                "q1": "What is the chemical formula for water and its molecular structure?",
+                "q2": "Explain the process of photosynthesis in plants and its importance?", 
+                "q3": "What are the basic principles of electrochemistry and battery function?"
+            }
+        
+        # Call planner integration with actual or sample data
+        result = await send_to_planner(
+            subject=test_subject,
+            wrong_questions=test_wrong_questions,
+            questions_text=test_questions_text,
+            user_id=test_user_id,
+            debug_mode=False
+        )
+        
+        return {
+            "status": "test_completed",
+            "test_data": {
+                "subject": test_subject,
+                "wrong_questions": test_wrong_questions,
+                "questions_sample": list(test_questions_text.values())
+            },
+            "planner_result": result
+        }
+        
+    except Exception as e:
+        return {
+            "status": "test_failed",
+            "error": str(e)
+        }
     
 # -----------------------------
 # Test endpoint to verify database connection
