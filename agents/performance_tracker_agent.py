@@ -103,17 +103,67 @@ else:
 # -----------------------------
 # Pydantic model for input
 # -----------------------------
+class QuestionDetail(BaseModel):
+    question_id: str
+    topic: str
+    subject: str
+    question_text: str
+    user_answer: str
+    correct_answer: str
+    is_correct: bool
+
 class QuizResult(BaseModel):
     user_id: str  # Changed from int to str to handle MongoDB ObjectIds
     quiz_id: int
-    topic: str
     subject: str = "Unknown"  # Main subject area (Science, Math, English)
-    answers: dict           # {"Q1": "A"}
-    correct_answers: dict   # {"Q1": "B"}
-    questions_text: dict    # {"Q1": "What is 2+2?"}
+    questions_details: list[QuestionDetail]  # Detailed question-level data with topic mapping
 
 # -----------------------------
-# Core MCQ evaluation function
+# Core MCQ evaluation function (new structure)
+# -----------------------------
+def evaluate_mcq_detailed(questions_details: list) -> tuple:
+    score = 0
+    total = len(questions_details)
+    wrong_questions = {}
+    topic_performance = {}
+    
+    # Calculate overall score and topic-specific performance
+    for question in questions_details:
+        if question.is_correct:
+            score += 1
+        else:
+            wrong_questions[question.question_id] = {
+                "correct_answer": question.correct_answer,
+                "user_answer": question.user_answer,
+                "topic": question.topic
+            }
+        
+        # Track performance by topic
+        topic = question.topic
+        if topic not in topic_performance:
+            topic_performance[topic] = {"correct": 0, "total": 0}
+        
+        topic_performance[topic]["total"] += 1
+        if question.is_correct:
+            topic_performance[topic]["correct"] += 1
+    
+    accuracy = (score / total) * 100 if total > 0 else 0
+    feedback = f"You scored {score}/{total} ({accuracy:.2f}%)."
+    
+    if wrong_questions:
+        feedback += f" Review questions: {', '.join(wrong_questions.keys())}"
+    
+    # Add topic-specific feedback
+    if topic_performance:
+        feedback += "\n\nTopic Performance:"
+        for topic, perf in topic_performance.items():
+            topic_accuracy = (perf["correct"] / perf["total"]) * 100
+            feedback += f"\n- {topic}: {perf['correct']}/{perf['total']} ({topic_accuracy:.1f}%)"
+
+    return score, total, accuracy, feedback, wrong_questions, topic_performance
+
+# -----------------------------
+# Legacy MCQ evaluation function (for backward compatibility)
 # -----------------------------
 def evaluate_mcq(answers: dict, correct_answers: dict):
     score = 0
@@ -136,6 +186,23 @@ def evaluate_mcq(answers: dict, correct_answers: dict):
 
 # -----------------------------
 # Generate LLM explanations
+# -----------------------------
+def generate_feedback_with_llm_detailed(questions_details: list):
+    explanations = {}
+    
+    # Generate explanations for wrong answers with topic context
+    for question in questions_details:
+        if not question.is_correct:
+            explanations[question.question_id] = llm_client.generate_explanation(
+                question.question_text, 
+                question.user_answer, 
+                question.correct_answer
+            )
+    
+    return explanations
+
+# -----------------------------
+# Legacy LLM feedback function (for backward compatibility)
 # -----------------------------
 def generate_feedback_with_llm(answers, correct_answers, questions_text):
     explanations = {}
@@ -242,29 +309,57 @@ async def get_historical_weak_areas(user_id: str, subject: str = None) -> list:
         if not results:
             return []
         
-        # Calculate topic performance (same logic as PerformanceUI)
+        # Calculate topic performance (EXACT same logic as PerformanceUI)
         topic_performance = {}
-        
         for result in results:
-            topic = result.get("topic", "Unknown")
-            result_data = result.get("result", {})
-            score = result_data.get("score", 0)
-            total = result_data.get("total", 1)
+            # Handle both new format (questions_details) and old format (topic field)
+            questions_details = result.get("questions_details", [])
             
-            if topic not in topic_performance:
-                topic_performance[topic] = {"scores": [], "total_questions": 0, "correct_answers": 0}
-            
-            # Calculate accuracy for this quiz
-            accuracy = (score / total) * 100 if total > 0 else 0
-            topic_performance[topic]["scores"].append(accuracy)
-            topic_performance[topic]["total_questions"] += total
-            topic_performance[topic]["correct_answers"] += score
+            if questions_details:
+                # New format: extract topics from questions_details
+                # Count questions and correct answers per topic (SAME as PerformanceUI)
+                topic_stats = {}
+                
+                for question in questions_details:
+                    topic = question.get("topic", "Unknown")
+                    is_correct = question.get("is_correct", False)
+                    
+                    if topic not in topic_stats:
+                        topic_stats[topic] = {"questions": 0, "correct": 0}
+                    
+                    topic_stats[topic]["questions"] += 1
+                    if is_correct:
+                        topic_stats[topic]["correct"] += 1
+                
+                # Add topic performance data (SAME as PerformanceUI)
+                for topic, stats in topic_stats.items():
+                    if topic not in topic_performance:
+                        topic_performance[topic] = {"scores": [], "total_questions": 0, "correct_answers": 0}
+                    
+                    # Calculate accuracy for this topic in this quiz
+                    topic_accuracy = (stats["correct"] / stats["questions"]) * 100 if stats["questions"] > 0 else 0
+                    
+                    topic_performance[topic]["scores"].append(topic_accuracy)
+                    topic_performance[topic]["total_questions"] += stats["questions"]
+                    topic_performance[topic]["correct_answers"] += stats["correct"]
+            else:
+                # Fallback to old format for backward compatibility
+                topic = result.get("topic", "Unknown")
+                if topic not in topic_performance:
+                    topic_performance[topic] = {"scores": [], "total_questions": 0, "correct_answers": 0}
+                
+                score = result.get("result", {}).get("score", 0)
+                total = result.get("result", {}).get("total", 1)
+                topic_performance[topic]["scores"].append((score / total) * 100)
+                topic_performance[topic]["total_questions"] += total
+                topic_performance[topic]["correct_answers"] += score
         
-        # Calculate averages and find weak areas (< 60% average)
+        # Calculate averages and find weak areas (< 60% average) - SAME as PerformanceUI
         weak_areas = []
         for topic, data in topic_performance.items():
             scores = data["scores"]
             average = sum(scores) / len(scores) if scores else 0
+            data["average"] = average  # Store for consistency
             
             if average < 60:  # Same threshold as PerformanceUI
                 weak_areas.append(topic)
@@ -381,19 +476,17 @@ async def send_to_planner(subject: str, wrong_questions: list, questions_text: d
 async def track_performance(data: QuizResult, request: Request):
     try:
         # Validate the data
-        if not data.answers or not data.correct_answers or not data.questions_text:
-            raise HTTPException(status_code=400, detail="Missing required quiz data")
+        if not data.questions_details:
+            raise HTTPException(status_code=400, detail="Missing required quiz questions data")
         
-        # Evaluate MCQs
-        score, total, accuracy, feedback, wrong_questions = evaluate_mcq(
-            data.answers, data.correct_answers
+        # Evaluate MCQs using new detailed structure
+        score, total, accuracy, feedback, wrong_questions, topic_performance = evaluate_mcq_detailed(
+            data.questions_details
         )
         
         # Generate explanations for wrong answers using LLM
         try:
-            explanations = generate_feedback_with_llm(
-                data.answers, data.correct_answers, data.questions_text
-            )
+            explanations = generate_feedback_with_llm_detailed(data.questions_details)
         except Exception as e:
             explanations = {"error": f"Failed to generate explanations: {str(e)}"}
 
@@ -432,9 +525,9 @@ async def track_performance(data: QuizResult, request: Request):
             document = {
                 "user_id": data.user_id,
                 "quiz_id": data.quiz_id,
-                "topic": data.topic,
-                "answers": data.answers,
-                "correct_answers": data.correct_answers,
+                "subject": data.subject,        # Main subject (Science, Math, English, etc.)
+                "questions_details": [q.dict() for q in data.questions_details],  # Detailed question-level data
+                "topic_performance": topic_performance,  # Performance breakdown by topic
                 "result": result,
                 "timestamp": logging.Formatter().converter()
             }

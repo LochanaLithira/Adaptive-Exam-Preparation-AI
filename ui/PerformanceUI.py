@@ -79,15 +79,47 @@ class PerformanceAnalytics:
         # Topic-wise performance
         topic_performance = {}
         for result in results:
-            topic = result.get("topic", "Unknown")
-            if topic not in topic_performance:
-                topic_performance[topic] = {"scores": [], "total_questions": 0, "correct_answers": 0}
+            # Handle both new format (questions_details) and old format (topic field)
+            questions_details = result.get("questions_details", [])
             
-            score = result.get("result", {}).get("score", 0)
-            total = result.get("result", {}).get("total", 1)
-            topic_performance[topic]["scores"].append((score / total) * 100)
-            topic_performance[topic]["total_questions"] += total
-            topic_performance[topic]["correct_answers"] += score
+            if questions_details:
+                # New format: extract topics from questions_details
+                # Count questions and correct answers per topic
+                topic_stats = {}
+                
+                for question in questions_details:
+                    topic = question.get("topic", "Unknown")
+                    is_correct = question.get("is_correct", False)
+                    
+                    if topic not in topic_stats:
+                        topic_stats[topic] = {"questions": 0, "correct": 0}
+                    
+                    topic_stats[topic]["questions"] += 1
+                    if is_correct:
+                        topic_stats[topic]["correct"] += 1
+                
+                # Add topic performance data
+                for topic, stats in topic_stats.items():
+                    if topic not in topic_performance:
+                        topic_performance[topic] = {"scores": [], "total_questions": 0, "correct_answers": 0}
+                    
+                    # Calculate accuracy for this topic in this quiz
+                    topic_accuracy = (stats["correct"] / stats["questions"]) * 100 if stats["questions"] > 0 else 0
+                    
+                    topic_performance[topic]["scores"].append(topic_accuracy)
+                    topic_performance[topic]["total_questions"] += stats["questions"]
+                    topic_performance[topic]["correct_answers"] += stats["correct"]
+            else:
+                # Fallback to old format for backward compatibility
+                topic = result.get("topic", "Unknown")
+                if topic not in topic_performance:
+                    topic_performance[topic] = {"scores": [], "total_questions": 0, "correct_answers": 0}
+                
+                score = result.get("result", {}).get("score", 0)
+                total = result.get("result", {}).get("total", 1)
+                topic_performance[topic]["scores"].append((score / total) * 100)
+                topic_performance[topic]["total_questions"] += total
+                topic_performance[topic]["correct_answers"] += score
         
         # Calculate average for each topic
         for topic in topic_performance:
@@ -329,58 +361,7 @@ def render_performance_charts(metrics: Dict[str, Any]):
         st.info("Complete some quizzes to see your performance charts!")
         return
     
-    # Recent Performance Trend
-    st.markdown(icon_text("analytics", "Performance Trends", 20), unsafe_allow_html=True)
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        # Accuracy trend chart
-        if metrics['improvement_trend']:
-            trend_data = pd.DataFrame(metrics['improvement_trend'])
-            fig = px.line(
-                trend_data, 
-                x='date', 
-                y='accuracy',
-                title='📈 Accuracy Improvement Trend',
-                line_shape='spline',
-                color_discrete_sequence=['#667eea']
-            )
-            fig.update_layout(
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                font_color='white',
-                height=300
-            )
-            st.plotly_chart(fig, use_container_width=True)
-    
-    with col2:
-        # Topic performance pie chart
-        if metrics['topic_performance']:
-            topic_data = []
-            for topic, data in metrics['topic_performance'].items():
-                topic_data.append({
-                    'topic': topic,
-                    'average': data['average'],
-                    'questions': data['total_questions']
-                })
-            
-            if topic_data:
-                df = pd.DataFrame(topic_data)
-                fig = px.pie(
-                    df, 
-                    values='questions', 
-                    names='topic',
-                    title='🎯 Questions by Topic',
-                    color_discrete_sequence=px.colors.qualitative.Set3
-                )
-                fig.update_layout(
-                    plot_bgcolor='rgba(0,0,0,0)',
-                    paper_bgcolor='rgba(0,0,0,0)',
-                    font_color='white',
-                    height=300
-                )
-                st.plotly_chart(fig, use_container_width=True)
+
 
 def render_topic_analysis(metrics: Dict[str, Any]):
     """Render detailed topic-wise performance analysis"""

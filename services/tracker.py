@@ -69,38 +69,98 @@ def track_performance():
         "received_responses": received_responses
     }
     
-    # Format data for performance tracker agent
-    answers = {}
-    correct_answers = {}
-    questions_text = {}
-    
     # Extract user information from request headers or session if available
     user_id = request.headers.get("X-User-ID", "current_user")
     
     # Log user info
     logger.info(f"Processing quiz results for user: {user_id}")
     
+    # Create detailed question-level mapping with topics
+    questions_details = []
+    all_topics = []
+    all_subjects = []
+    
     for i, q in enumerate(results_sorted):
         question_id = f"Q{i+1}"
-        answers[question_id] = q.get("user_answer")
-        correct_answers[question_id] = q.get("correct_answer")
-        questions_text[question_id] = q.get("question")
+        topic = q.get("category", "Unknown")
+        subject = q.get("subject", "Unknown")
+        
+        # Store detailed question info with topic mapping
+        user_answer = q.get("user_answer")
+        correct_answer = q.get("correct_answer")
+        
+        # Normalize answers for comparison (handle different data types and formats)
+        def normalize_answer(answer):
+            if answer is None:
+                return None
+            # Convert to string and normalize whitespace/casing
+            normalized = str(answer).strip().lower()
+            
+            # Remove common formatting like "a)", "b)", "c)", "d)" and extract just the letter
+            import re
+            # Match patterns like "a)", "A)", "a) ", "A) ", etc. and extract just the letter
+            match = re.match(r'^([a-d])\s*\)?\s*$', normalized, re.IGNORECASE)
+            if match:
+                return match.group(1).lower()
+            
+            return normalized
+        
+        normalized_user = normalize_answer(user_answer)
+        normalized_correct = normalize_answer(correct_answer)
+        is_correct = normalized_user == normalized_correct and normalized_user is not None
+        
+        # Debug logging for answer comparison
+        logger.info(f"Question {question_id} Answer Comparison:")
+        logger.info(f"  Raw User Answer: '{user_answer}' (type: {type(user_answer).__name__})")
+        logger.info(f"  Raw Correct Answer: '{correct_answer}' (type: {type(correct_answer).__name__})")
+        logger.info(f"  Normalized User: '{normalized_user}'")
+        logger.info(f"  Normalized Correct: '{normalized_correct}'")
+        logger.info(f"  Is Correct: {is_correct}")
+        
+        question_detail = {
+            "question_id": question_id,
+            "topic": topic,
+            "subject": subject,
+            "question_text": q.get("question", ""),
+            "user_answer": user_answer,
+            "correct_answer": correct_answer,
+            "is_correct": is_correct
+        }
+        questions_details.append(question_detail)
+        
+        # Collect unique topics and subjects
+        if topic and topic != "Unknown":
+            all_topics.append(topic)
+        if subject and subject != "Unknown":
+            all_subjects.append(subject)
+    
+    # Get unique topics and subjects
+    unique_topics = list(set(all_topics)) if all_topics else ["General"]
+    unique_subjects = list(set(all_subjects)) if all_subjects else ["Unknown"]
+    
+    # Store topics as array/list for better querying and analysis
+    quiz_topics = unique_topics  # Keep as list/array object
+    
+    # For subject: use the most common subject or first one
+    quiz_subject = unique_subjects[0] if unique_subjects else "Unknown"
+    
+    # Generate unique quiz ID based on timestamp
+    unique_quiz_id = int(time.time())
     
     # Prepare data for the performance tracker API
     performance_data = {
         "user_id": user_id,
-        "quiz_id": 1,  # This should be replaced with the actual quiz ID
-        "topic": results_sorted[0].get("category") if results_sorted else "General",
-        "subject": results_sorted[0].get("subject") if results_sorted else "Unknown",
-        "answers": answers,
-        "correct_answers": correct_answers,
-        "questions_text": questions_text
+        "quiz_id": unique_quiz_id,
+        "subject": quiz_subject,       # Main subject of the quiz
+        "questions_details": questions_details  # Detailed question-level data with topic mapping
     }
     
     # Log the formatted data being sent to performance tracker
     logger.info("Formatted data for performance tracker")
-    logger.info(f"Topic: {performance_data['topic']}")
-    logger.info(f"Number of answers: {len(answers)}")
+    logger.info(f"Quiz subject: {performance_data['subject']}")
+    logger.info(f"Number of unique topics: {len(quiz_topics)}")
+    logger.info(f"Number of questions: {len(questions_details)}")
+    logger.info(f"Sample question detail: {questions_details[0] if questions_details else 'None'}")
     
     # Forward data to performance tracker agent
     try:
