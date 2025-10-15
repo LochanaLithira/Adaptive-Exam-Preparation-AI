@@ -317,21 +317,31 @@ async def get_historical_weak_areas(user_id: str, subject: str = None) -> list:
             
             if questions_details:
                 # New format: extract topics from questions_details
-                quiz_score = result.get("result", {}).get("score", 0)
-                quiz_total = result.get("result", {}).get("total", 1)
-                quiz_accuracy = (quiz_score / quiz_total) * 100 if quiz_total > 0 else 0
+                # Count questions and correct answers per topic (SAME as PerformanceUI)
+                topic_stats = {}
                 
-                # Get unique topics from this quiz
-                quiz_topics = list(set(q.get("topic", "Unknown") for q in questions_details))
+                for question in questions_details:
+                    topic = question.get("topic", "Unknown")
+                    is_correct = question.get("is_correct", False)
+                    
+                    if topic not in topic_stats:
+                        topic_stats[topic] = {"questions": 0, "correct": 0}
+                    
+                    topic_stats[topic]["questions"] += 1
+                    if is_correct:
+                        topic_stats[topic]["correct"] += 1
                 
-                # Apply this quiz's performance to all topics it covers
-                for topic in quiz_topics:
+                # Add topic performance data (SAME as PerformanceUI)
+                for topic, stats in topic_stats.items():
                     if topic not in topic_performance:
                         topic_performance[topic] = {"scores": [], "total_questions": 0, "correct_answers": 0}
                     
-                    topic_performance[topic]["scores"].append(quiz_accuracy)
-                    topic_performance[topic]["total_questions"] += quiz_total
-                    topic_performance[topic]["correct_answers"] += quiz_score
+                    # Calculate accuracy for this topic in this quiz
+                    topic_accuracy = (stats["correct"] / stats["questions"]) * 100 if stats["questions"] > 0 else 0
+                    
+                    topic_performance[topic]["scores"].append(topic_accuracy)
+                    topic_performance[topic]["total_questions"] += stats["questions"]
+                    topic_performance[topic]["correct_answers"] += stats["correct"]
             else:
                 # Fallback to old format for backward compatibility
                 topic = result.get("topic", "Unknown")

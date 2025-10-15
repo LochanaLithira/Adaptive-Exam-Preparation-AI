@@ -86,14 +86,45 @@ def track_performance():
         subject = q.get("subject", "Unknown")
         
         # Store detailed question info with topic mapping
+        user_answer = q.get("user_answer")
+        correct_answer = q.get("correct_answer")
+        
+        # Normalize answers for comparison (handle different data types and formats)
+        def normalize_answer(answer):
+            if answer is None:
+                return None
+            # Convert to string and normalize whitespace/casing
+            normalized = str(answer).strip().lower()
+            
+            # Remove common formatting like "a)", "b)", "c)", "d)" and extract just the letter
+            import re
+            # Match patterns like "a)", "A)", "a) ", "A) ", etc. and extract just the letter
+            match = re.match(r'^([a-d])\s*\)?\s*$', normalized, re.IGNORECASE)
+            if match:
+                return match.group(1).lower()
+            
+            return normalized
+        
+        normalized_user = normalize_answer(user_answer)
+        normalized_correct = normalize_answer(correct_answer)
+        is_correct = normalized_user == normalized_correct and normalized_user is not None
+        
+        # Debug logging for answer comparison
+        logger.info(f"Question {question_id} Answer Comparison:")
+        logger.info(f"  Raw User Answer: '{user_answer}' (type: {type(user_answer).__name__})")
+        logger.info(f"  Raw Correct Answer: '{correct_answer}' (type: {type(correct_answer).__name__})")
+        logger.info(f"  Normalized User: '{normalized_user}'")
+        logger.info(f"  Normalized Correct: '{normalized_correct}'")
+        logger.info(f"  Is Correct: {is_correct}")
+        
         question_detail = {
             "question_id": question_id,
             "topic": topic,
             "subject": subject,
             "question_text": q.get("question", ""),
-            "user_answer": q.get("user_answer"),
-            "correct_answer": q.get("correct_answer"),
-            "is_correct": q.get("user_answer") == q.get("correct_answer")
+            "user_answer": user_answer,
+            "correct_answer": correct_answer,
+            "is_correct": is_correct
         }
         questions_details.append(question_detail)
         
