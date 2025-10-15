@@ -4,9 +4,6 @@ Comprehensive Quiz History Dashboard - FIXED VERSION
 import streamlit as st
 import sys
 import os
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any
 
@@ -14,20 +11,11 @@ from typing import Dict, List, Any
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from security.auth import login_required, init_session_state
-from ui.icons import get_svg_icon, icon_text, info_message
+from ui.icons import get_svg_icon
 from utils.config import get_database, COLLECTIONS
 
 # CSS Constants for styling
 GLASS_CARD_STYLE = "background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%); border-radius: 15px; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0,0,0,0.1); transition: all 0.3s ease; margin-bottom: 1rem;"
-
-# Gradient backgrounds for different themes
-GRADIENT_BACKGROUNDS = {
-    "primary": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    "success": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
-    "warning": "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
-    "error": "linear-gradient(135deg, #ff6b6b 0%, #ffa8a8 100%)",
-    "subtle": "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)"
-}
 
 class QuizHistoryManager:
     """Manage and display comprehensive quiz history"""
@@ -45,38 +33,12 @@ class QuizHistoryManager:
         try:
             results = list(self.results_collection.find(
                 {"user_id": self.user_id}
-            ).sort("_id", -1))  # Sort by newest first
+            ).sort("_id", 1))  # Sort by oldest first
+            
             return results
         except Exception as e:
             st.error(f"Error fetching quiz results: {str(e)}")
             return []
-    
-    def get_filtered_results(self, results: List[Dict], topic_filter: str = "All", 
-                           performance_filter: str = "All", sort_by: str = "Newest First") -> List[Dict]:
-        """Filter and sort quiz results based on user preferences"""
-        filtered_results = results.copy()
-        
-        # Filter by topic
-        if topic_filter != "All":
-            filtered_results = [r for r in filtered_results if r.get("topic", "Unknown") == topic_filter]
-        
-        # Filter by performance
-        if performance_filter != "All":
-            filtered_results = [r for r in filtered_results if self._get_performance_category(r) == performance_filter]
-        
-        # Sort results
-        if sort_by == "Newest First":
-            filtered_results.sort(key=lambda x: x.get("_id", datetime.now(timezone.utc)), reverse=True)
-        elif sort_by == "Oldest First":
-            filtered_results.sort(key=lambda x: x.get("_id", datetime.now(timezone.utc)))
-        elif sort_by == "Best Score":
-            filtered_results.sort(key=lambda x: self._get_accuracy(x), reverse=True)
-        elif sort_by == "Worst Score":
-            filtered_results.sort(key=lambda x: self._get_accuracy(x))
-        elif sort_by == "Topic A-Z":
-            filtered_results.sort(key=lambda x: x.get("topic", ""))
-        
-        return filtered_results
     
     def _get_performance_category(self, result: Dict) -> str:
         """Get performance category for a quiz result"""
@@ -114,8 +76,8 @@ def render_filters_panel(results: List[Dict]) -> Dict[str, str]:
     
     st.markdown("### Filters & Sorting")
     
-    # Extract unique topics from results
-    topics = sorted(list(set([r.get("topic", "Unknown") for r in results])))
+    # Extract unique subjects from results
+    topics = sorted(list(set([r.get("subject", "Unknown") for r in results])))
     topics.insert(0, "All")
     
     # Create filter columns
@@ -128,7 +90,7 @@ def render_filters_panel(results: List[Dict]) -> Dict[str, str]:
             
         # Use widget with session state value
         topic_filter = st.selectbox(
-            "Filter by Topic",
+            "Filter by Subject",
             options=topics,
             key="topic_filter_selector",
             index=topics.index(st.session_state.topic_filter) if st.session_state.topic_filter in topics else 0
@@ -162,7 +124,7 @@ def render_filters_panel(results: List[Dict]) -> Dict[str, str]:
         
         # Initialize session state if needed
         if 'sort_option' not in st.session_state:
-            st.session_state.sort_option = "Newest First"
+            st.session_state.sort_option = "Oldest First"
             
         # Use widget with session state value
         sort_option = st.selectbox(
@@ -202,7 +164,7 @@ def render_filters_panel(results: List[Dict]) -> Dict[str, str]:
         
     # Use widget with session state value
     search_query = st.text_input(
-        "Search in quiz topics or questions",
+        "Search in quiz subjects or questions",
         placeholder="Type to search...",
         key="search_query_input",
         value=st.session_state.search_query
@@ -223,15 +185,29 @@ def render_filters_panel(results: List[Dict]) -> Dict[str, str]:
 def apply_filters(results: List[Dict], filters: Dict[str, str]) -> List[Dict]:
     """Apply all filters to the results"""
     filtered_results = results.copy()
-    manager = QuizHistoryManager(None)
     
-    # Filter by topic
+    # Create helper functions for performance calculations
+    def get_accuracy(result: Dict) -> float:
+        score = result.get("result", {}).get("score", 0)
+        total = result.get("result", {}).get("total", 1)
+        return (score / total) * 100 if total > 0 else 0
+    
+    def get_performance_category(result: Dict) -> str:
+        accuracy = get_accuracy(result)
+        if accuracy >= 80:
+            return "Excellent"
+        elif accuracy >= 60:
+            return "Good"
+        else:
+            return "Needs Work"
+
+    # Filter by subject
     if filters["topic"] != "All":
-        filtered_results = [r for r in filtered_results if r.get("topic", "Unknown") == filters["topic"]]
+        filtered_results = [r for r in filtered_results if r.get("subject", "Unknown") == filters["topic"]]
     
     # Filter by performance
     if filters["performance"] != "All":
-        filtered_results = [r for r in filtered_results if manager._get_performance_category(r) == filters["performance"]]
+        filtered_results = [r for r in filtered_results if get_performance_category(r) == filters["performance"]]
     
     # Filter by date range
     if filters["date_range"] != "All Time":
@@ -251,8 +227,8 @@ def apply_filters(results: List[Dict], filters: Dict[str, str]) -> List[Dict]:
         search_term = filters["search"].lower()
         search_filtered = []
         for r in filtered_results:
-            # Search in topic
-            if search_term in r.get("topic", "").lower():
+            # Search in subject
+            if search_term in r.get("subject", "Unknown").lower():
                 search_filtered.append(r)
                 continue
             
@@ -271,11 +247,11 @@ def apply_filters(results: List[Dict], filters: Dict[str, str]) -> List[Dict]:
     elif filters["sort"] == "Oldest First":
         filtered_results.sort(key=lambda x: x.get("_id", datetime.now(timezone.utc)))
     elif filters["sort"] == "Best Score":
-        filtered_results.sort(key=lambda x: manager._get_accuracy(x), reverse=True)
+        filtered_results.sort(key=lambda x: get_accuracy(x), reverse=True)
     elif filters["sort"] == "Worst Score":
-        filtered_results.sort(key=lambda x: manager._get_accuracy(x))
+        filtered_results.sort(key=lambda x: get_accuracy(x))
     elif filters["sort"] == "Topic A-Z":
-        filtered_results.sort(key=lambda x: x.get("topic", ""))
+        filtered_results.sort(key=lambda x: x.get("subject", "Unknown"))
     
     return filtered_results
 
@@ -284,7 +260,7 @@ def render_filter_summary(original_count: int, filtered_count: int, filters: Dic
     active_filters = []
     
     if filters["topic"] != "All":
-        active_filters.append(f"Topic: {filters['topic']}")
+        active_filters.append(f"Subject: {filters['topic']}")
     if filters["performance"] != "All":
         active_filters.append(f"Performance: {filters['performance']}")
     if filters["date_range"] != "All Time":
@@ -314,16 +290,20 @@ def render_quiz_statistics(results: List[Dict]):
     if not results:
         return
     
+    def get_accuracy(result: Dict) -> float:
+        score = result.get("result", {}).get("score", 0)
+        total = result.get("result", {}).get("total", 1)
+        return (score / total) * 100 if total > 0 else 0
+    
     total_quizzes = len(results)
     total_questions = sum(r.get("result", {}).get("total", 0) for r in results)
     total_correct = sum(r.get("result", {}).get("score", 0) for r in results)
     overall_accuracy = (total_correct / total_questions * 100) if total_questions > 0 else 0
     
     # Performance categories
-    manager = QuizHistoryManager(None)
-    excellent = len([r for r in results if manager._get_accuracy(r) >= 80])
-    good = len([r for r in results if 60 <= manager._get_accuracy(r) < 80])
-    needs_work = len([r for r in results if manager._get_accuracy(r) < 60])
+    excellent = len([r for r in results if get_accuracy(r) >= 80])
+    good = len([r for r in results if 60 <= get_accuracy(r) < 80])
+    needs_work = len([r for r in results if get_accuracy(r) < 60])
     
     st.markdown("### Overall Statistics")
     
@@ -366,6 +346,71 @@ def render_quiz_statistics(results: List[Dict]):
         </div>
         """, unsafe_allow_html=True)
 
+def get_answer_text_mapping(answer_letter: str, options: dict = None) -> str:
+    """
+    Convert answer letters to full text using stored options, with fallback
+    This shows the actual answer text instead of just the letter
+    
+    Handles various answer formats:
+    - User answer: "A) " (with trailing space)
+    - Correct answer: "C" (just letter)
+    - Options format: {"A) ": "text...", "B) ": "text...", ...}
+    """
+    if not answer_letter:
+        return "No answer"
+    
+    # If we have the options dictionary, use the actual text
+    if options and isinstance(options, dict):
+        # Normalize the answer: remove spaces and parentheses, keep only letter
+        answer_normalized = answer_letter.strip().rstrip(' ').rstrip(')').upper()
+        
+        # Try to find matching option in various formats
+        for option_key, option_text in options.items():
+            # Normalize the option key the same way
+            option_normalized = option_key.strip().rstrip(' ').rstrip(')').upper()
+            
+            # If the normalized forms match
+            if option_normalized == answer_normalized:
+                # Return with the original option key format + text (ensure space after key)
+                key_clean = option_key.strip()
+                if not key_clean.endswith(' '):
+                    key_clean += ' '
+                return f"{key_clean}{option_text}"
+        
+        # If no direct match found, try matching just the letter part
+        for option_key, option_text in options.items():
+            # Extract just the letter from option key: "A) " -> "A"
+            option_letter = option_key.strip().rstrip(' ').rstrip(')').upper()
+            if option_letter == answer_normalized:
+                # Use consistent formatting: "A) text..."
+                return f"{option_letter}) {option_text}"
+    
+    # Fallback: just return the letter with basic formatting
+    answer_clean = answer_letter.strip().rstrip(')').rstrip(' ').upper()
+    if len(answer_clean) == 1:
+        return f"Option {answer_clean}"
+    else:
+        return answer_letter
+
+def get_question_text_from_ir_service(q_key: str, user_answer: str, correct_answer: str) -> str:
+    """
+    Try to provide meaningful question context for older quiz results
+    This is a fallback for older quiz results that don't have question_text stored
+    """
+    try:
+        # Create a more informative placeholder that gives context about the answer format
+        if user_answer and correct_answer:
+            if len(user_answer) == 1 and len(correct_answer) == 1:
+                # Looks like multiple choice (A, B, C, D)
+                return f"Question {q_key} (Multiple Choice Question - Full text not available in older quiz format)"
+            else:
+                # Might be a different answer format
+                return f"Question {q_key} (Question text not available in older quiz format)"
+        else:
+            return f"Question {q_key}"
+    except Exception:
+        return f"Question {q_key}"
+
 def render_detailed_quiz_cards(results: List[Dict]):
     """Render detailed cards for each quiz result"""
     if not results:
@@ -399,13 +444,14 @@ def render_detailed_quiz_cards(results: List[Dict]):
         formatted_date = quiz_date.strftime("%B %d, %Y at %I:%M %p")
         
         # Get topic and quiz details
-        topic = result.get("topic", "Unknown Topic")
+        topic = result.get("subject", "Unknown")
         score = result.get("result", {}).get("score", 0)
         total = result.get("result", {}).get("total", 1)
         quiz_id = result.get("quiz_id", "N/A")
         
         # Create expandable card for each quiz
-        with st.expander(f"Quiz #{i+1}: {topic} - {accuracy:.1f}% ({formatted_date})", expanded=False):
+        with st.expander(f"Quiz #{i+1}: {topic} - {accuracy:.1f}% ({formatted_date})", 
+                         expanded=False):
             col1, col2 = st.columns([2, 1])
             
             with col1:
@@ -438,71 +484,137 @@ def render_detailed_quiz_cards(results: List[Dict]):
                 
                 st.markdown("---")
                 
-                # Questions & Answers Section
-                st.markdown("**Questions & Answers:**")
+                # Quick Performance Summary
+                st.markdown("**📊 Quick Summary:**")
+                perf_col1, perf_col2, perf_col3 = st.columns(3)
                 
-                # Check for different possible field names for questions, answers, and correct answers
-                questions_text = result.get("questions_text", {})
-                if not questions_text:
-                    questions_text = result.get("questions", {})
-                    
-                answers = result.get("answers", {})
-                if not answers:
-                    answers = result.get("user_answers", {})
-                    
-                correct_answers = result.get("correct_answers", {})
-                if not correct_answers:
-                    correct_answers = result.get("solutions", {})
+                with perf_col1:
+                    st.metric("Score", f"{score}/{total}", delta=f"{accuracy:.1f}%")
                 
-                # Try to display questions and answers
-                if questions_text and answers and correct_answers:
-                    for q_key in sorted(questions_text.keys()):
-                        question = questions_text.get(q_key, "Question not found")
-                        user_answer = answers.get(q_key, "No answer")
-                        correct_answer = correct_answers.get(q_key, "Unknown")
-                        is_correct = user_answer == correct_answer
+                with perf_col2:
+                    if accuracy >= 80:
+                        st.metric("Performance", "Excellent", delta="🌟")
+                    elif accuracy >= 60:
+                        st.metric("Performance", "Good", delta="👍")
+                    else:
+                        st.metric("Performance", "Needs Work", delta="📚")
+                
+                with perf_col3:
+                    wrong_count = total - score
+                    if wrong_count > 0:
+                        st.metric("Need Review", f"{wrong_count} questions", delta="❌")
+                    else:
+                        st.metric("Perfect Score!", "All correct", delta="🎉")
+                
+                st.markdown("---")
+                
+                # Enhanced Questions & Answers Section
+                st.markdown("**🔍 Questions & Answers:**")
+                
+                # Get explanations from result field
+                explanations = result.get("result", {}).get("explanations", {})
+                
+                # Handle both new format (questions_details) and old format (answers/correct_answers)
+                questions_details = result.get("questions_details", [])
+                
+                if questions_details:
+                    # New format: Use questions_details array
+                    for i, question_detail in enumerate(questions_details, 1):
+                        question_text = question_detail.get("question_text", f"Question {i}")
+                        user_answer = question_detail.get("user_answer", "No answer")
+                        correct_answer = question_detail.get("correct_answer", "Unknown")
+                        is_correct = question_detail.get("is_correct", False)
+                        question_id = question_detail.get("question_id", f"Q{i}")
                         
-                        # Use markdown for question text for better formatting
-                        st.markdown(f"**Question {q_key}:** {question}")
+                        # Display question
+                        st.markdown(f"**Question {i}:** {question_text}")
+                        
+                        # Get options for this question to display full answer text
+                        question_options = question_detail.get("options", {})
+                        
+                        # Display answers with full text using stored options
+                        user_answer_text = get_answer_text_mapping(user_answer, question_options)
+                        correct_answer_text = get_answer_text_mapping(correct_answer, question_options)
                         
                         answer_col1, answer_col2 = st.columns([1, 1])
                         
                         with answer_col1:
                             if is_correct:
-                                st.success(f"Your answer: {user_answer} ✓")
+                                st.success(f"✓ Your answer: **{user_answer_text}**")
                             else:
-                                st.error(f"Your answer: {user_answer} ✗")
+                                st.error(f"✗ Your answer: **{user_answer_text}**")
                         
                         with answer_col2:
-                            st.info(f"Correct answer: {correct_answer}")
+                            st.info(f"🎯 Correct answer: **{correct_answer_text}**")
                         
-                        st.markdown("---")
+                        # Show explanation for wrong answers
+                        if not is_correct and explanations.get(question_id):
+                            st.markdown("**💡 Explanation:**")
+                            explanation_text = explanations[question_id]
+                            st.markdown(f"""
+                            <div style="background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)); 
+                                        border-left: 4px solid #3b82f6; 
+                                        padding: 1rem; 
+                                        border-radius: 8px; 
+                                        margin: 0.5rem 0;">
+                                <span style="color: #e2e8f0;">{explanation_text}</span>
+                            </div>
+                            """, unsafe_allow_html=True)
                         
+                        if i < len(questions_details):  # Don't add separator after last question
+                            st.markdown("---")
+                
                 else:
-                    # Check for different data structures - list of questions
-                    questions_list = result.get("questions", [])
-                    if isinstance(questions_list, list) and questions_list:
-                        for i, question in enumerate(questions_list):
-                            if isinstance(question, dict):
-                                q_text = question.get("text", question.get("question", "Question not found"))
-                                user_ans = question.get("user_answer", question.get("selected_answer", "No answer"))
-                                correct_ans = question.get("correct_answer", question.get("answer", "Unknown"))
-                                is_correct = user_ans == correct_ans
-                                
-                                # Use markdown for question text for better formatting
-                                st.markdown(f"**Question {i+1}:** {q_text}")
-                                
-                                answer_col1, answer_col2 = st.columns([1, 1])
-                                
-                                with answer_col1:
-                                    if is_correct:
-                                        st.success(f"Your answer: {user_ans} ✓")
-                                    else:
-                                        st.error(f"Your answer: {user_ans} ✗")
-                                
-                                with answer_col2:
-                                    st.info(f"Correct answer: {correct_ans}")
-                                
+                    # Old format: Use answers and correct_answers dictionaries
+                    answers = result.get("answers", {})
+                    correct_answers = result.get("correct_answers", {})
+                    
+                    if answers and correct_answers:
+                        # Show info banner for older quiz format
+                        st.info("ℹ️ This is an older quiz format. Question texts are not available, but answers and explanations are preserved.")
+                        for q_key in sorted(answers.keys()):
+                            user_answer = answers.get(q_key, "No answer")
+                            correct_answer = correct_answers.get(q_key, "Unknown")
+                            is_correct = user_answer == correct_answer
+                            
+                            # Try to get question text (fallback for older format)
+                            question_text = get_question_text_from_ir_service(q_key, user_answer, correct_answer)
+                            
+                            # Display question
+                            st.markdown(f"**{question_text}**")
+                            
+                            # Display answers with enhanced text (no options available in old format)
+                            user_answer_text = get_answer_text_mapping(user_answer, None)
+                            correct_answer_text = get_answer_text_mapping(correct_answer, None)
+                            
+                            answer_col1, answer_col2 = st.columns([1, 1])
+                            
+                            with answer_col1:
+                                if is_correct:
+                                    st.success(f"✓ Your answer: **{user_answer_text}**")
+                                else:
+                                    st.error(f"✗ Your answer: **{user_answer_text}**")
+                            
+                            with answer_col2:
+                                st.info(f"🎯 Correct answer: **{correct_answer_text}**")
+                            
+                            # Show explanation for wrong answers
+                            if not is_correct and explanations.get(q_key):
+                                st.markdown("**💡 Explanation:**")
+                                explanation_text = explanations[q_key]
+                                st.markdown(f"""
+                                <div style="background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)); 
+                                            border-left: 4px solid #3b82f6; 
+                                            padding: 1rem; 
+                                            border-radius: 8px; 
+                                            margin: 0.5rem 0;">
+                                    <span style="color: #e2e8f0;">{explanation_text}</span>
+                                </div>
+                                """, unsafe_allow_html=True)
+                            
+                            # Add separator between questions
+                            remaining_keys = [k for k in sorted(answers.keys()) if k > q_key]
+                            if remaining_keys:  # Don't add separator after last question
                                 st.markdown("---")
                     else:
                         st.info("No question details available for this quiz")
@@ -524,26 +636,11 @@ def render_detailed_quiz_cards(results: List[Dict]):
                 </div>
                 """, unsafe_allow_html=True)
                 
-                # Add a simple progress bar using Streamlit
-                st.progress(accuracy / 100)
+
 
 @login_required
 def quiz_history_dashboard():
     """Main quiz history dashboard"""
-    # Initialize filter session state values with proper defaults
-    filter_defaults = {
-        "topic_filter": "All",
-        "performance_filter": "All", 
-        "sort_option": "Newest First", 
-        "date_range": "All Time",
-        "search_query": "",
-        "filter_initialized": True
-    }
-    
-    # Initialize any missing keys with default values
-    for key, default_value in filter_defaults.items():
-        if key not in st.session_state:
-            st.session_state[key] = default_value
         
     # Page header
     render_quiz_history_header()

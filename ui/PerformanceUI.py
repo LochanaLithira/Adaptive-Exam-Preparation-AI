@@ -130,7 +130,7 @@ class PerformanceAnalytics:
         recent_activity = []
         for result in results[:10]:
             recent_activity.append({
-                "topic": result.get("topic", "Unknown"),
+                "topic": result.get("subject", "Unknown"),  # Use subject instead of topic
                 "score": result.get("result", {}).get("score", 0),
                 "total": result.get("result", {}).get("total", 1),
                 "accuracy": result.get("result", {}).get("accuracy", 0),
@@ -444,24 +444,24 @@ def render_recent_activity(metrics: Dict[str, Any]):
             
             with cols[i]:
                 st.markdown(f"""
-                <div style="{GLASS_CARD_STYLE} border-left: 4px solid {color}; height: 180px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                <div style="{GLASS_CARD_STYLE} border-left: 4px solid {color}; height: 220px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; box-sizing: border-box;">
+                    <div style="flex: 1; display: flex; flex-direction: column; padding: 0;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                             {get_svg_icon(icon, 18, color)}
                             <span style="font-size: 0.9rem; color: {color}; font-weight: 600;">{status}</span>
                         </div>
-                        <h4 style="color: #e2e8f0; margin: 0 0 8px 0; font-size: 1rem;">
-                            {activity['topic'][:20]}{'...' if len(activity['topic']) > 20 else ''}
+                        <h4 style="color: #e2e8f0; margin: 0 0 6px 0; font-size: 0.95rem; line-height: 1.2;">
+                            {activity['topic'][:18]}{'...' if len(activity['topic']) > 18 else ''}
                         </h4>
-                        <div style="font-size: 2rem; font-weight: bold; color: {color}; margin: 8px 0;">
+                        <div style="font-size: 1.8rem; font-weight: bold; color: {color}; margin: 6px 0; flex: 1; display: flex; align-items: center;">
                             {accuracy:.1f}%
                         </div>
                     </div>
-                    <div>
-                        <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">
+                    <div style="margin-top: auto; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-bottom: 2px;">
                             Score: {activity['score']}/{activity['total']}
                         </div>
-                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 4px;">
+                        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">
                             {activity['date'].strftime('%b %d, %Y')}
                         </div>
                     </div>
