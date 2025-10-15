@@ -57,37 +57,45 @@ class GeminiClient:
 
     def _build_prompt(self, passages: List[str], topic: str | None, max_q: int) -> str:
         """
-        Build a concise prompt for generating scenario-based, application-focused MCQs.
-    """
+        Build a professional prompt for generating scenario-based, application-focused MCQs.
+        Only generate hard-level, module-relevant questions with specific topic categories.
+        """
+
         joined_passages = "\n\n---\n\n".join(passages[:10])
-        topic_line = f"Subject: {topic}\n" if topic else ""
+        topic_line = f"Subject/Module Context: {topic}\n" if topic else ""
 
         structured_prompt = f"""
-    Generate {max_q} challenging MCQs from the material below. Follow these rules strictly:
+Generate {max_q} challenging, scenario-based multiple-choice questions strictly based on the following study material.
+Focus only on conceptual understanding, application, and reasoning. Include observations, experiments, or real-life examples wherever possible.
+Do NOT include trivial or factual recall questions such as names, dates, publishers, or textbook information.
 
-REQUIREMENTS:
-- Base questions on provided content only
-- Create scenario-based, application-oriented questions (NO factual recall like names/dates)
-- Provide exactly 4 options (A-D) per question
-- Hard difficulty only
-- Number questions as Q1, Q2, etc.
-- Category must be a specific topic (e.g., "Photosynthesis", "Newton's Laws") - NOT generic terms
+RULES:
+1. Base each question strictly on the content provided; do not invent external facts.
+2. Provide exactly 4 options (A, B, C, D) per question.
+3. Only produce HARD questions.
+4. Questions should be scenario-based, application-oriented, or experimental.
+5. Mark the correct answer with the corresponding letter.
+6. Include a concise explanation (1-2 sentences) for the correct answer.
+7. Number questions sequentially (Q1, Q2, ...).
+8. *IMPORTANT*: For the "Category" field, provide a SPECIFIC TOPIC related to the question content (e.g., "Photosynthesis", "Newton's Laws", "Cell Division", "Trigonometry", "Chemical Bonding"). 
+   DO NOT use generic terms like "Hard", "Module X", or file names. The category should describe the educational topic/concept being tested.
+9. Do NOT add any introductory notes, commentary, or questions outside this material.
 
-FORMAT (use exactly):
-Q1: [Scenario-based question]
-Category: [Specific educational topic]
+Format strictly as:
+Q1: [Scenario/Observation-based question text]
+Category: [Specific educational topic - e.g., "Photosynthesis", "Newton's Second Law", "Atomic Structure"]
 A) option 1
 B) option 2
 C) option 3
 D) option 4
-Answer: [Letter] (brief explanation)
+Answer: [Letter] (short explanation)
 
 {topic_line}
-Content:
+Content for question generation:
 {joined_passages}
 
-    Generate quiz:
-        """
+Begin generating the quiz now:
+"""
         return structured_prompt
 
     def generate_explanation(self, question_text: str, student_ans: str, correct_ans: str) -> str:
@@ -162,8 +170,6 @@ Content:
             # Format without Category
             r"Q\d+: (.?)\nA\) (.?)\nB\) (.?)\nC\) (.?)\nD\) (.?)\nAnswer: ([A-D])\s\(?([^\)]*)\)?",
         ]
-
-        
 
         for pattern in patterns:
             matches = re.findall(pattern, text, re.DOTALL)
