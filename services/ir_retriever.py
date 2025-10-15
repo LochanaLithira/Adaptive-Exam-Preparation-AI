@@ -1,73 +1,72 @@
-# ir_retriever.py (Optimized Version)
+# ir_retriever.py
+# TF-IDF retriever supporting both plain text and PDF files
 import os
-import random
 from typing import List, Tuple, Optional
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
+from sklearn.metrics.pairwise import linear_kernel
 
 try:
     import PyPDF2
 except ImportError:
     raise ImportError("PyPDF2 is required for PDF support. Run: pip install PyPDF2")
 
+# default data directory (same folder as this script /data)
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
 class SimpleIR:
-    """Optimized TF-IDF retriever with caching and faster operations."""
+    """Simple TF-IDF based information retriever (supports .txt and .pdf)."""
 
     def __init__(self, data_dir: str = DATA_DIR):
+        # allow overriding data_dir (helpful for tests)
         self.data_dir = data_dir
-        self.docs: List[str] = []
-        self.paths: List[str] = []
+        self.docs: List[str] = []   # list of text passages
+        self.paths: List[str] = []  # corresponding file#paragraph identifiers
         self._vectorizer: Optional[TfidfVectorizer] = None
         self._matrix = None
-        self._cached_folder = None  # Track which folder is cached
+        # load docs from the default data dir at init
         self._load_docs()
 
+    # -------------------------
+    # PDF text extraction
+    # -------------------------
     def _extract_text_from_pdf(self, pdf_path: str) -> str:
-        """Optimized PDF extraction with error handling."""
-        text_chunks = []
+        """Extract text content from a PDF file using PyPDF2."""
+        text = ""
         try:
             with open(pdf_path, 'rb') as file:
                 pdf_reader = PyPDF2.PdfReader(file)
-                # Limit pages for faster processing
-                max_pages = min(len(pdf_reader.pages), 50)  # Limit to 50 pages
-                
-                for i in range(max_pages):
-                    page_text = pdf_reader.pages[i].extract_text()
-                    if page_text and len(page_text.strip()) > 50:
-                        text_chunks.append(page_text)
-                        
+                for page in pdf_reader.pages:
+                    page_text = page.extract_text()
+                    if page_text:
+                        text += page_text + "\n\n"
         except Exception as e:
             print(f"Error reading PDF {pdf_path}: {e}")
-        
-        return "\n\n".join(text_chunks)
+        return text
 
+    # -------------------------
+    # Load documents (txt & pdf)
+    # -------------------------
     def _load_docs(self, folder: Optional[str] = None):
         """
-        Optimized document loading with better chunking.
-        Only reloads if folder changes (caching mechanism).
+        Load documents from .txt and .pdf files.
+        If 'folder' is provided, load files from that folder (and its subfolders).
+        Otherwise use self.data_dir (default DATA_DIR).
         """
-        base_dir = folder or self.data_dir
-        
-        # Check if we already loaded this folder
-        if self._cached_folder == base_dir and self.docs:
-            print(f"Using cached documents from: {base_dir}")
-            return
-        
         self.docs = []
         self.paths = []
 
+        base_dir = folder or self.data_dir
+
+        # create folder if missing
         if not os.path.exists(base_dir):
             os.makedirs(base_dir, exist_ok=True)
             print(f"Created data directory at: {base_dir}")
             return
 
-        print(f"Loading documents from: {base_dir}")
-        
+        # Walk directory tree so subject/module subfolders are supported
         for root, _, files in os.walk(base_dir):
             for fn in files:
+                # only handle supported extensions
                 if not fn.lower().endswith(('.pdf', '.txt')):
                     continue
 
@@ -78,6 +77,7 @@ class SimpleIR:
                 if fn.lower().endswith('.pdf'):
                     text = self._extract_text_from_pdf(file_path)
                     if not text.strip():
+                        print(f"Warning: No text extracted from {file_path}")
                         continue
 
                 # TXT handling
@@ -86,178 +86,92 @@ class SimpleIR:
                         with open(file_path, 'r', encoding='utf-8') as f:
                             text = f.read().strip()
                     except Exception as e:
-                        print(f"Error reading {file_path}: {e}")
+                        print(f"Error reading text file {file_path}: {e}")
                         continue
 
-                # Improved chunking strategy
+                # Split text into passages (paragraph-like chunks)
                 if text:
-                    chunks = self._smart_chunk(text)
-                    for i, chunk in enumerate(chunks):
-                        if len(chunk) > 100:  # Minimum chunk size
-                            self.docs.append(chunk)
+                    paras = [p.strip() for p in text.split('\n\n') if p.strip()]
+                    # fallback to single-line splits if double newlines not found
+                    if len(paras) <= 1:
+                        paras = [p.strip() for p in text.split('\n') if p.strip() and len(p.strip()) > 50]
+
+                    for i, para in enumerate(paras):
+                        if len(para) > 30:
+                            self.docs.append(para)
+                            # store relative path (relative to base_dir) plus paragraph index
                             rel = os.path.relpath(file_path, base_dir)
                             self.paths.append(f"{rel}#p{i}")
 
         file_count = len(set([p.split('#')[0] for p in self.paths])) if self.paths else 0
-        print(f"Loaded {len(self.docs)} passages from {file_count} file(s)")
+        print(f"Loaded {len(self.docs)} passages from {file_count} file(s) under: {base_dir}")
 
-        # Build TF-IDF matrix (optimized settings)
+        # Build TF-IDF matrix if we have docs
         if self.docs:
             self._vectorizer = TfidfVectorizer(
                 stop_words='english',
-                max_features=3000,  # Reduced for speed
+                max_features=5000,
                 min_df=1,
-                max_df=0.9,
-                ngram_range=(1, 2)  # Include bigrams for better matching
+                max_df=0.95
             )
             try:
                 self._matrix = self._vectorizer.fit_transform(self.docs)
-                self._cached_folder = base_dir  # Mark as cached
-                print("TF-IDF matrix built successfully")
             except Exception as e:
                 print(f"Error building TF-IDF matrix: {e}")
                 self._matrix = None
         else:
-            print("No documents found. Add .txt or .pdf files to data/ directory.")
+            print("No documents loaded. Add .txt or .pdf files to the data/ directory.")
 
-    def _smart_chunk(self, text: str, chunk_size: int = 800) -> List[str]:
+    # -------------------------
+    # Retrieve top-k passages
+    # -------------------------
+    def retrieve(self, query: str, topk: int = 5, folder: Optional[str] = None, search_dir: Optional[str] = None) -> List[Tuple[str, float]]:
         """
-        Intelligent chunking that preserves sentence boundaries.
+        Retrieve top-k most relevant passages for a given query.
+        Supports either 'folder' or legacy 'search_dir' parameter to restrict which files are loaded.
+        If neither is provided, searches the default data_dir loaded at init.
+        Returns a list of (passage_text, score) tuples.
         """
-        # First try paragraph splits
-        paragraphs = [p.strip() for p in text.split('\n\n') if p.strip()]
-        
-        chunks = []
-        current_chunk = []
-        current_size = 0
-        
-        for para in paragraphs:
-            para_size = len(para)
-            
-            # If single paragraph is too large, split by sentences
-            if para_size > chunk_size * 1.5:
-                sentences = para.split('. ')
-                for sent in sentences:
-                    sent = sent.strip() + '.'
-                    if current_size + len(sent) > chunk_size and current_chunk:
-                        chunks.append(' '.join(current_chunk))
-                        current_chunk = [sent]
-                        current_size = len(sent)
-                    else:
-                        current_chunk.append(sent)
-                        current_size += len(sent)
-            
-            # Normal paragraph handling
-            elif current_size + para_size > chunk_size and current_chunk:
-                chunks.append(' '.join(current_chunk))
-                current_chunk = [para]
-                current_size = para_size
-            else:
-                current_chunk.append(para)
-                current_size += para_size
-        
-        # Add remaining chunk
-        if current_chunk:
-            chunks.append(' '.join(current_chunk))
-        
-        return chunks
-
-    def retrieve(
-        self, 
-        query: str, 
-        topk: int = 5, 
-        folder: Optional[str] = None, 
-        search_dir: Optional[str] = None,
-        randomize: bool = True,  # NEW: Add randomization
-        diversity_factor: float = 0.3  # NEW: Control diversity
-    ) -> List[Tuple[str, float]]:
-        """
-        Optimized retrieval with optional randomization for unique results.
-        
-        Args:
-            query: Search query
-            topk: Number of results to return
-            folder/search_dir: Optional folder to search in
-            randomize: If True, adds some randomness to results
-            diversity_factor: Higher = more diverse results (0.0-1.0)
-        """
+        # accept either name for backward compatibility
         target_folder = folder or search_dir
 
-        # Only reload if folder changes
-        if target_folder and target_folder != self._cached_folder:
+        # if user provided a folder, reload docs from that folder
+        if target_folder:
             self._load_docs(target_folder)
         elif not self.docs or self._matrix is None:
+            # ensure docs are loaded if not already
             self._load_docs()
 
         if not self.docs or self._matrix is None:
             return []
 
+        # vectorize query and compute cosine similarities
         try:
-            # Vectorize query
             qv = self._vectorizer.transform([query])
-            
-            # Compute similarities
-            sims = cosine_similarity(qv, self._matrix).flatten()
-            
-            # Get more candidates than needed for randomization
-            candidate_count = min(topk * 3, len(sims))
-            top_indices = np.argsort(sims)[::-1][:candidate_count]
-            
-            # Filter valid results
-            candidates = [(i, sims[i]) for i in top_indices if sims[i] > 0.01]
-            
-            if not candidates:
-                return []
-            
-            # Apply randomization for variety
-            if randomize and len(candidates) > topk:
-                # Split into high and medium relevance
-                high_rel_count = max(2, topk // 2)
-                high_rel = candidates[:high_rel_count]
-                medium_rel = candidates[high_rel_count:candidate_count]
-                
-                # Always include some high relevance
-                selected = high_rel[:topk//2]
-                
-                # Randomly sample from medium relevance
-                remaining = topk - len(selected)
-                if medium_rel and remaining > 0:
-                    # Weight by score for probabilistic selection
-                    weights = [score ** (1 - diversity_factor) for _, score in medium_rel]
-                    sample_size = min(remaining, len(medium_rel))
-                    sampled_indices = random.choices(
-                        range(len(medium_rel)), 
-                        weights=weights, 
-                        k=sample_size
-                    )
-                    selected.extend([medium_rel[i] for i in sampled_indices])
-                
-                # Shuffle for variety
-                random.shuffle(selected)
-                final_results = selected[:topk]
-            else:
-                final_results = candidates[:topk]
-            
-            # Convert to return format
-            results = [(self.docs[i], float(score)) for i, score in final_results]
-            
-            return results
-            
         except Exception as e:
-            print(f"Error during retrieval: {e}")
+            print(f"Error transforming query: {e}")
             return []
 
+        sims = linear_kernel(qv, self._matrix).flatten()
+        top_idxs = sims.argsort()[::-1][:topk]
+        results = [(self.docs[i], float(sims[i])) for i in top_idxs if sims[i] > 0]
+        return results
+
+    # -------------------------
+    # Utility: reload all docs (default data_dir)
+    # -------------------------
     def reload_docs(self):
-        """Force reload documents from default directory."""
-        self._cached_folder = None  # Clear cache
+        """Reload documents from the default data directory."""
         self._load_docs()
 
 
-# Quick test
+# -------------------------
+# Quick test when run directly
+# -------------------------
 if __name__ == '__main__':
     ir = SimpleIR()
-    print("\nTesting optimized retrieval:")
-    results = ir.retrieve('photosynthesis', topk=3, randomize=True)
+    print("\nTesting retrieval (example):")
+    results = ir.retrieve('what is photosynthesis', topk=3)
     for i, (doc, score) in enumerate(results, 1):
         print(f"\n{i}. Score: {score:.4f}")
-        print(f"   {doc[:150]}...")
+        print(f"   {doc[:200]}...")

@@ -1,7 +1,6 @@
 # gemini_client.py
 import os
 import re
-import time  # Added for timing
 from typing import List, Dict
 from dotenv import load_dotenv
 
@@ -14,7 +13,6 @@ except Exception:
     raise ImportError("google-genai package is required. Run: pip install google-genai")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
 
 class GeminiClient:
     def __init__(self, api_key: str | None = None, model: str = "gemini-2.5-flash"):
@@ -47,10 +45,7 @@ class GeminiClient:
         """
         Ask Gemini to produce multiple choice questions based on passages.
         Returns a list of dicts: {question, category, options, correct_answer, explanation}
-        Measures and prints the time taken for generation.
         """
-        start_time = time.time()  # Start timer
-
         # Filter passages to remove irrelevant content
         passages = self.filter_passages(passages)
 
@@ -58,19 +53,15 @@ class GeminiClient:
         resp = self.client.models.generate_content(model=self.model, contents=prompt)
 
         text = getattr(resp, "text", None) or str(resp)
-        quiz = self.parse_quiz(text)
-
-        end_time = time.time()  # End timer
-        print(f"[Timing] Quiz generated in {end_time - start_time:.2f} seconds")
-
-        return quiz
+        return self.parse_quiz(text)
 
     def _build_prompt(self, passages: List[str], topic: str | None, max_q: int) -> str:
         """
         Build a professional prompt for generating scenario-based, application-focused MCQs.
         Only generate hard-level, module-relevant questions with specific topic categories.
         """
-        joined_passages = "\n\n---\n\n".join(passages[:10])  # Limit to first 5 passages for brevity
+
+        joined_passages = "\n\n---\n\n".join(passages[:10])
         topic_line = f"Subject/Module Context: {topic}\n" if topic else ""
 
         structured_prompt = f"""
@@ -119,7 +110,6 @@ Begin generating the quiz now:
         Returns:
             str: Generated explanation or error message
         """
-        
         prompt = (
             f"Question: {question_text}\n"
             f"Student answered: {student_ans}\n"
@@ -129,23 +119,36 @@ Begin generating the quiz now:
         )
 
         try:
+            # Generate response using the new genai client
             response = self.client.models.generate_content(
                 model=self.model,
                 contents=prompt
             )
+            
+            # Safely extract text from response
             text_content = getattr(response, "text", None) or str(response)
-            return text_content.strip() if text_content else "Could not extract explanation from the API response."
+            
+            if text_content:
+                return text_content.strip()
+            else:
+                return "Could not extract explanation from the API response."
 
         except Exception as e:
             error_message = str(e)
             print(f"Error generating explanation: {error_message}")
+            
+            # Provide a more user-friendly error message for common API issues
             if "404" in error_message or "not found" in error_message.lower():
+                print(f"Model access error: {error_message}")
                 return "Error: Could not access the AI model. Please try again."
             elif "quota exceeded" in error_message.lower() or "429" in error_message:
+                print(f"Quota exceeded: {error_message}")
                 return "Error: API quota exceeded. Please try again in a few minutes."
             elif "API key" in error_message.lower():
+                print(f"API key error: {error_message}")
                 return "Error: Invalid API key. Please check your configuration."
             else:
+                print(f"Unknown error: {error_message}")
                 return f"Error generating explanation: {error_message}"
 
     def parse_quiz(self, text: str) -> List[Dict]:
@@ -160,10 +163,15 @@ Begin generating the quiz now:
 
         # Regex patterns for standard and alternative formats
         patterns = [
+            # Standard format with Category
             r"Q\d+: (.?)\nCategory: (.?)\nA\) (.?)\nB\) (.?)\nC\) (.?)\nD\) (.?)\nAnswer: ([A-D])\s*\((.*?)\)",
+            # Alternative format with optional explanation
             r"Q\d+: (.?)\nCategory: (.?)\nA\) (.?)\nB\) (.?)\nC\) (.?)\nD\) (.?)\nAnswer: ([A-D])",
+            # Format without Category
             r"Q\d+: (.?)\nA\) (.?)\nB\) (.?)\nC\) (.?)\nD\) (.?)\nAnswer: ([A-D])\s\(?([^\)]*)\)?",
         ]
+
+        
 
         for pattern in patterns:
             matches = re.findall(pattern, text, re.DOTALL)
@@ -207,12 +215,15 @@ Begin generating the quiz now:
                         category = category_parts[0].strip()
                         options_part = "A)" + category_parts[1]
 
+                    # Extract options
                     option_matches = re.findall(r"([A-D]\) )(.*?)(?=\n[A-D]\)|Answer:|$)", options_part, re.DOTALL)
                     options = {opt[0]: opt[1].strip() for opt in option_matches}
 
+                    # Extract answer
                     answer_match = re.search(r"Answer: ([A-D])", options_part)
                     answer = answer_match.group(1) if answer_match else None
 
+                    # Extract explanation
                     explanation_match = re.search(r"Answer: [A-D]\s*\((.*?)\)", options_part)
                     explanation = explanation_match.group(1).strip() if explanation_match else ""
 
