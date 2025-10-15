@@ -145,6 +145,9 @@ class PerformanceAnalytics:
                 "date": result.get("_id").generation_time if result.get("_id") else datetime.now()
             })
         
+        # Extract available subjects from quiz results
+        available_subjects = sorted(list(set([result.get("subject", "Unknown") for result in results])))
+        
         # Strengths and weaknesses
         strengths = [topic for topic, data in topic_performance.items() if data["average"] >= 80]
         weaknesses = [topic for topic, data in topic_performance.items() if data["average"] < 60]
@@ -158,6 +161,8 @@ class PerformanceAnalytics:
             "recent_activity": recent_activity,
             "topic_performance": topic_performance,
             "improvement_trend": improvement_trend,
+            "available_subjects": available_subjects,
+            "quiz_results": results,  # Pass the raw results for subject filtering
             "strengths": strengths,
             "weaknesses": weaknesses
         }
@@ -364,26 +369,136 @@ def render_performance_charts(metrics: Dict[str, Any]):
 
 
 def render_topic_analysis(metrics: Dict[str, Any]):
-    """Render detailed topic-wise performance analysis"""
-    st.markdown(icon_text("brain", "Topic Performance Analysis", 20), unsafe_allow_html=True)
+    """Render detailed subject-wise performance analysis"""
+    st.markdown(icon_text("brain", "Subject Performance Analysis", 20), unsafe_allow_html=True)
     
-    if not metrics['topic_performance']:
-        st.info("Complete quizzes in different topics to see your topic analysis!")
+    if not metrics.get('available_subjects') or not metrics.get('quiz_results'):
+        st.info("Complete quizzes in different subjects to see your performance analysis!")
         return
     
-    # Create topic performance dataframe
-    topic_data = []
-    for topic, data in metrics['topic_performance'].items():
-        topic_data.append({
-            'Topic': topic,
-            'Average Score': f"{data['average']:.1f}%",
-            'Questions Answered': data['total_questions'],
-            'Correct Answers': data['correct_answers'],
-            'Performance': '🟢 Strong' if data['average'] >= 80 else '🟡 Good' if data['average'] >= 60 else '🔴 Needs Work'
-        })
+    # Create subject dropdown
+    available_subjects = metrics['available_subjects']
+    selected_subject = st.selectbox(
+        "Select Subject to Analyze:",
+        options=["All Subjects"] + available_subjects,
+        index=0
+    )
     
-    df = pd.DataFrame(topic_data)
-    st.dataframe(df, use_container_width=True)
+    if selected_subject == "All Subjects":
+        # Show all subjects overview with topics
+        st.markdown("### 📊 All Subjects & Topics Overview")
+        
+        # Collect subject-topic relationships and performance
+        subject_topic_data = []
+        
+        # Group by subject and collect topics from topic_performance
+        subject_topics = {}
+        for result in metrics['quiz_results']:
+            subject = result.get("subject", "Unknown")
+            if subject not in subject_topics:
+                subject_topics[subject] = set()
+        
+        # Get topics for each subject from topic_performance (which has individual topic data)
+        for topic_name, topic_data in metrics.get('topic_performance', {}).items():
+            # Find which subject this topic belongs to by checking quiz results
+            topic_subject = "Unknown"
+            for result in metrics['quiz_results']:
+                # Check if this topic appears in this result's questions
+                questions_details = result.get("questions_details", [])
+                if questions_details:
+                    for question in questions_details:
+                        if question.get("topic") == topic_name:
+                            topic_subject = result.get("subject", "Unknown")
+                            break
+                    if topic_subject != "Unknown":
+                        break
+                else:
+                    # Fallback for old format
+                    if result.get("topic") == topic_name:
+                        topic_subject = result.get("subject", "Unknown")
+                        break
+            
+            if topic_subject in subject_topics:
+                subject_topics[topic_subject].add(topic_name)
+        
+        # Create table data with topics
+        for subject in sorted(subject_topics.keys()):
+            topics_list = sorted(list(subject_topics[subject]))
+            
+            # Calculate subject performance
+            subject_results = [r for r in metrics['quiz_results'] if r.get("subject", "Unknown") == subject]
+            total_score = sum(r.get("result", {}).get("score", 0) for r in subject_results)
+            total_questions = sum(r.get("result", {}).get("total", 0) for r in subject_results)
+            avg_accuracy = (total_score / total_questions * 100) if total_questions > 0 else 0
+            
+            # Format topics for display (limit to prevent table overflow)
+            topics_display = ", ".join(topics_list[:3])  # Show first 3 topics
+            if len(topics_list) > 3:
+                topics_display += f" (+{len(topics_list) - 3} more)"
+            
+            subject_topic_data.append({
+                'Subject': subject,
+                'Topics': topics_display if topics_list else "No topics found",
+                'Average Score': f"{avg_accuracy:.1f}%",
+                'Total Quizzes': len(subject_results),
+                'Questions Answered': total_questions,
+                'Correct Answers': total_score,
+                'Performance': '🟢 Strong' if avg_accuracy >= 80 else '🟡 Good' if avg_accuracy >= 60 else '🔴 Needs Work'
+            })
+        
+        df = pd.DataFrame(subject_topic_data)
+        st.dataframe(df, use_container_width=True)
+        
+    else:
+        # Show topics performance for selected subject
+        st.markdown(f"### 🎯 {selected_subject} - Topics Performance")
+        
+        # Filter quiz results for selected subject
+        subject_results = [r for r in metrics['quiz_results'] if r.get("subject", "Unknown") == selected_subject]
+        
+        if not subject_results:
+            st.warning(f"No quiz data found for {selected_subject}")
+            return
+        
+        # Show topics performance for this subject
+        
+        subject_topics_data = []
+        
+        # Find all topics for this subject
+        for topic_name, topic_data in metrics.get('topic_performance', {}).items():
+            # Check if this topic belongs to the selected subject
+            topic_belongs_to_subject = False
+            for result in subject_results:
+                questions_details = result.get("questions_details", [])
+                if questions_details:
+                    for question in questions_details:
+                        if question.get("topic") == topic_name:
+                            topic_belongs_to_subject = True
+                            break
+                else:
+                    # Fallback for old format
+                    if result.get("topic") == topic_name:
+                        topic_belongs_to_subject = True
+                        break
+                if topic_belongs_to_subject:
+                    break
+            
+            if topic_belongs_to_subject:
+                subject_topics_data.append({
+                    'Topic': topic_name,
+                    'Average Score': f"{topic_data['average']:.1f}%",
+                    'Questions Answered': topic_data['total_questions'],
+                    'Correct Answers': topic_data['correct_answers'],
+                    'Performance': '🟢 Strong' if topic_data['average'] >= 80 else '🟡 Good' if topic_data['average'] >= 60 else '🔴 Needs Work'
+                })
+        
+        if subject_topics_data:
+            # Sort by topic name
+            subject_topics_data.sort(key=lambda x: x['Topic'])
+            topics_df = pd.DataFrame(subject_topics_data)
+            st.dataframe(topics_df, use_container_width=True)
+        else:
+            st.info(f"No detailed topic data available for {selected_subject}")
     
     # Strengths and weaknesses
     col1, col2 = st.columns(2)
@@ -391,18 +506,38 @@ def render_topic_analysis(metrics: Dict[str, Any]):
     with col1:
         st.markdown("### 💪 Your Strengths")
         if metrics['strengths']:
-            for strength in metrics['strengths']:
+            # Display top 5 strengths
+            top_strengths = metrics['strengths'][:5]
+            for strength in top_strengths:
                 avg_score = metrics['topic_performance'][strength]['average']
                 st.success(f"**{strength}** - {avg_score:.1f}% average")
+            
+            # Show remaining strengths in dropdown if more than 5
+            if len(metrics['strengths']) > 5:
+                remaining_strengths = metrics['strengths'][5:]
+                with st.expander(f"View {len(remaining_strengths)} more strengths"):
+                    for strength in remaining_strengths:
+                        avg_score = metrics['topic_performance'][strength]['average']
+                        st.success(f"**{strength}** - {avg_score:.1f}% average")
         else:
             st.info("Keep practicing to identify your strengths!")
     
     with col2:
         st.markdown("### 📚 Areas for Improvement")
         if metrics['weaknesses']:
-            for weakness in metrics['weaknesses']:
+            # Display top 5 areas for improvement
+            top_weaknesses = metrics['weaknesses'][:5]
+            for weakness in top_weaknesses:
                 avg_score = metrics['topic_performance'][weakness]['average']
                 st.warning(f"**{weakness}** - {avg_score:.1f}% average")
+            
+            # Show remaining weaknesses in dropdown if more than 5
+            if len(metrics['weaknesses']) > 5:
+                remaining_weaknesses = metrics['weaknesses'][5:]
+                with st.expander(f"View {len(remaining_weaknesses)} more areas to improve"):
+                    for weakness in remaining_weaknesses:
+                        avg_score = metrics['topic_performance'][weakness]['average']
+                        st.warning(f"**{weakness}** - {avg_score:.1f}% average")
         else:
             st.success("Great job! No weak areas identified.")
 
@@ -484,85 +619,9 @@ def render_recent_activity(metrics: Dict[str, Any]):
         <div style="text-align: center; margin-top: 1rem;">
             <span style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">
                 Showing latest 3 of {total_quizzes} total quizzes • 
-                <a href="#" style="color: #667eea; text-decoration: none;">View all with detailed analytics ↗</a>
             </span>
         </div>
         """, unsafe_allow_html=True)
-
-def render_ai_insights(metrics: Dict[str, Any]):
-    """Render AI-powered insights and recommendations"""
-    st.markdown(icon_text("light_bulb", "AI-Powered Insights", 20), unsafe_allow_html=True)
-    
-    if metrics['total_quizzes'] == 0:
-        st.info("🤖 Complete some quizzes to get personalized AI insights!")
-        return
-    
-    # Generate insights based on performance
-    insights = []
-    
-    # Performance insights
-    if metrics['accuracy_percentage'] >= 80:
-        insights.append({
-            'type': 'success',
-            'title': 'Excellent Performance! 🎉',
-            'message': f"You're scoring an average of {metrics['accuracy_percentage']:.1f}%. Keep up the fantastic work!"
-        })
-    elif metrics['accuracy_percentage'] >= 60:
-        insights.append({
-            'type': 'info',
-            'title': 'Good Progress! 📈',
-            'message': f"You're averaging {metrics['accuracy_percentage']:.1f}%. Focus on your weak areas to reach the next level."
-        })
-    else:
-        insights.append({
-            'type': 'warning',
-            'title': 'Room for Improvement 💪',
-            'message': f"Your average is {metrics['accuracy_percentage']:.1f}%. Consider reviewing fundamentals and practicing more."
-        })
-    
-    # Study streak insights
-    if metrics['study_streak'] >= 7:
-        insights.append({
-            'type': 'success',
-            'title': 'Amazing Consistency! 🔥',
-            'message': f"You've maintained a {metrics['study_streak']}-day study streak. Consistency is key to success!"
-        })
-    elif metrics['study_streak'] >= 3:
-        insights.append({
-            'type': 'info',
-            'title': 'Building Momentum! ⚡',
-            'message': f"You have a {metrics['study_streak']}-day streak. Try to extend it for better learning outcomes."
-        })
-    else:
-        insights.append({
-            'type': 'info',
-            'title': 'Establish a Routine 📅',
-            'message': "Regular practice is key. Try to take quizzes daily to build a study habit."
-        })
-    
-    # Topic-specific insights
-    if metrics['weaknesses']:
-        insights.append({
-            'type': 'warning',
-            'title': 'Focus Areas Identified 🎯',
-            'message': f"Consider spending extra time on: {', '.join(metrics['weaknesses'][:3])}"
-        })
-    
-    if metrics['strengths']:
-        insights.append({
-            'type': 'success',
-            'title': 'Your Strong Subjects 💪',
-            'message': f"You excel in: {', '.join(metrics['strengths'][:3])}. Use this confidence to tackle harder topics!"
-        })
-    
-    # Render insights
-    for insight in insights:
-        if insight['type'] == 'success':
-            st.success(f"**{insight['title']}**\n\n{insight['message']}")
-        elif insight['type'] == 'warning':
-            st.warning(f"**{insight['title']}**\n\n{insight['message']}")
-        else:
-            st.info(f"**{insight['title']}**\n\n{insight['message']}")
 
 @login_required
 def performance_dashboard():
@@ -630,11 +689,6 @@ def performance_dashboard():
         
         # Recent activity timeline
         render_recent_activity(metrics)
-        
-        st.markdown("---")
-        
-        # AI insights and recommendations
-        render_ai_insights(metrics)
         
     except Exception as e:
         st.error(f"Error loading performance data: {str(e)}")
