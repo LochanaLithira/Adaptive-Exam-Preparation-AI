@@ -1,38 +1,27 @@
 #plan_manager.py
 import os
 import json
-from datetime import datetime, timedelta
-from logic_planner.resources import resources
+from datetime import datetime
 
-def save_plan_to_file(plan, weights, base_dir):
+def save_plan_to_file(plan, weights, base_dir): 
+    """
+    Save the plan exactly as it appears in the Planner UI.
+    Plan should be a list of entries with complete data.
+    """
     plans_dir = os.path.join(base_dir, "saved_plans")
     os.makedirs(plans_dir, exist_ok=True)
 
-    study_schedule = {"Learn": 30, "Practice": 30, "Review": 15}
-    start_hour = 8  # start at 8:00 AM
-
+    # Save the plan exactly as provided (already has Schedule, Resources, Date, etc.)
     saved_plan = []
-    for idx, day in enumerate(plan, start=1):
-        topic = day["Topic"]
-        guidance = day.get("Guidance", f"Concentrate on weak areas in {topic}.")
-        
-        # Allocate time slots
-        current_time = datetime.combine(datetime.today(), datetime.min.time()) + timedelta(hours=start_hour)
-        schedule_list = []
-        for key, minutes in study_schedule.items():
-            end_time = current_time + timedelta(minutes=minutes)
-            schedule_list.append(f"{key} ({current_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}): {minutes} min")
-            current_time = end_time
-        
-        # Resources
-        day_resources = resources.get(topic, [])
-
+    for entry in plan:
         saved_day = {
-            "Day": idx,
-            "Topic": topic,
-            "Guidance": guidance,
-            "Schedule": schedule_list,
-            "Resources": day_resources
+            "Day": entry["Day"],
+            "Topic": entry["Topic"],
+            "Date": entry.get("Date", None),
+            "AvailableTime": entry.get("AvailableTime", None),
+            "Schedule": entry.get("Schedule", []),
+            "Resources": entry.get("Resources", []),
+            "Guidance": entry.get("Guidance", f"Focus on {entry['Topic']}")
         }
         saved_plan.append(saved_day)
 
@@ -45,8 +34,9 @@ def save_plan_to_file(plan, weights, base_dir):
     }
 
     file_path = os.path.join(plans_dir, f"{timestamp}.json")
-    with open(file_path, "w") as f:
-        json.dump(plan_data, f, indent=4)
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(plan_data, f, indent=4, ensure_ascii=False)
+
 
 def load_all_plans(base_dir):
     """Load all saved plans in saved_plans folder."""
@@ -57,13 +47,12 @@ def load_all_plans(base_dir):
     files = [f for f in os.listdir(plans_dir) if f.endswith(".json")]
     all_plans = []
     for f in sorted(files, reverse=True):
-        with open(os.path.join(plans_dir, f), "r") as file:
+        with open(os.path.join(plans_dir, f), "r", encoding="utf-8") as file:
             try:
                 all_plans.append(json.load(file))
             except:
                 continue
     return all_plans
-
 
 def is_plan_already_saved(new_plan, existing_plans):
     """Check if the exact same plan is already saved."""
