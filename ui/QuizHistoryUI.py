@@ -468,22 +468,6 @@ def render_detailed_quiz_cards(results: List[Dict]):
                 </div>
                 """, unsafe_allow_html=True)
                 
-                # Display quiz details in a cleaner format
-                st.markdown("**Quiz Details**")
-                
-                # Create a proper table using columns
-                detail_col1, detail_col2 = st.columns([1, 1])
-                
-                with detail_col1:
-                    st.metric("Score", f"{score}/{total}")
-                    st.metric("Accuracy", f"{accuracy:.1f}%")
-                
-                with detail_col2:
-                    st.markdown(f"**Date:** {formatted_date}")
-                    st.markdown(f"**Quiz ID:** #{quiz_id}")
-                
-                st.markdown("---")
-                
                 # Quick Performance Summary
                 st.markdown("**📊 Quick Summary:**")
                 perf_col1, perf_col2, perf_col3 = st.columns(3)
