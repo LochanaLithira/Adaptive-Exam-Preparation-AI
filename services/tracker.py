@@ -69,38 +69,67 @@ def track_performance():
         "received_responses": received_responses
     }
     
-    # Format data for performance tracker agent
-    answers = {}
-    correct_answers = {}
-    questions_text = {}
-    
     # Extract user information from request headers or session if available
     user_id = request.headers.get("X-User-ID", "current_user")
     
     # Log user info
     logger.info(f"Processing quiz results for user: {user_id}")
     
+    # Create detailed question-level mapping with topics
+    questions_details = []
+    all_topics = []
+    all_subjects = []
+    
     for i, q in enumerate(results_sorted):
         question_id = f"Q{i+1}"
-        answers[question_id] = q.get("user_answer")
-        correct_answers[question_id] = q.get("correct_answer")
-        questions_text[question_id] = q.get("question")
+        topic = q.get("category", "Unknown")
+        subject = q.get("subject", "Unknown")
+        
+        # Store detailed question info with topic mapping
+        question_detail = {
+            "question_id": question_id,
+            "topic": topic,
+            "subject": subject,
+            "question_text": q.get("question", ""),
+            "user_answer": q.get("user_answer"),
+            "correct_answer": q.get("correct_answer"),
+            "is_correct": q.get("user_answer") == q.get("correct_answer")
+        }
+        questions_details.append(question_detail)
+        
+        # Collect unique topics and subjects
+        if topic and topic != "Unknown":
+            all_topics.append(topic)
+        if subject and subject != "Unknown":
+            all_subjects.append(subject)
+    
+    # Get unique topics and subjects
+    unique_topics = list(set(all_topics)) if all_topics else ["General"]
+    unique_subjects = list(set(all_subjects)) if all_subjects else ["Unknown"]
+    
+    # Store topics as array/list for better querying and analysis
+    quiz_topics = unique_topics  # Keep as list/array object
+    
+    # For subject: use the most common subject or first one
+    quiz_subject = unique_subjects[0] if unique_subjects else "Unknown"
+    
+    # Generate unique quiz ID based on timestamp
+    unique_quiz_id = int(time.time())
     
     # Prepare data for the performance tracker API
     performance_data = {
         "user_id": user_id,
-        "quiz_id": 1,  # This should be replaced with the actual quiz ID
-        "topic": results_sorted[0].get("category") if results_sorted else "General",
-        "subject": results_sorted[0].get("subject") if results_sorted else "Unknown",
-        "answers": answers,
-        "correct_answers": correct_answers,
-        "questions_text": questions_text
+        "quiz_id": unique_quiz_id,
+        "subject": quiz_subject,       # Main subject of the quiz
+        "questions_details": questions_details  # Detailed question-level data with topic mapping
     }
     
     # Log the formatted data being sent to performance tracker
     logger.info("Formatted data for performance tracker")
-    logger.info(f"Topic: {performance_data['topic']}")
-    logger.info(f"Number of answers: {len(answers)}")
+    logger.info(f"Quiz subject: {performance_data['subject']}")
+    logger.info(f"Number of unique topics: {len(quiz_topics)}")
+    logger.info(f"Number of questions: {len(questions_details)}")
+    logger.info(f"Sample question detail: {questions_details[0] if questions_details else 'None'}")
     
     # Forward data to performance tracker agent
     try:
