@@ -48,7 +48,8 @@ COLLECTIONS = {
     "quizzes": "quizzes",
     "quiz_results": "quiz_results",
     "study_plans": "study_plans",
-    "performance_data": "performance_data"
+    "performance_data": "performance_data",
+    "user_plans": "user_plans"  # Added for storing user's weak areas and subjects
 }
 
 # ==============================
