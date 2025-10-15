@@ -124,7 +124,8 @@ def track_performance():
             "question_text": q.get("question", ""),
             "user_answer": user_answer,
             "correct_answer": correct_answer,
-            "is_correct": is_correct
+            "is_correct": is_correct,
+            "options": q.get("options", {})  # Include the full option texts
         }
         questions_details.append(question_detail)
         
