@@ -1,6 +1,5 @@
 """
 Integrated Quiz Module - Dashboard + Gemini Quiz Generator
-Enhanced UI for Grade 11 Students - Settings in Main Screen
 """
 import streamlit as st
 import sys
@@ -16,98 +15,7 @@ from security.auth import login_required, init_session_state
 from ui.icons import icon_text, info_message
 from services.llm_service import GeminiClient
 from services.ir_retriever import SimpleIR, DATA_DIR
-
-# ---------------- Custom CSS ----------------
-def load_custom_css():
-    st.markdown("""
-        <style>
-        /* Main container */
-        .main {
-            background: #f8f9fa;
-        }
-
-        /* Settings card */
-        .settings-card {
-            background: white;
-            border-radius: 16px;
-            padding: 30px;
-            margin: 20px 0;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-        }
-
-        /* Section headers */
-        .section-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 16px 24px;
-            border-radius: 12px;
-            margin: 10px 0 20px 0;
-            font-weight: 600;
-            font-size: 18px;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-            text-align: center;
-        }
-
-        /* Quiz question styling */
-        .quiz-question-card h3 {
-            color: white !important;
-            font-size: 20px !important;
-            font-weight: bold !important;
-            margin: 0 0 8px 0 !important;
-            line-height: 1.3;
-        }
-
-        .quiz-question-card p {
-            color: white !important;
-            font-size: 18px !important;
-            font-weight: bold !important;
-            margin: 0 !important;
-            line-height: 1.5;
-        }
-
-        .quiz-question-card {
-            background: #1E1E1E;
-            border-radius: 12px;
-            padding: 16px;
-            margin: 16px 0;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        /* Progress bar styling */
-        .stProgress > div > div > div {
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        }
-
-        /* Button styling */
-        .stButton>button {
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            padding: 12px 24px;
-        }
-
-        .stButton>button[kind="primary"] {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-        }
-
-        /* Divider */
-        .custom-divider {
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #667eea, transparent);
-            margin: 30px 0;
-        }
-
-        /* Progress text */
-        .progress-text {
-            text-align: center;
-            font-size: 16px;
-            color: #5a6c7d;
-            margin: 15px 0;
-            font-weight: 600;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+from ui.quiz_styles import QUIZ_CUSTOM_CSS  # Import CSS from separate file
 
 # ---------------- Initialize Clients ----------------
 gemini = GeminiClient()
@@ -118,13 +26,14 @@ ir = SimpleIR()
 def quiz_dashboard():
     """Main quiz interface for authenticated users"""
     st.set_page_config(page_title="University Quiz", page_icon="🎓", layout="wide")
-    load_custom_css()
+    
+    # Load custom CSS
+    st.markdown(QUIZ_CUSTOM_CSS, unsafe_allow_html=True)
 
     # Header
     col1, col2 = st.columns([3, 1])
     with col1:
         st.markdown("# 🎓 Interactive Learning Quiz")
-        st.markdown("**Grade 11 - Personalized Assessment System**")
     with col2:
         user_data = st.session_state.get('user_data', {})
 
@@ -204,6 +113,8 @@ def quiz_dashboard():
                         except Exception as e:
                             st.error(f"❌ Error generating quiz: {e}")
 
+            st.markdown("</div>", unsafe_allow_html=True)
+
     # ---------------- Quiz Display ----------------
     if "questions" in st.session_state and st.session_state["questions"]:
         st.markdown("<div class='section-header'>📝 Your Personalized Quiz</div>", unsafe_allow_html=True)
@@ -219,7 +130,7 @@ def quiz_dashboard():
         for idx, q in enumerate(st.session_state["questions"]):
             st.markdown(f"""
                 <div class='quiz-question-card'>
-                    <h3>❓ Question {idx+1} of {total}</h3>
+                    <h3> {idx+1}.</h>
                     <p>{q['question']}</p>
                 </div>
             """, unsafe_allow_html=True)
