@@ -1,6 +1,6 @@
 # Adaptive Exam Preparation Planner
 
-An intelligent study planner application that generates a **7-day personalized study plan** based on your performance in different topics. The system provides guidance, study schedules, and resources for each topic, and tracks your progress.
+An intelligent study planner application that generates a p**personalized study plan** based on your performance in different topics. The system provides guidance, study schedules, and resources for each topic, and tracks your progress.
 
 ---
 

@@ -174,8 +174,10 @@ def main():
         except Exception as e:
             st.error(f"❌ Quiz history error: {str(e)}")
             st.info("💡 There was an error loading the quiz history. Please check the database connection.")
+    
     elif current_page == 'planner':
         run_planner_ui()
+
     elif current_page == 'settings':
         st.markdown(icon_text("settings", "Settings", 24), unsafe_allow_html=True)
         st.info("Settings page - coming soon!")

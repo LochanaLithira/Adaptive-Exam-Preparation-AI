@@ -17,16 +17,18 @@ def select_study_dates():
     free_days = []
     today = date.today()
     tomorrow = today + timedelta(days=1)
+    current_time = datetime.now().time()
 
-    time_slots = [
-        "Morning (08:00-12:00)",
-        "Afternoon (12:00-17:00)",
-        "Evening (17:00-21:00)",
-        "Night (21:00-00:00)"
+    # Define all time slots with their start times
+    all_time_slots = [
+        ("Morning (08:00AM)", datetime.strptime("08:00", "%H:%M").time()),
+        ("Afternoon (12:00PM)", datetime.strptime("12:00", "%H:%M").time()),
+        ("Evening (05:00PM)", datetime.strptime("17:00", "%H:%M").time()),
+        ("Night (09:00PM)", datetime.strptime("21:00", "%H:%M").time())
     ]
 
     # Input container for exam details
-    st.markdown("<h3 style='text-align:center; color:#1E90FF;'>Exam Details</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align:center; color:#1E90FF;'>Enter your Exam Date and Preferred Study Slot</h3>", unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
@@ -34,37 +36,70 @@ def select_study_dates():
         exam_date = st.date_input(
             "Select Your Exam Date",
             value=None,
-            min_value=tomorrow,  # Minimum exam date is tomorrow
-            help="Pick your exam date (must be a future date)"
+            min_value=tomorrow,  # Minimum is tomorrow (today disabled)
+            help="Pick your exam date (must be a future date)",
+            format="DD/MM/YYYY"
         )
+    
+    # Filter time slots based on selected date and current time
+    if exam_date:
+        if exam_date == tomorrow:
+            # If exam is tomorrow, plan starts today - only show future time slots
+            available_time_slots = [slot[0] for slot in all_time_slots if slot[1] > current_time]
+            if not available_time_slots:
+                st.warning("⚠️ No available time slots remaining for today. Please select a later exam date.")
+        else:
+            # For dates beyond tomorrow, show all time slots (plan starts from tomorrow)
+            available_time_slots = [slot[0] for slot in all_time_slots]
+    else:
+        # No date selected, show all slots
+        available_time_slots = [slot[0] for slot in all_time_slots]
         
     with col2:
         preferred_time = st.selectbox(
             "Select Your Preferred Study Time",
-            options=time_slots,
+            options=[None] + available_time_slots,
+            format_func=lambda x: "Choose your Time Slot..." if x is None else x,
             help="Choose your preferred time slot for studying"
         )
 
+    # Only process if both are selected
     if exam_date and preferred_time:
-        # If exam is tomorrow, start plan from today; otherwise start from tomorrow
-        if exam_date == tomorrow:
-            start_date = today
-        else:
-            start_date = tomorrow
+        # Show loading message immediately
+        with st.spinner("📅 Calculating your study Schedule..."):
+            # If exam is tomorrow, start plan from today; otherwise start from tomorrow
+            if exam_date == tomorrow:
+                start_date = today
+            else:
+                start_date = tomorrow
+            
+            # Calculate available days from start_date until the day before exam
+            days_until_exam = (exam_date - start_date).days
+
+            if days_until_exam > 0:
+                # Generate study dates starting from start_date
+                current_date = start_date
+                while current_date < exam_date:
+                    free_days.append({
+                        "date": current_date,
+                        "available_time": preferred_time
+                    })
+                    current_date += timedelta(days=1)
+
+                # Format dates in "16th October 2025" format
+                def format_date_with_suffix(d):
+                    day = d.day
+                    if 10 <= day % 100 <= 20:
+                        suffix = 'th'
+                    else:
+                        suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(day % 10, 'th')
+                    return f"{day}{suffix} {d.strftime('%B %Y')}"
+
+                start_formatted = format_date_with_suffix(start_date)
+                end_formatted = format_date_with_suffix(exam_date - timedelta(days=1))
         
-        # Calculate available days from start_date until the day before exam
-        days_until_exam = (exam_date - start_date).days
-
+        # Show result after spinner completes
         if days_until_exam > 0:
-            # Generate study dates starting from start_date
-            current_date = start_date
-            while current_date < exam_date:
-                free_days.append({
-                    "date": current_date,
-                    "available_time": preferred_time
-                })
-                current_date += timedelta(days=1)
-
             # Show selected study period in a card with black background
             st.markdown(
                 f"""
@@ -73,7 +108,7 @@ def select_study_dates():
                           border: 1px solid #333;'>
                     <p style='color: white; margin: 0; font-size: 16px;'>Your study plan will cover:</p>
                     <p style='color: white; font-weight: bold; margin: 10px 0; font-size: 18px;'>
-                        {start_date.strftime('%b %d, %Y')} - {(exam_date - timedelta(days=1)).strftime('%b %d, %Y')}
+                        {start_formatted} - {end_formatted}
                     </p>
                     <p style='color: white; margin: 0; font-size: 16px;'>Preferred study time: {preferred_time}</p>
                 </div>

@@ -1,0 +1,1694 @@
+[
+    {
+        "timestamp": "2025-10-16 12-03-37",
+        "weights": [
+            {
+                "topic": "Chemical Nomenclature",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Science and Air Pollution",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry / Galvanic Cells",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Chemical Safety",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Chemistry",
+                "weight": 50,
+                "resources": []
+            }
+        ],
+        "plan": [
+            {
+                "Day": 1,
+                "Topic": "Chemical Nomenclature",
+                "Guidance": "Focus on Chemical Nomenclature",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Nomenclature (05:00 PM - 06:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Nomenclature (06:15 PM - 06:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Nomenclature (07:00 PM - 07:15 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 1,
+                "Topic": "Environmental Science and Air Pollution",
+                "Guidance": "Focus on Environmental Science and Air Pollution",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry",
+                "Guidance": "Focus on Electrochemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry / Galvanic Cells",
+                "Guidance": "Focus on Electrochemistry / Galvanic Cells",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 3,
+                "Topic": "Chemical Safety",
+                "Guidance": "Focus on Chemical Safety",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 3,
+                "Topic": "Environmental Chemistry",
+                "Guidance": "Focus on Environmental Chemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            }
+        ],
+        "completed_days": {
+            "1": false,
+            "2": false,
+            "3": false
+        },
+        "total_study_time_minutes": 105
+    },
+    {
+        "timestamp": "2025-10-16 12-03-37",
+        "weights": [
+            {
+                "topic": "Chemical Nomenclature",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Science and Air Pollution",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry / Galvanic Cells",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Chemical Safety",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Chemistry",
+                "weight": 50,
+                "resources": []
+            }
+        ],
+        "plan": [
+            {
+                "Day": 1,
+                "Topic": "Chemical Nomenclature",
+                "Guidance": "Focus on Chemical Nomenclature",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Nomenclature (05:00 PM - 06:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Nomenclature (06:15 PM - 06:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Nomenclature (07:00 PM - 07:15 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 1,
+                "Topic": "Environmental Science and Air Pollution",
+                "Guidance": "Focus on Environmental Science and Air Pollution",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Environmental Science and Air Pollution (07:15 PM - 08:15 PM)",
+                    "Break - 15 min",
+                    "Practice Environmental Science and Air Pollution (08:30 PM - 09:00 PM)",
+                    "Break - 15 min",
+                    "Review Environmental Science and Air Pollution (09:15 PM - 09:30 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry",
+                "Guidance": "Focus on Electrochemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry / Galvanic Cells",
+                "Guidance": "Focus on Electrochemistry / Galvanic Cells",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 3,
+                "Topic": "Chemical Safety",
+                "Guidance": "Focus on Chemical Safety",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 3,
+                "Topic": "Environmental Chemistry",
+                "Guidance": "Focus on Environmental Chemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            }
+        ],
+        "completed_days": {
+            "1": false,
+            "2": false,
+            "3": false
+        },
+        "total_study_time_minutes": 210
+    },
+    {
+        "timestamp": "2025-10-16 12-03-37",
+        "weights": [
+            {
+                "topic": "Chemical Nomenclature",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Science and Air Pollution",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry / Galvanic Cells",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Chemical Safety",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Chemistry",
+                "weight": 50,
+                "resources": []
+            }
+        ],
+        "plan": [
+            {
+                "Day": 1,
+                "Topic": "Chemical Nomenclature",
+                "Guidance": "Focus on Chemical Nomenclature",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Nomenclature (05:00 PM - 06:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Nomenclature (06:15 PM - 06:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Nomenclature (07:00 PM - 07:15 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 1,
+                "Topic": "Environmental Science and Air Pollution",
+                "Guidance": "Focus on Environmental Science and Air Pollution",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Environmental Science and Air Pollution (07:15 PM - 08:15 PM)",
+                    "Break - 15 min",
+                    "Practice Environmental Science and Air Pollution (08:30 PM - 09:00 PM)",
+                    "Break - 15 min",
+                    "Review Environmental Science and Air Pollution (09:15 PM - 09:30 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry",
+                "Guidance": "Focus on Electrochemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Electrochemistry (05:00 PM - 06:00 PM)",
+                    "Break - 15 min",
+                    "Practice Electrochemistry (06:15 PM - 06:45 PM)",
+                    "Break - 15 min",
+                    "Review Electrochemistry (07:00 PM - 07:15 PM)"
+                ],
+                "Date": "2025-10-18",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry / Galvanic Cells",
+                "Guidance": "Focus on Electrochemistry / Galvanic Cells",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 3,
+                "Topic": "Chemical Safety",
+                "Guidance": "Focus on Chemical Safety",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 3,
+                "Topic": "Environmental Chemistry",
+                "Guidance": "Focus on Environmental Chemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            }
+        ],
+        "completed_days": {
+            "1": false,
+            "2": false,
+            "3": false
+        },
+        "total_study_time_minutes": 315
+    },
+    {
+        "timestamp": "2025-10-16 12-03-37",
+        "weights": [
+            {
+                "topic": "Chemical Nomenclature",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Science and Air Pollution",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry / Galvanic Cells",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Chemical Safety",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Chemistry",
+                "weight": 50,
+                "resources": []
+            }
+        ],
+        "plan": [
+            {
+                "Day": 1,
+                "Topic": "Chemical Nomenclature",
+                "Guidance": "Focus on Chemical Nomenclature",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Nomenclature (05:00 PM - 06:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Nomenclature (06:15 PM - 06:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Nomenclature (07:00 PM - 07:15 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 1,
+                "Topic": "Environmental Science and Air Pollution",
+                "Guidance": "Focus on Environmental Science and Air Pollution",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Environmental Science and Air Pollution (07:15 PM - 08:15 PM)",
+                    "Break - 15 min",
+                    "Practice Environmental Science and Air Pollution (08:30 PM - 09:00 PM)",
+                    "Break - 15 min",
+                    "Review Environmental Science and Air Pollution (09:15 PM - 09:30 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry",
+                "Guidance": "Focus on Electrochemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Electrochemistry (05:00 PM - 06:00 PM)",
+                    "Break - 15 min",
+                    "Practice Electrochemistry (06:15 PM - 06:45 PM)",
+                    "Break - 15 min",
+                    "Review Electrochemistry (07:00 PM - 07:15 PM)"
+                ],
+                "Date": "2025-10-18",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry / Galvanic Cells",
+                "Guidance": "Focus on Electrochemistry / Galvanic Cells",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Electrochemistry / Galvanic Cells (07:15 PM - 08:15 PM)",
+                    "Break - 15 min",
+                    "Practice Electrochemistry / Galvanic Cells (08:30 PM - 09:00 PM)",
+                    "Break - 15 min",
+                    "Review Electrochemistry / Galvanic Cells (09:15 PM - 09:30 PM)"
+                ],
+                "Date": "2025-10-18",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 3,
+                "Topic": "Chemical Safety",
+                "Guidance": "Focus on Chemical Safety",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 3,
+                "Topic": "Environmental Chemistry",
+                "Guidance": "Focus on Environmental Chemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            }
+        ],
+        "completed_days": {
+            "1": false,
+            "2": false,
+            "3": false
+        },
+        "total_study_time_minutes": 420
+    },
+    {
+        "timestamp": "2025-10-16 12-03-37",
+        "weights": [
+            {
+                "topic": "Chemical Nomenclature",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Science and Air Pollution",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry / Galvanic Cells",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Chemical Safety",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Chemistry",
+                "weight": 50,
+                "resources": []
+            }
+        ],
+        "plan": [
+            {
+                "Day": 1,
+                "Topic": "Chemical Nomenclature",
+                "Guidance": "Focus on Chemical Nomenclature",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Nomenclature (05:00 PM - 06:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Nomenclature (06:15 PM - 06:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Nomenclature (07:00 PM - 07:15 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 1,
+                "Topic": "Environmental Science and Air Pollution",
+                "Guidance": "Focus on Environmental Science and Air Pollution",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Environmental Science and Air Pollution (07:15 PM - 08:15 PM)",
+                    "Break - 15 min",
+                    "Practice Environmental Science and Air Pollution (08:30 PM - 09:00 PM)",
+                    "Break - 15 min",
+                    "Review Environmental Science and Air Pollution (09:15 PM - 09:30 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry",
+                "Guidance": "Focus on Electrochemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Electrochemistry (05:00 PM - 06:00 PM)",
+                    "Break - 15 min",
+                    "Practice Electrochemistry (06:15 PM - 06:45 PM)",
+                    "Break - 15 min",
+                    "Review Electrochemistry (07:00 PM - 07:15 PM)"
+                ],
+                "Date": "2025-10-18",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry / Galvanic Cells",
+                "Guidance": "Focus on Electrochemistry / Galvanic Cells",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Electrochemistry / Galvanic Cells (07:15 PM - 08:15 PM)",
+                    "Break - 15 min",
+                    "Practice Electrochemistry / Galvanic Cells (08:30 PM - 09:00 PM)",
+                    "Break - 15 min",
+                    "Review Electrochemistry / Galvanic Cells (09:15 PM - 09:30 PM)"
+                ],
+                "Date": "2025-10-18",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 3,
+                "Topic": "Chemical Safety",
+                "Guidance": "Focus on Chemical Safety",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Safety (05:00 PM - 06:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Safety (06:15 PM - 06:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Safety (07:00 PM - 07:15 PM)"
+                ],
+                "Date": "2025-10-19",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 3,
+                "Topic": "Environmental Chemistry",
+                "Guidance": "Focus on Environmental Chemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            }
+        ],
+        "completed_days": {
+            "1": false,
+            "2": false,
+            "3": false
+        },
+        "total_study_time_minutes": 525
+    },
+    {
+        "timestamp": "2025-10-16 12-03-37",
+        "weights": [
+            {
+                "topic": "Chemical Nomenclature",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Science and Air Pollution",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry / Galvanic Cells",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Chemical Safety",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Chemistry",
+                "weight": 50,
+                "resources": []
+            }
+        ],
+        "plan": [
+            {
+                "Day": 1,
+                "Topic": "Chemical Nomenclature",
+                "Guidance": "Focus on Chemical Nomenclature",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Nomenclature (05:00 PM - 06:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Nomenclature (06:15 PM - 06:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Nomenclature (07:00 PM - 07:15 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 1,
+                "Topic": "Environmental Science and Air Pollution",
+                "Guidance": "Focus on Environmental Science and Air Pollution",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Environmental Science and Air Pollution (07:15 PM - 08:15 PM)",
+                    "Break - 15 min",
+                    "Practice Environmental Science and Air Pollution (08:30 PM - 09:00 PM)",
+                    "Break - 15 min",
+                    "Review Environmental Science and Air Pollution (09:15 PM - 09:30 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry",
+                "Guidance": "Focus on Electrochemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Electrochemistry (05:00 PM - 06:00 PM)",
+                    "Break - 15 min",
+                    "Practice Electrochemistry (06:15 PM - 06:45 PM)",
+                    "Break - 15 min",
+                    "Review Electrochemistry (07:00 PM - 07:15 PM)"
+                ],
+                "Date": "2025-10-18",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry / Galvanic Cells",
+                "Guidance": "Focus on Electrochemistry / Galvanic Cells",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Electrochemistry / Galvanic Cells (07:15 PM - 08:15 PM)",
+                    "Break - 15 min",
+                    "Practice Electrochemistry / Galvanic Cells (08:30 PM - 09:00 PM)",
+                    "Break - 15 min",
+                    "Review Electrochemistry / Galvanic Cells (09:15 PM - 09:30 PM)"
+                ],
+                "Date": "2025-10-18",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 3,
+                "Topic": "Chemical Safety",
+                "Guidance": "Focus on Chemical Safety",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Safety (05:00 PM - 06:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Safety (06:15 PM - 06:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Safety (07:00 PM - 07:15 PM)"
+                ],
+                "Date": "2025-10-19",
+                "AvailableTime": "Evening (05:00PM)"
+            },
+            {
+                "Day": 3,
+                "Topic": "Environmental Chemistry",
+                "Guidance": "Focus on Environmental Chemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Environmental Chemistry (07:15 PM - 08:15 PM)",
+                    "Break - 15 min",
+                    "Practice Environmental Chemistry (08:30 PM - 09:00 PM)",
+                    "Break - 15 min",
+                    "Review Environmental Chemistry (09:15 PM - 09:30 PM)"
+                ],
+                "Date": "2025-10-19",
+                "AvailableTime": "Evening (05:00PM)"
+            }
+        ],
+        "completed_days": {
+            "1": false,
+            "2": false,
+            "3": false
+        },
+        "total_study_time_minutes": 630
+    },
+    {
+        "timestamp": "2025-10-16 12-13-09",
+        "weights": [
+            {
+                "topic": "Chemical Nomenclature",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Science and Air Pollution",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry / Galvanic Cells",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Chemical Safety",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Chemistry",
+                "weight": 50,
+                "resources": []
+            }
+        ],
+        "plan": [
+            {
+                "Day": 1,
+                "Topic": "Chemical Nomenclature",
+                "Guidance": "Focus on Chemical Nomenclature",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Nomenclature (09:00 PM - 10:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Nomenclature (10:15 PM - 10:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Nomenclature (11:00 PM - 11:15 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 1,
+                "Topic": "Environmental Science and Air Pollution",
+                "Guidance": "Focus on Environmental Science and Air Pollution",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry",
+                "Guidance": "Focus on Electrochemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry / Galvanic Cells",
+                "Guidance": "Focus on Electrochemistry / Galvanic Cells",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 3,
+                "Topic": "Chemical Safety",
+                "Guidance": "Focus on Chemical Safety",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 4,
+                "Topic": "Environmental Chemistry",
+                "Guidance": "Focus on Environmental Chemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            }
+        ],
+        "completed_days": {
+            "1": false,
+            "2": false,
+            "3": false,
+            "4": false
+        },
+        "total_study_time_minutes": 105
+    },
+    {
+        "timestamp": "2025-10-16 12-13-09",
+        "weights": [
+            {
+                "topic": "Chemical Nomenclature",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Science and Air Pollution",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry / Galvanic Cells",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Chemical Safety",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Chemistry",
+                "weight": 50,
+                "resources": []
+            }
+        ],
+        "plan": [
+            {
+                "Day": 1,
+                "Topic": "Chemical Nomenclature",
+                "Guidance": "Focus on Chemical Nomenclature",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Nomenclature (09:00 PM - 10:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Nomenclature (10:15 PM - 10:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Nomenclature (11:00 PM - 11:15 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 1,
+                "Topic": "Environmental Science and Air Pollution",
+                "Guidance": "Focus on Environmental Science and Air Pollution",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Environmental Science and Air Pollution (11:15 PM - 12:15 AM)",
+                    "Break - 15 min",
+                    "Practice Environmental Science and Air Pollution (12:30 AM - 01:00 AM)",
+                    "Break - 15 min",
+                    "Review Environmental Science and Air Pollution (01:15 AM - 01:30 AM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry",
+                "Guidance": "Focus on Electrochemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry / Galvanic Cells",
+                "Guidance": "Focus on Electrochemistry / Galvanic Cells",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 3,
+                "Topic": "Chemical Safety",
+                "Guidance": "Focus on Chemical Safety",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 4,
+                "Topic": "Environmental Chemistry",
+                "Guidance": "Focus on Environmental Chemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            }
+        ],
+        "completed_days": {
+            "1": false,
+            "2": false,
+            "3": false,
+            "4": false
+        },
+        "total_study_time_minutes": 210
+    },
+    {
+        "timestamp": "2025-10-16 12-13-09",
+        "weights": [
+            {
+                "topic": "Chemical Nomenclature",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Science and Air Pollution",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry / Galvanic Cells",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Chemical Safety",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Chemistry",
+                "weight": 50,
+                "resources": []
+            }
+        ],
+        "plan": [
+            {
+                "Day": 1,
+                "Topic": "Chemical Nomenclature",
+                "Guidance": "Focus on Chemical Nomenclature",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Nomenclature (09:00 PM - 10:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Nomenclature (10:15 PM - 10:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Nomenclature (11:00 PM - 11:15 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 1,
+                "Topic": "Environmental Science and Air Pollution",
+                "Guidance": "Focus on Environmental Science and Air Pollution",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Environmental Science and Air Pollution (11:15 PM - 12:15 AM)",
+                    "Break - 15 min",
+                    "Practice Environmental Science and Air Pollution (12:30 AM - 01:00 AM)",
+                    "Break - 15 min",
+                    "Review Environmental Science and Air Pollution (01:15 AM - 01:30 AM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry",
+                "Guidance": "Focus on Electrochemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Electrochemistry (09:00 PM - 10:00 PM)",
+                    "Break - 15 min",
+                    "Practice Electrochemistry (10:15 PM - 10:45 PM)",
+                    "Break - 15 min",
+                    "Review Electrochemistry (11:00 PM - 11:15 PM)"
+                ],
+                "Date": "2025-10-18",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry / Galvanic Cells",
+                "Guidance": "Focus on Electrochemistry / Galvanic Cells",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 3,
+                "Topic": "Chemical Safety",
+                "Guidance": "Focus on Chemical Safety",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 4,
+                "Topic": "Environmental Chemistry",
+                "Guidance": "Focus on Environmental Chemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            }
+        ],
+        "completed_days": {
+            "1": false,
+            "2": false,
+            "3": false,
+            "4": false
+        },
+        "total_study_time_minutes": 315
+    },
+    {
+        "timestamp": "2025-10-16 12-13-09",
+        "weights": [
+            {
+                "topic": "Chemical Nomenclature",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Science and Air Pollution",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry / Galvanic Cells",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Chemical Safety",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Chemistry",
+                "weight": 50,
+                "resources": []
+            }
+        ],
+        "plan": [
+            {
+                "Day": 1,
+                "Topic": "Chemical Nomenclature",
+                "Guidance": "Focus on Chemical Nomenclature",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Nomenclature (09:00 PM - 10:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Nomenclature (10:15 PM - 10:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Nomenclature (11:00 PM - 11:15 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 1,
+                "Topic": "Environmental Science and Air Pollution",
+                "Guidance": "Focus on Environmental Science and Air Pollution",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Environmental Science and Air Pollution (11:15 PM - 12:15 AM)",
+                    "Break - 15 min",
+                    "Practice Environmental Science and Air Pollution (12:30 AM - 01:00 AM)",
+                    "Break - 15 min",
+                    "Review Environmental Science and Air Pollution (01:15 AM - 01:30 AM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry",
+                "Guidance": "Focus on Electrochemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Electrochemistry (09:00 PM - 10:00 PM)",
+                    "Break - 15 min",
+                    "Practice Electrochemistry (10:15 PM - 10:45 PM)",
+                    "Break - 15 min",
+                    "Review Electrochemistry (11:00 PM - 11:15 PM)"
+                ],
+                "Date": "2025-10-18",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry / Galvanic Cells",
+                "Guidance": "Focus on Electrochemistry / Galvanic Cells",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Electrochemistry / Galvanic Cells (11:15 PM - 12:15 AM)",
+                    "Break - 15 min",
+                    "Practice Electrochemistry / Galvanic Cells (12:30 AM - 01:00 AM)",
+                    "Break - 15 min",
+                    "Review Electrochemistry / Galvanic Cells (01:15 AM - 01:30 AM)"
+                ],
+                "Date": "2025-10-18",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 3,
+                "Topic": "Chemical Safety",
+                "Guidance": "Focus on Chemical Safety",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            },
+            {
+                "Day": 4,
+                "Topic": "Environmental Chemistry",
+                "Guidance": "Focus on Environmental Chemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            }
+        ],
+        "completed_days": {
+            "1": false,
+            "2": false,
+            "3": false,
+            "4": false
+        },
+        "total_study_time_minutes": 420
+    },
+    {
+        "timestamp": "2025-10-16 12-13-09",
+        "weights": [
+            {
+                "topic": "Chemical Nomenclature",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Science and Air Pollution",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry / Galvanic Cells",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Chemical Safety",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Chemistry",
+                "weight": 50,
+                "resources": []
+            }
+        ],
+        "plan": [
+            {
+                "Day": 1,
+                "Topic": "Chemical Nomenclature",
+                "Guidance": "Focus on Chemical Nomenclature",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Nomenclature (09:00 PM - 10:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Nomenclature (10:15 PM - 10:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Nomenclature (11:00 PM - 11:15 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 1,
+                "Topic": "Environmental Science and Air Pollution",
+                "Guidance": "Focus on Environmental Science and Air Pollution",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Environmental Science and Air Pollution (11:15 PM - 12:15 AM)",
+                    "Break - 15 min",
+                    "Practice Environmental Science and Air Pollution (12:30 AM - 01:00 AM)",
+                    "Break - 15 min",
+                    "Review Environmental Science and Air Pollution (01:15 AM - 01:30 AM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry",
+                "Guidance": "Focus on Electrochemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Electrochemistry (09:00 PM - 10:00 PM)",
+                    "Break - 15 min",
+                    "Practice Electrochemistry (10:15 PM - 10:45 PM)",
+                    "Break - 15 min",
+                    "Review Electrochemistry (11:00 PM - 11:15 PM)"
+                ],
+                "Date": "2025-10-18",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry / Galvanic Cells",
+                "Guidance": "Focus on Electrochemistry / Galvanic Cells",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Electrochemistry / Galvanic Cells (11:15 PM - 12:15 AM)",
+                    "Break - 15 min",
+                    "Practice Electrochemistry / Galvanic Cells (12:30 AM - 01:00 AM)",
+                    "Break - 15 min",
+                    "Review Electrochemistry / Galvanic Cells (01:15 AM - 01:30 AM)"
+                ],
+                "Date": "2025-10-18",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 3,
+                "Topic": "Chemical Safety",
+                "Guidance": "Focus on Chemical Safety",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Safety (09:00 PM - 10:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Safety (10:15 PM - 10:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Safety (11:00 PM - 11:15 PM)"
+                ],
+                "Date": "2025-10-19",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 4,
+                "Topic": "Environmental Chemistry",
+                "Guidance": "Focus on Environmental Chemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": []
+            }
+        ],
+        "completed_days": {
+            "1": false,
+            "2": false,
+            "3": false,
+            "4": false
+        },
+        "total_study_time_minutes": 525
+    },
+    {
+        "timestamp": "2025-10-16 12-13-09",
+        "weights": [
+            {
+                "topic": "Chemical Nomenclature",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Science and Air Pollution",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Electrochemistry / Galvanic Cells",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Chemical Safety",
+                "weight": 50,
+                "resources": []
+            },
+            {
+                "topic": "Environmental Chemistry",
+                "weight": 50,
+                "resources": []
+            }
+        ],
+        "plan": [
+            {
+                "Day": 1,
+                "Topic": "Chemical Nomenclature",
+                "Guidance": "Focus on Chemical Nomenclature",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Nomenclature (09:00 PM - 10:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Nomenclature (10:15 PM - 10:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Nomenclature (11:00 PM - 11:15 PM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 1,
+                "Topic": "Environmental Science and Air Pollution",
+                "Guidance": "Focus on Environmental Science and Air Pollution",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Environmental Science and Air Pollution (11:15 PM - 12:15 AM)",
+                    "Break - 15 min",
+                    "Practice Environmental Science and Air Pollution (12:30 AM - 01:00 AM)",
+                    "Break - 15 min",
+                    "Review Environmental Science and Air Pollution (01:15 AM - 01:30 AM)"
+                ],
+                "Date": "2025-10-17",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry",
+                "Guidance": "Focus on Electrochemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Electrochemistry (09:00 PM - 10:00 PM)",
+                    "Break - 15 min",
+                    "Practice Electrochemistry (10:15 PM - 10:45 PM)",
+                    "Break - 15 min",
+                    "Review Electrochemistry (11:00 PM - 11:15 PM)"
+                ],
+                "Date": "2025-10-18",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 2,
+                "Topic": "Electrochemistry / Galvanic Cells",
+                "Guidance": "Focus on Electrochemistry / Galvanic Cells",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Electrochemistry / Galvanic Cells (11:15 PM - 12:15 AM)",
+                    "Break - 15 min",
+                    "Practice Electrochemistry / Galvanic Cells (12:30 AM - 01:00 AM)",
+                    "Break - 15 min",
+                    "Review Electrochemistry / Galvanic Cells (01:15 AM - 01:30 AM)"
+                ],
+                "Date": "2025-10-18",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 3,
+                "Topic": "Chemical Safety",
+                "Guidance": "Focus on Chemical Safety",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Chemical Safety (09:00 PM - 10:00 PM)",
+                    "Break - 15 min",
+                    "Practice Chemical Safety (10:15 PM - 10:45 PM)",
+                    "Break - 15 min",
+                    "Review Chemical Safety (11:00 PM - 11:15 PM)"
+                ],
+                "Date": "2025-10-19",
+                "AvailableTime": "Night (09:00PM)"
+            },
+            {
+                "Day": 4,
+                "Topic": "Environmental Chemistry",
+                "Guidance": "Focus on Environmental Chemistry",
+                "ScheduleMinutes": {
+                    "Learn": 60,
+                    "Practice": 30,
+                    "Review": 15
+                },
+                "Resources": [],
+                "Schedule": [
+                    "Learn Environmental Chemistry (09:00 PM - 10:00 PM)",
+                    "Break - 15 min",
+                    "Practice Environmental Chemistry (10:15 PM - 10:45 PM)",
+                    "Break - 15 min",
+                    "Review Environmental Chemistry (11:00 PM - 11:15 PM)"
+                ],
+                "Date": "2025-10-20",
+                "AvailableTime": "Night (09:00PM)"
+            }
+        ],
+        "completed_days": {
+            "1": false,
+            "2": false,
+            "3": false,
+            "4": false
+        },
+        "total_study_time_minutes": 630
+    }
+]
