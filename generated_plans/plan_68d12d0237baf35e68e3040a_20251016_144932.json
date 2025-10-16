@@ -1,0 +1,218 @@
+[
+    {
+        "Day": 1,
+        "Topic": "Chemical Nomenclature",
+        "Guidance": "Focus on Chemical Nomenclature",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "How to Name Chemicals Made Easy",
+                "url": "https://www.youtube.com/watch?v=xSBYpaRze3Y",
+                "type": "video"
+            },
+            {
+                "title": "Nomenclature: Crash Course Chemistry #44",
+                "url": "https://www.youtube.com/watch?v=U7wavimfNFE",
+                "type": "video"
+            },
+            {
+                "title": "Naming Ionic Compounds",
+                "url": "https://www.youtube.com/watch?v=mKo72RnN37E",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Chemical Nomenclature (05:00 PM - 06:00 PM)",
+            "Break - 15 min",
+            "Practice Chemical Nomenclature (06:15 PM - 06:45 PM)",
+            "Break - 15 min",
+            "Review Chemical Nomenclature (07:00 PM - 07:15 PM)"
+        ],
+        "Date": "2025-10-16",
+        "AvailableTime": "Evening (05:00PM)"
+    },
+    {
+        "Day": 1,
+        "Topic": "Environmental Science and Air Pollution",
+        "Guidance": "Focus on Environmental Science and Air Pollution",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "Indoor air pollutants| Atmospheric pollution| AP Environmental science| Khan Academy",
+                "url": "https://www.youtube.com/watch?v=nqRPRwO79kg",
+                "type": "video"
+            },
+            {
+                "title": "Air Pollution",
+                "url": "https://www.youtube.com/watch?v=_dTtvtlct9k",
+                "type": "video"
+            },
+            {
+                "title": "Air pollution 101- Breathing deadly air",
+                "url": "https://www.youtube.com/watch?v=Tds3k97aAzo",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Environmental Science and Air Pollution (07:15 PM - 08:15 PM)",
+            "Break - 15 min",
+            "Practice Environmental Science and Air Pollution (08:30 PM - 09:00 PM)",
+            "Break - 15 min",
+            "Review Environmental Science and Air Pollution (09:15 PM - 09:30 PM)"
+        ],
+        "Date": "2025-10-16",
+        "AvailableTime": "Evening (05:00PM)"
+    },
+    {
+        "Day": 1,
+        "Topic": "Electrochemistry",
+        "Guidance": "Focus on Electrochemistry",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "Introduction to Electrochemistry",
+                "url": "https://www.youtube.com/watch?v=teTkvUtW4SA",
+                "type": "video"
+            },
+            {
+                "title": "Electrochemistry: Crash Course Chemistry #36",
+                "url": "https://www.youtube.com/watch?v=IV4IUsholjg",
+                "type": "video"
+            },
+            {
+                "title": "Electrochemistry Review - Cell Potential &amp; Notation, Redox Half Reactions, Nernst Equation",
+                "url": "https://www.youtube.com/watch?v=ImV8LyujjqY",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Electrochemistry (09:30 PM - 10:30 PM)",
+            "Break - 15 min",
+            "Practice Electrochemistry (10:45 PM - 11:15 PM)",
+            "Break - 15 min",
+            "Review Electrochemistry (11:30 PM - 11:45 PM)"
+        ],
+        "Date": "2025-10-16",
+        "AvailableTime": "Evening (05:00PM)"
+    },
+    {
+        "Day": 1,
+        "Topic": "Electrochemistry / Galvanic Cells",
+        "Guidance": "Focus on Electrochemistry / Galvanic Cells",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "Introduction to Galvanic Cells &amp; Voltaic Cells",
+                "url": "https://www.youtube.com/watch?v=9blB-uMTIAM",
+                "type": "video"
+            },
+            {
+                "title": "Galvanic Cells (Voltaic Cells)",
+                "url": "https://www.youtube.com/watch?v=7b34XYgADlM",
+                "type": "video"
+            },
+            {
+                "title": "Galvanic cells explained -in UNDER 5 MINUTES.",
+                "url": "https://www.youtube.com/watch?v=8SxnCZbXYI4",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Electrochemistry / Galvanic Cells (11:45 PM - 12:45 AM)",
+            "Break - 15 min",
+            "Practice Electrochemistry / Galvanic Cells (01:00 AM - 01:30 AM)",
+            "Break - 15 min",
+            "Review Electrochemistry / Galvanic Cells (01:45 AM - 02:00 AM)"
+        ],
+        "Date": "2025-10-16",
+        "AvailableTime": "Evening (05:00PM)"
+    },
+    {
+        "Day": 1,
+        "Topic": "Chemical Safety",
+        "Guidance": "Focus on Chemical Safety",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "From Chemical Safety Rules to Risk Management | ACS College Safety Video #1",
+                "url": "https://www.youtube.com/watch?v=DWSymRPCDN4",
+                "type": "video"
+            },
+            {
+                "title": "Chemical Safety Training from SafetyVideos.com",
+                "url": "https://www.youtube.com/watch?v=-ErKlBxEP8Q",
+                "type": "video"
+            },
+            {
+                "title": "Working Safely with Chemicals",
+                "url": "https://www.youtube.com/watch?v=LqfHVWr-r28",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Chemical Safety (02:00 AM - 03:00 AM)",
+            "Break - 15 min",
+            "Practice Chemical Safety (03:15 AM - 03:45 AM)",
+            "Break - 15 min",
+            "Review Chemical Safety (04:00 AM - 04:15 AM)"
+        ],
+        "Date": "2025-10-16",
+        "AvailableTime": "Evening (05:00PM)"
+    },
+    {
+        "Day": 1,
+        "Topic": "Environmental Chemistry",
+        "Guidance": "Focus on Environmental Chemistry",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "Acid Rain | Environmental Chemistry | Chemistry | FuseSchool",
+                "url": "https://www.youtube.com/watch?v=Nf8cuvl62Vc",
+                "type": "video"
+            },
+            {
+                "title": "what is Environmental chemistry",
+                "url": "https://www.youtube.com/watch?v=ajBSsw7VOzk",
+                "type": "video"
+            },
+            {
+                "title": "What Is Water Pollution | Environmental Chemistry | Chemistry | FuseSchool",
+                "url": "https://www.youtube.com/watch?v=Zk1J2EW-nmQ",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Environmental Chemistry (04:15 AM - 05:15 AM)",
+            "Break - 15 min",
+            "Practice Environmental Chemistry (05:30 AM - 06:00 AM)",
+            "Break - 15 min",
+            "Review Environmental Chemistry (06:15 AM - 06:30 AM)"
+        ],
+        "Date": "2025-10-16",
+        "AvailableTime": "Evening (05:00PM)"
+    }
+]

@@ -13,7 +13,7 @@ The system is composed of three AI agents:
 
 | Agent | Role | Core Functions |
 |-------|------|----------------|
-| **Planner Agent** | Generates personalized study plans | Personalized Plans for 7 days, allow study time monitoring and adapts plans based on individual progress|
+| **Planner Agent** | Generates personalized study plans based on exam date | Personalized Plans for user preferences |display total study minutes|download personal plan
 | **Quiz Generator Agent(LLM Service)** | Creates quizzes based on topics & difficulty | •Generates multiple-choice questions dynamically using the dataset and the Gemini API  <br><br> •Can generate quizzes of varying difficulty levels depending on the plan from the Planner Agent.|
 | **Performance Tracker Agent** | Evaluates student performance, provides feedback, and informs adaptive study plans |• Use performance data to monitor which areas need to be improved.<br> • Generates AI-based explanations for wrong answers using LLM. <br> • Identifies weak topics <br> • Maintains historical performance data in MongoDB. <br> • Sends performance insights to Planner Agent to adjust upcoming study plans adaptively. |
 
@@ -96,8 +96,8 @@ flowchart TD
 
 **Functions:**
 - Use performance data to monitor which areas need to be improved. 
-- Generate a 7 day personalized study plan with resources based on user's performance. (Learn/Practice/Review method)
-- Allow users to save a plan once generated, monitor their study time and mark completion status for each day.
+- Generate a personalized study plan with resources based on user's performance. (Learn/Practice/Review method)
+- Allow users to save a plan once generated, calculate total study time within a plan and mark completion status for each day.
 - Provide a plan download option if necessary.
 - Sends user performance data to quiz agent
 
