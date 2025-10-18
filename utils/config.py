@@ -4,10 +4,14 @@ Configuration settings for the Adaptive Exam Preparation AI
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 from pymongo import MongoClient
 import streamlit as st
 import socket
+
+# Load environment variables from .env file
+load_dotenv()
 
 # ==============================
 # Base directory
@@ -17,11 +21,10 @@ BASE_DIR = Path(__file__).parent.parent
 # ==============================
 # MongoDB Settings
 # ==============================
-# MongoDB Connection URL
-MONGODB_URL = os.getenv(
-    "MONGODB_URL",
-    "mongodb+srv://lithi0301:1XXDdlzvPBQvNaJo@adaptive-exam-preparati.o5h3ewc.mongodb.net/?retryWrites=true&w=majority&appName=Adaptive-Exam-Preparation-AI&ssl=true"
-)
+# MongoDB Connection URL - loaded from .env file
+MONGODB_URL = os.getenv("MONGODB_URL")
+if not MONGODB_URL:
+    raise ValueError("MONGODB_URL environment variable is required. Please set it in your .env file.")
 
 DATABASE_NAME = os.getenv("DATABASE_NAME", "adaptive_exam_prep_ai")
 
@@ -106,7 +109,9 @@ def get_database():
 # Other App Settings
 # ==============================
 SESSION_EXPIRY_HOURS = 24
-SESSION_SECRET_KEY = os.getenv("SESSION_SECRET_KEY", "your-secret-key-change-this")
+SESSION_SECRET_KEY = os.getenv("SESSION_SECRET_KEY")
+if not SESSION_SECRET_KEY:
+    raise ValueError("SESSION_SECRET_KEY environment variable is required. Please set it in your .env file.")
 
 PASSWORD_MIN_LENGTH = 8
 BCRYPT_ROUNDS = 12
