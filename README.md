@@ -217,9 +217,10 @@ flowchart TD
 * Provide partial success handling—return results even if DB write fails.
 
 
-##  6️⃣ Commercialization Plan
+## 6️⃣ Commercialization Plan
 
-| **Component**             | **Details** |
-| ------------------------- | ----------- |
-| **Pricing Model**         | **Freemium + Subscription** <br>• **Free tier:** Users can take a limited number of quizzes per day and receive basic feedback on performance. This allows students to explore the platform without any cost and encourages engagement. <br>• **Premium tier (300LKR/month or 40000LKR/year):** Provides unlimited quizzes, detailed AI-generated explanations for wrong answers, personalized adaptive study plans, and advanced performance analytics. The subscription ensures continuous learning and access to all advanced features. |
-| **Target Users / Market** | **Primary Users:** Undergraduate students preparing for IT, engineering, or other professional exams who need structured and adaptive study support. <br>**Secondary Users:** Teachers, tutoring centers, and educational institutions that want to monitor student performance, generate quizzes automatically, and offer personalized learning paths. These users benefit from scalable and automated AI-driven tools for student management and academic improvement. |
+| **Component** | **Details** |
+| -------------- | ----------- |
+| **Pricing Model** | **Freemium + Subscription** <br><br> **• Free Tier:** Users can take quizzes with up to **10 questions per quiz** and view a **limited quiz history** (only the latest 3 quizzes). This tier allows students to explore the platform, test its core features, and stay engaged at no cost. Advanced planner tools and AI-generated explanations are not available in this tier. <br><br> **• Premium Tier (300 LKR/month or 4000 LKR/year):** Offers up to **20 questions per quiz**, **unlimited quiz history** (view all past quizzes), access to the **AI-powered planner feature** for advanced study scheduling, and **AI-generated explanations** for all questions and answers. Users can review their complete quiz history, including correct answers and responses, ensuring a personalized and continuous learning experience. |
+| **Target Users / Market** | **Primary Users:** Undergraduate students preparing for **IT, engineering, and other professional exams** who need structured and adaptive study support to improve performance. <br><br> **Secondary Users:** Teachers, tutoring centers, and educational institutions seeking tools to automatically generate quizzes, monitor student performance, and provide personalized learning paths. These users benefit from **AI-driven automation**, scalable student management, and data-based academic insights. |
+
