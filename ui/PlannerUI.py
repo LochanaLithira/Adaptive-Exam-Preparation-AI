@@ -59,8 +59,8 @@ def show_premium_gate():
         <div class="premium-badge"> PREMIUM FEATURE</div>
         <h1 style="color: white; margin-bottom: 1rem;">Study Planner</h1>
         <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 2rem;">
-            Unlock the Study Planner to create personalized learning schedules, track your progress, 
-            and optimize your study time with AI-powered recommendations.
+            Unlock the Study Planner to create personalized learning schedules, 
+            and optimize your study time with smart planning features.
         </p>
     </div>""", unsafe_allow_html=True)
     
@@ -70,35 +70,46 @@ def show_premium_gate():
     with col1:
         st.markdown("""
         <div class="feature-card">
-            <h3 style="color: #e2e8f0;"> Study Schedule</h3>
-            <p style="color: rgba(255,255,255,0.7);">Create custom study plans tailored to your goals</p>
+            <h3 style="color: #e2e8f0;"> Exam-Based Study Plan</h3>
+            <p style="color: rgba(255,255,255,0.7);">
+                Enter your <b>exam date</b> and get a personalized schedule that guides your study journey 
+                <b>day-by-day until the exam</b>.
+            </p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
         <div class="feature-card">
-            <h3 style="color: #e2e8f0;"> AI Recommendations</h3>
-            <p style="color: rgba(255,255,255,0.7);">Get personalized study suggestions</p>
+            <h3 style="color: #e2e8f0;"> Personalized Study Hours</h3>
+            <p style="color: rgba(255,255,255,0.7);">
+                Set your <b>preferred daily study time</b> and receive plans that automatically 
+                fit into your routine
+            </p>
         </div>
         """, unsafe_allow_html=True)
-        
+
     with col2:
         st.markdown("""
         <div class="feature-card">
-            <h3 style="color: #e2e8f0;"> Goal Setting</h3>
-            <p style="color: rgba(255,255,255,0.7);">Set and track your learning objectives</p>
+            <h3 style="color: #e2e8f0;"> Smart Goal & Weak Area Tracking</h3>
+            <p style="color: rgba(255,255,255,0.7);">
+                Plans are tailored to your <b>weak areas</b> and designed to help you see 
+                measurable improvement through continuous feedback.
+            </p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
         <div class="feature-card">
-            <h3 style="color: #e2e8f0;"> Progress Tracking</h3>
-            <p style="color: rgba(255,255,255,0.7);">Visualize your learning journey</p>
+            <h3 style="color: #e2e8f0;"> Auto Plan Saving & Progress Summary</h3>
+            <p style="color: rgba(255,255,255,0.7);">
+                Every plan is <b>automatically saved</b> with details like <b>total study hours</b> 
+                shown below saved plans. Download your plans anytime for easy access.
+            </p>
         </div>
-        """,
-        unsafe_allow_html=True
-    )
-    
+        """, unsafe_allow_html=True)
+
+        
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         if st.button(" Upgrade to Premium", type="primary", use_container_width=True):
