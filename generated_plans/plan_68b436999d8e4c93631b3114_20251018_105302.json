@@ -1,0 +1,418 @@
+[
+    {
+        "Day": 1,
+        "Topic": "Tokenization and Term Normalization\nWhich of the following statements accurately describes the *initial* tokenization and subsequent normalization process, according to the principles of Information Retrieval discussed?",
+        "Guidance": "Focus on Tokenization and Term Normalization\nWhich of the following statements accurately describes the *initial* tokenization and subsequent normalization process, according to the principles of Information Retrieval discussed?",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "GV-Rep: A Large-Scale Dataset for Genetic Variant Representation Learning - ArXiv:2407.1",
+                "url": "https://www.youtube.com/watch?v=fy28ZGvrUMI",
+                "type": "video"
+            },
+            {
+                "title": "AI Weekly Update - February 24th, 2020 (#17)",
+                "url": "https://www.youtube.com/watch?v=hZz95G8sJAs",
+                "type": "video"
+            },
+            {
+                "title": "Data Science - Part XI - Text Analytics",
+                "url": "https://www.youtube.com/watch?v=BXc-m4dO7dU",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Tokenization and Term Normalization\nWhich of the following statements accurately describes the *initial* tokenization and subsequent normalization process, according to the principles of Information Retrieval discussed? (09:00 PM - 10:00 PM)",
+            "Break - 15 min",
+            "Practice Tokenization and Term Normalization\nWhich of the following statements accurately describes the *initial* tokenization and subsequent normalization process, according to the principles of Information Retrieval discussed? (10:15 PM - 10:45 PM)",
+            "Break - 15 min",
+            "Review Tokenization and Term Normalization\nWhich of the following statements accurately describes the *initial* tokenization and subsequent normalization process, according to the principles of Information Retrieval discussed? (11:00 PM - 11:15 PM)"
+        ],
+        "Date": "2025-10-19",
+        "AvailableTime": "Night (09:00PM)"
+    },
+    {
+        "Day": 1,
+        "Topic": "Term Equivalence Classing\nGiven the options for term equivalence classing, which approach, if implemented judiciously, would be most effective in ensuring the system successfully matches the query term \"develops\" with documents containing \"development,\" \"developed,\" or \"developing\"?",
+        "Guidance": "Focus on Term Equivalence Classing\nGiven the options for term equivalence classing, which approach, if implemented judiciously, would be most effective in ensuring the system successfully matches the query term \"develops\" with documents containing \"development,\" \"developed,\" or \"developing\"?",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [],
+        "Schedule": [
+            "Learn Term Equivalence Classing\nGiven the options for term equivalence classing, which approach, if implemented judiciously, would be most effective in ensuring the system successfully matches the query term \"develops\" with documents containing \"development,\" \"developed,\" or \"developing\"? (11:15 PM - 12:15 AM)",
+            "Break - 15 min",
+            "Practice Term Equivalence Classing\nGiven the options for term equivalence classing, which approach, if implemented judiciously, would be most effective in ensuring the system successfully matches the query term \"develops\" with documents containing \"development,\" \"developed,\" or \"developing\"? (12:30 AM - 01:00 AM)",
+            "Break - 15 min",
+            "Review Term Equivalence Classing\nGiven the options for term equivalence classing, which approach, if implemented judiciously, would be most effective in ensuring the system successfully matches the query term \"develops\" with documents containing \"development,\" \"developed,\" or \"developing\"? (01:15 AM - 01:30 AM)"
+        ],
+        "Date": "2025-10-19",
+        "AvailableTime": "Night (09:00PM)"
+    },
+    {
+        "Day": 1,
+        "Topic": "Phrase and Proximity Querying\nWhich of the following indexing strategies, when used either individually or in combination, would provide the most robust and flexible solution for these requirements, and why?",
+        "Guidance": "Focus on Phrase and Proximity Querying\nWhich of the following indexing strategies, when used either individually or in combination, would provide the most robust and flexible solution for these requirements, and why?",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "Chapter-21 Information Retrieval (Crawling and Indexing the Web)",
+                "url": "https://www.youtube.com/watch?v=JTBEcx_bvJA",
+                "type": "video"
+            },
+            {
+                "title": "Pearson BTEC L5-Unit-25-Global Business Environment-Tutorial Session-(SK)",
+                "url": "https://www.youtube.com/watch?v=KPI86CLnfyU",
+                "type": "video"
+            },
+            {
+                "title": "BLI 223 Solved Assignment 2020-21 | Organizing and Managing information | IGNOU Solved Assignment",
+                "url": "https://www.youtube.com/watch?v=7bxBcA5-63Y",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Phrase and Proximity Querying\nWhich of the following indexing strategies, when used either individually or in combination, would provide the most robust and flexible solution for these requirements, and why? (01:30 AM - 02:30 AM)",
+            "Break - 15 min",
+            "Practice Phrase and Proximity Querying\nWhich of the following indexing strategies, when used either individually or in combination, would provide the most robust and flexible solution for these requirements, and why? (02:45 AM - 03:15 AM)",
+            "Break - 15 min",
+            "Review Phrase and Proximity Querying\nWhich of the following indexing strategies, when used either individually or in combination, would provide the most robust and flexible solution for these requirements, and why? (03:30 AM - 03:45 AM)"
+        ],
+        "Date": "2025-10-19",
+        "AvailableTime": "Night (09:00PM)"
+    },
+    {
+        "Day": 2,
+        "Topic": "Application of Cloud Characteristics & NIST Definition",
+        "Guidance": "Focus on Application of Cloud Characteristics & NIST Definition",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "NIST Characteristics - Introduction to Cloud Computing - Cloud Computing and Services",
+                "url": "https://www.youtube.com/watch?v=raXHR3jjSow",
+                "type": "video"
+            },
+            {
+                "title": "5.5 Understanding NIST Definition of Cloud Computing",
+                "url": "https://www.youtube.com/watch?v=RxU5x86NQ_0",
+                "type": "video"
+            },
+            {
+                "title": "Ep 5: The NIST Definition of Cloud",
+                "url": "https://www.youtube.com/watch?v=1rvhMuV9z8k",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Application of Cloud Characteristics & NIST Definition (09:00 PM - 10:00 PM)",
+            "Break - 15 min",
+            "Practice Application of Cloud Characteristics & NIST Definition (10:15 PM - 10:45 PM)",
+            "Break - 15 min",
+            "Review Application of Cloud Characteristics & NIST Definition (11:00 PM - 11:15 PM)"
+        ],
+        "Date": "2025-10-20",
+        "AvailableTime": "Night (09:00PM)"
+    },
+    {
+        "Day": 2,
+        "Topic": "Characteristics of Cloud Computing - Measured Service",
+        "Guidance": "Focus on Characteristics of Cloud Computing - Measured Service",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "Measured service - 5th characteristic of cloud computing",
+                "url": "https://www.youtube.com/watch?v=OZu7gLpWV_c",
+                "type": "video"
+            },
+            {
+                "title": "Cloud Models: Characteristics, Measured Service. Part-1",
+                "url": "https://www.youtube.com/watch?v=i1HL1xImjNE",
+                "type": "video"
+            },
+            {
+                "title": "Cloud Models: Characteristics, Measured Service. Part-2",
+                "url": "https://www.youtube.com/watch?v=l_9exkwxS00",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Characteristics of Cloud Computing - Measured Service (11:15 PM - 12:15 AM)",
+            "Break - 15 min",
+            "Practice Characteristics of Cloud Computing - Measured Service (12:30 AM - 01:00 AM)",
+            "Break - 15 min",
+            "Review Characteristics of Cloud Computing - Measured Service (01:15 AM - 01:30 AM)"
+        ],
+        "Date": "2025-10-20",
+        "AvailableTime": "Night (09:00PM)"
+    },
+    {
+        "Day": 2,
+        "Topic": "NIST Cloud Computing Definition - Rapid Provisioning & Minimal Management",
+        "Guidance": "Focus on NIST Cloud Computing Definition - Rapid Provisioning & Minimal Management",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "Introduction to Cloud Computing | What is Cloud Computing?",
+                "url": "https://www.youtube.com/watch?v=XcQScAOpdko",
+                "type": "video"
+            },
+            {
+                "title": "Domain 1: Cloud Computing Concepts and Architecture - Deployment Models, Security Architecture",
+                "url": "https://www.youtube.com/watch?v=rlEiDmk5UjE",
+                "type": "video"
+            },
+            {
+                "title": "ACP03 - What is Cloud Computing",
+                "url": "https://www.youtube.com/watch?v=TxFB2Jl2J90",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn NIST Cloud Computing Definition - Rapid Provisioning & Minimal Management (01:30 AM - 02:30 AM)",
+            "Break - 15 min",
+            "Practice NIST Cloud Computing Definition - Rapid Provisioning & Minimal Management (02:45 AM - 03:15 AM)",
+            "Break - 15 min",
+            "Review NIST Cloud Computing Definition - Rapid Provisioning & Minimal Management (03:30 AM - 03:45 AM)"
+        ],
+        "Date": "2025-10-20",
+        "AvailableTime": "Night (09:00PM)"
+    },
+    {
+        "Day": 3,
+        "Topic": "Cloud Elasticity (Inferred)",
+        "Guidance": "Focus on Cloud Elasticity (Inferred)",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "Clinically proven stretch mark treatment \u2764\ufe0f",
+                "url": "https://www.youtube.com/watch?v=QymBhxu0qBk",
+                "type": "video"
+            },
+            {
+                "title": "##Vivo 1724 # about phone#short video#daily short video#|",
+                "url": "https://www.youtube.com/watch?v=EA-XN-o_8z4",
+                "type": "video"
+            },
+            {
+                "title": "#golfswing #fyp #waitforit #followthrough",
+                "url": "https://www.youtube.com/watch?v=GwDpY6g5h-Y",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Cloud Elasticity (Inferred) (09:00 PM - 10:00 PM)",
+            "Break - 15 min",
+            "Practice Cloud Elasticity (Inferred) (10:15 PM - 10:45 PM)",
+            "Break - 15 min",
+            "Review Cloud Elasticity (Inferred) (11:00 PM - 11:15 PM)"
+        ],
+        "Date": "2025-10-21",
+        "AvailableTime": "Night (09:00PM)"
+    },
+    {
+        "Day": 3,
+        "Topic": "Characteristics of Cloud Computing - Broad Access",
+        "Guidance": "Focus on Characteristics of Cloud Computing - Broad Access",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "Broad Network Access - 2nd Characteristics of Cloud Computing",
+                "url": "https://www.youtube.com/watch?v=kFY4kQmMXbQ",
+                "type": "video"
+            },
+            {
+                "title": "Cloud Characteristics - Broad Network Access Tutorial",
+                "url": "https://www.youtube.com/watch?v=Fu6_HaqsMSI",
+                "type": "video"
+            },
+            {
+                "title": "Essential Characteristics Of Cloud Computing | Exin Cloud Computing",
+                "url": "https://www.youtube.com/watch?v=FDMrqES3pwo",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Characteristics of Cloud Computing - Broad Access (11:15 PM - 12:15 AM)",
+            "Break - 15 min",
+            "Practice Characteristics of Cloud Computing - Broad Access (12:30 AM - 01:00 AM)",
+            "Break - 15 min",
+            "Review Characteristics of Cloud Computing - Broad Access (01:15 AM - 01:30 AM)"
+        ],
+        "Date": "2025-10-21",
+        "AvailableTime": "Night (09:00PM)"
+    },
+    {
+        "Day": 3,
+        "Topic": "Apriori Principle Application / Candidate Generation",
+        "Guidance": "Focus on Apriori Principle Application / Candidate Generation",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "#2 Solved Example Apriori Algorithm to find Strong Association Rules Data Mining Machine Learning",
+                "url": "https://www.youtube.com/watch?v=zi_ydmbWfAs",
+                "type": "video"
+            },
+            {
+                "title": "#10 Mining Methods - APRIORI algorithm with Example |DM|",
+                "url": "https://www.youtube.com/watch?v=CcaRfwlHyNw",
+                "type": "video"
+            },
+            {
+                "title": "3. Apriori Algorithm | Association Rule Mining | Frequent Item Sets Solved Example by Mahesh Huddar",
+                "url": "https://www.youtube.com/watch?v=wpCeFC8-z-k",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Apriori Principle Application / Candidate Generation (01:30 AM - 02:30 AM)",
+            "Break - 15 min",
+            "Practice Apriori Principle Application / Candidate Generation (02:45 AM - 03:15 AM)",
+            "Break - 15 min",
+            "Review Apriori Principle Application / Candidate Generation (03:30 AM - 03:45 AM)"
+        ],
+        "Date": "2025-10-21",
+        "AvailableTime": "Night (09:00PM)"
+    },
+    {
+        "Day": 4,
+        "Topic": "Apriori Algorithm Candidate Generation",
+        "Guidance": "Focus on Apriori Algorithm Candidate Generation",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "Apriori Algorithm Example | Generate Candidates | Join Step | Prune Step | Frequent Itemsets",
+                "url": "https://www.youtube.com/watch?v=N5puzDs54V8",
+                "type": "video"
+            },
+            {
+                "title": "#2 Solved Example Apriori Algorithm to find Strong Association Rules Data Mining Machine Learning",
+                "url": "https://www.youtube.com/watch?v=zi_ydmbWfAs",
+                "type": "video"
+            },
+            {
+                "title": "3. Apriori Algorithm | Association Rule Mining | Frequent Item Sets Solved Example by Mahesh Huddar",
+                "url": "https://www.youtube.com/watch?v=wpCeFC8-z-k",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Apriori Algorithm Candidate Generation (09:00 PM - 10:00 PM)",
+            "Break - 15 min",
+            "Practice Apriori Algorithm Candidate Generation (10:15 PM - 10:45 PM)",
+            "Break - 15 min",
+            "Review Apriori Algorithm Candidate Generation (11:00 PM - 11:15 PM)"
+        ],
+        "Date": "2025-10-22",
+        "AvailableTime": "Night (09:00PM)"
+    },
+    {
+        "Day": 4,
+        "Topic": "Association Rule Evaluation / Support and Confidence",
+        "Guidance": "Focus on Association Rule Evaluation / Support and Confidence",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "#2 Solved Example Apriori Algorithm to find Strong Association Rules Data Mining Machine Learning",
+                "url": "https://www.youtube.com/watch?v=zi_ydmbWfAs",
+                "type": "video"
+            },
+            {
+                "title": "#1 Solved Example Apriori Algorithm to find Strong Association Rules Data Mining Machine Learning",
+                "url": "https://www.youtube.com/watch?v=C57cQKFJhz8",
+                "type": "video"
+            },
+            {
+                "title": "WEKA: Mining Association Rules and Evaluation",
+                "url": "https://www.youtube.com/watch?v=NJ9StQ54Yrs",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Association Rule Evaluation / Support and Confidence (11:15 PM - 12:15 AM)",
+            "Break - 15 min",
+            "Practice Association Rule Evaluation / Support and Confidence (12:30 AM - 01:00 AM)",
+            "Break - 15 min",
+            "Review Association Rule Evaluation / Support and Confidence (01:15 AM - 01:30 AM)"
+        ],
+        "Date": "2025-10-22",
+        "AvailableTime": "Night (09:00PM)"
+    },
+    {
+        "Day": 4,
+        "Topic": "Apriori Algorithm Parameter Tuning / Impact of Thresholds",
+        "Guidance": "Focus on Apriori Algorithm Parameter Tuning / Impact of Thresholds",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "Data Science - Part VI - Market Basket and Product Recommendation Engines",
+                "url": "https://www.youtube.com/watch?v=898mey_dKSs",
+                "type": "video"
+            },
+            {
+                "title": "Building Apriori and FP-growth Algorithms",
+                "url": "https://www.youtube.com/watch?v=670be9GSiXM",
+                "type": "video"
+            },
+            {
+                "title": "Hierarchical Regression Discontinuity Design: Pursuing Subgroup Treatment Effects - ArXi",
+                "url": "https://www.youtube.com/watch?v=fa0zeGYh5EI",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Apriori Algorithm Parameter Tuning / Impact of Thresholds (01:30 AM - 02:30 AM)",
+            "Break - 15 min",
+            "Practice Apriori Algorithm Parameter Tuning / Impact of Thresholds (02:45 AM - 03:15 AM)",
+            "Break - 15 min",
+            "Review Apriori Algorithm Parameter Tuning / Impact of Thresholds (03:30 AM - 03:45 AM)"
+        ],
+        "Date": "2025-10-22",
+        "AvailableTime": "Night (09:00PM)"
+    }
+]

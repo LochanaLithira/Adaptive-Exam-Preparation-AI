@@ -1,0 +1,146 @@
+[
+    {
+        "Day": 1,
+        "Topic": "Apriori Principle Application / Candidate Generation",
+        "Guidance": "Focus on Apriori Principle Application / Candidate Generation",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "#2 Solved Example Apriori Algorithm to find Strong Association Rules Data Mining Machine Learning",
+                "url": "https://www.youtube.com/watch?v=zi_ydmbWfAs",
+                "type": "video"
+            },
+            {
+                "title": "#10 Mining Methods - APRIORI algorithm with Example |DM|",
+                "url": "https://www.youtube.com/watch?v=CcaRfwlHyNw",
+                "type": "video"
+            },
+            {
+                "title": "3. Apriori Algorithm | Association Rule Mining | Frequent Item Sets Solved Example by Mahesh Huddar",
+                "url": "https://www.youtube.com/watch?v=wpCeFC8-z-k",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Apriori Principle Application / Candidate Generation (08:00 AM - 09:00 AM)",
+            "Break - 15 min",
+            "Practice Apriori Principle Application / Candidate Generation (09:15 AM - 09:45 AM)",
+            "Break - 15 min",
+            "Review Apriori Principle Application / Candidate Generation (10:00 AM - 10:15 AM)"
+        ],
+        "Date": "2025-10-18",
+        "AvailableTime": "Morning (08:00AM)"
+    },
+    {
+        "Day": 1,
+        "Topic": "Apriori Algorithm Candidate Generation",
+        "Guidance": "Focus on Apriori Algorithm Candidate Generation",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "#2 Solved Example Apriori Algorithm to find Strong Association Rules Data Mining Machine Learning",
+                "url": "https://www.youtube.com/watch?v=zi_ydmbWfAs",
+                "type": "video"
+            },
+            {
+                "title": "Apriori Algorithm Example | Generate Candidates | Join Step | Prune Step | Frequent Itemsets",
+                "url": "https://www.youtube.com/watch?v=N5puzDs54V8",
+                "type": "video"
+            },
+            {
+                "title": "3. Apriori Algorithm | Association Rule Mining | Frequent Item Sets Solved Example by Mahesh Huddar",
+                "url": "https://www.youtube.com/watch?v=wpCeFC8-z-k",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Apriori Algorithm Candidate Generation (10:15 AM - 11:15 AM)",
+            "Break - 15 min",
+            "Practice Apriori Algorithm Candidate Generation (11:30 AM - 12:00 PM)",
+            "Break - 15 min",
+            "Review Apriori Algorithm Candidate Generation (12:15 PM - 12:30 PM)"
+        ],
+        "Date": "2025-10-18",
+        "AvailableTime": "Morning (08:00AM)"
+    },
+    {
+        "Day": 1,
+        "Topic": "Association Rule Evaluation / Support and Confidence",
+        "Guidance": "Focus on Association Rule Evaluation / Support and Confidence",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "#2 Solved Example Apriori Algorithm to find Strong Association Rules Data Mining Machine Learning",
+                "url": "https://www.youtube.com/watch?v=zi_ydmbWfAs",
+                "type": "video"
+            },
+            {
+                "title": "#1 Solved Example Apriori Algorithm to find Strong Association Rules Data Mining Machine Learning",
+                "url": "https://www.youtube.com/watch?v=C57cQKFJhz8",
+                "type": "video"
+            },
+            {
+                "title": "WEKA: Mining Association Rules and Evaluation",
+                "url": "https://www.youtube.com/watch?v=NJ9StQ54Yrs",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Association Rule Evaluation / Support and Confidence (12:30 PM - 01:30 PM)",
+            "Break - 15 min",
+            "Practice Association Rule Evaluation / Support and Confidence (01:45 PM - 02:15 PM)",
+            "Break - 15 min",
+            "Review Association Rule Evaluation / Support and Confidence (02:30 PM - 02:45 PM)"
+        ],
+        "Date": "2025-10-18",
+        "AvailableTime": "Morning (08:00AM)"
+    },
+    {
+        "Day": 1,
+        "Topic": "Apriori Algorithm Parameter Tuning / Impact of Thresholds",
+        "Guidance": "Focus on Apriori Algorithm Parameter Tuning / Impact of Thresholds",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 30,
+            "Review": 15
+        },
+        "Resources": [
+            {
+                "title": "Data Science - Part VI - Market Basket and Product Recommendation Engines",
+                "url": "https://www.youtube.com/watch?v=898mey_dKSs",
+                "type": "video"
+            },
+            {
+                "title": "Building Apriori and FP-growth Algorithms",
+                "url": "https://www.youtube.com/watch?v=670be9GSiXM",
+                "type": "video"
+            },
+            {
+                "title": "Hierarchical Regression Discontinuity Design: Pursuing Subgroup Treatment Effects - ArXi",
+                "url": "https://www.youtube.com/watch?v=fa0zeGYh5EI",
+                "type": "video"
+            }
+        ],
+        "Schedule": [
+            "Learn Apriori Algorithm Parameter Tuning / Impact of Thresholds (02:45 PM - 03:45 PM)",
+            "Break - 15 min",
+            "Practice Apriori Algorithm Parameter Tuning / Impact of Thresholds (04:00 PM - 04:30 PM)",
+            "Break - 15 min",
+            "Review Apriori Algorithm Parameter Tuning / Impact of Thresholds (04:45 PM - 05:00 PM)"
+        ],
+        "Date": "2025-10-18",
+        "AvailableTime": "Morning (08:00AM)"
+    }
+]

@@ -121,7 +121,9 @@ class AuthManager:
                 "full_name": full_name or username,
                 "created_at": datetime.now(),
                 "is_active": True,
-                "last_login": None
+                "last_login": None,
+                "subscription_type": "free",  # Default to free subscription
+                "subscription_changed_date": datetime.now()
             }
             
             # Insert user

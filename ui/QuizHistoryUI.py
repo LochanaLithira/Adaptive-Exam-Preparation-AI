@@ -13,9 +13,84 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from security.auth import login_required, init_session_state
 from ui.icons import get_svg_icon
 from utils.config import get_database, COLLECTIONS
+from utils.subscription import is_current_user_premium
 
 # CSS Constants for styling
 GLASS_CARD_STYLE = "background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%); border-radius: 15px; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0,0,0,0.1); transition: all 0.3s ease; margin-bottom: 1rem;"
+
+def show_premium_gate():
+    """Show premium feature gate for Complete Quiz History"""
+    # Add custom CSS
+    st.markdown(
+        """
+        <style>
+        .premium-container {
+            background: linear-gradient(135deg, rgba(16, 24, 39, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            margin: 1rem 0;
+            text-align: center;
+        }
+        .premium-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 0.5rem 0;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            height: 90%;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    # Main premium container
+    st.markdown("""<div class="premium-container">
+        <div class="premium-badge"> PREMIUM FEATURE</div>
+        <h1 style="color: white; margin-bottom: 1rem;">Complete Quiz History</h1>
+        <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 2rem;">
+            Upgrade to Premium to access your complete quiz history with detailed AI-generated explanations 
+            for all quiz questions and answers, plus comprehensive analysis of your performance over time.
+        </p>
+    </div>""", unsafe_allow_html=True)
+    
+    # Create feature cards with st.columns
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="feature-card">
+            <h3 style="color: #e2e8f0;">AI Explanations</h3>
+            <p style="color: rgba(255,255,255,0.7);">Get detailed AI-generated explanations for all quiz questions and answers</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    with col2:
+        st.markdown("""
+        <div class="feature-card">
+            <h3 style="color: #e2e8f0;">Complete History</h3>
+            <p style="color: rgba(255,255,255,0.7);">View your complete quiz history with all questions, correct answers, and your responses</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Upgrade button
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button(" Upgrade to Premium", type="primary", use_container_width=True):
+            st.session_state.current_page = "subscription"
+            st.rerun()
 
 class QuizHistoryManager:
     """Manage and display comprehensive quiz history"""
@@ -469,7 +544,7 @@ def render_detailed_quiz_cards(results: List[Dict]):
                 """, unsafe_allow_html=True)
                 
                 # Quick Performance Summary
-                st.markdown("**📊 Quick Summary:**")
+                st.markdown(" Quick Summary:")
                 perf_col1, perf_col2, perf_col3 = st.columns(3)
                 
                 with perf_col1:
@@ -493,7 +568,7 @@ def render_detailed_quiz_cards(results: List[Dict]):
                 st.markdown("---")
                 
                 # Enhanced Questions & Answers Section
-                st.markdown("**🔍 Questions & Answers:**")
+                st.markdown("Questions & Answers:")
                 
                 # Get explanations from result field
                 explanations = result.get("result", {}).get("explanations", {})
@@ -529,11 +604,11 @@ def render_detailed_quiz_cards(results: List[Dict]):
                                 st.error(f"✗ Your answer: **{user_answer_text}**")
                         
                         with answer_col2:
-                            st.info(f"🎯 Correct answer: **{correct_answer_text}**")
+                            st.info(f" Correct answer: **{correct_answer_text}**")
                         
                         # Show explanation for wrong answers
                         if not is_correct and explanations.get(question_id):
-                            st.markdown("**💡 Explanation:**")
+                            st.markdown("Explanation:")
                             explanation_text = explanations[question_id]
                             st.markdown(f"""
                             <div style="background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)); 
@@ -580,11 +655,11 @@ def render_detailed_quiz_cards(results: List[Dict]):
                                     st.error(f"✗ Your answer: **{user_answer_text}**")
                             
                             with answer_col2:
-                                st.info(f"🎯 Correct answer: **{correct_answer_text}**")
+                                st.info(f" Correct answer: **{correct_answer_text}**")
                             
                             # Show explanation for wrong answers
                             if not is_correct and explanations.get(q_key):
-                                st.markdown("**💡 Explanation:**")
+                                st.markdown("** Explanation:**")
                                 explanation_text = explanations[q_key]
                                 st.markdown(f"""
                                 <div style="background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)); 
@@ -625,9 +700,19 @@ def render_detailed_quiz_cards(results: List[Dict]):
 @login_required
 def quiz_history_dashboard():
     """Main quiz history dashboard"""
-        
+    
     # Page header
     render_quiz_history_header()
+    
+    # Check if user has premium subscription
+    is_premium = is_current_user_premium()
+    
+    # If user is not premium, show premium gate and exit
+    if not is_premium:
+        show_premium_gate()
+        return
+    
+    # --- Only premium users proceed past this point ---
     
     # Get user data
     user_data = st.session_state.get('user_data', {})
@@ -644,7 +729,7 @@ def quiz_history_dashboard():
     if not all_results:
         st.markdown(f"""
         <div style="{GLASS_CARD_STYLE} text-align: center; padding: 3rem;">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">📊</div>
+            <div style="font-size: 4rem; margin-bottom: 1rem;"></div>
             <h3 style="color: #e2e8f0; margin-bottom: 1rem;">No Quiz History Yet</h3>
             <p style="color: rgba(255,255,255,0.7); margin-bottom: 2rem;">
                 Start taking quizzes to build your learning history and track your progress!
