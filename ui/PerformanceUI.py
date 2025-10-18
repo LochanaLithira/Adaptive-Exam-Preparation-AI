@@ -370,7 +370,7 @@ def render_performance_charts(metrics: Dict[str, Any]):
 
 def render_topic_analysis(metrics: Dict[str, Any]):
     """Render detailed subject-wise performance analysis"""
-    st.markdown(icon_text("brain", "Subject Performance Analysis", 20), unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #e2e8f0; margin: 1rem 0;'>Subject Performance Analysis</h2>", unsafe_allow_html=True)
     
     if not metrics.get('available_subjects') or not metrics.get('quiz_results'):
         st.info("Complete quizzes in different subjects to see your performance analysis!")
@@ -386,7 +386,7 @@ def render_topic_analysis(metrics: Dict[str, Any]):
     
     if selected_subject == "All Subjects":
         # Show all subjects overview with topics
-        st.markdown("### 📊 All Subjects & Topics Overview")
+        st.markdown("###  All Subjects & Topics Overview")
         
         # Collect subject-topic relationships and performance
         subject_topic_data = []
@@ -504,7 +504,7 @@ def render_topic_analysis(metrics: Dict[str, Any]):
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("### 💪 Your Strengths")
+        st.markdown("###  Your Strengths")
         if metrics['strengths']:
             # Display top 5 strengths
             top_strengths = metrics['strengths'][:5]
@@ -523,7 +523,7 @@ def render_topic_analysis(metrics: Dict[str, Any]):
             st.info("Keep practicing to identify your strengths!")
     
     with col2:
-        st.markdown("### 📚 Areas for Improvement")
+        st.markdown("###  Areas for Improvement")
         if metrics['weaknesses']:
             # Display top 5 areas for improvement
             top_weaknesses = metrics['weaknesses'][:5]
@@ -552,7 +552,7 @@ def render_recent_activity(metrics: Dict[str, Any]):
     recent_activity = metrics['recent_activity']
     
     # Show first 3 activities as cards
-    st.markdown("### 📊 Latest Quiz Results")
+    st.markdown("###  Latest Quiz Results")
     
     # Display first 3 activities in a grid
     num_to_show = min(3, len(recent_activity))
@@ -608,7 +608,7 @@ def render_recent_activity(metrics: Dict[str, Any]):
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("📚 View Complete Quiz History", type="primary", use_container_width=True, key="view_quiz_history"):
+        if st.button(" View Complete Quiz History", type="primary", use_container_width=True, key="view_quiz_history"):
             st.session_state.current_page = "quiz_history"
             st.rerun()
     
@@ -625,9 +625,6 @@ def render_recent_activity(metrics: Dict[str, Any]):
 
 @login_required
 def performance_dashboard():
-    """Enhanced Performance Dashboard with comprehensive analytics"""
-    st.markdown(icon_text("chart", "Performance Analytics Dashboard", 24), unsafe_allow_html=True)
-    
     # Check if user has any quiz data
     user_data = st.session_state.get('user_data', {})
     # Try both 'id' and '_id' field names for compatibility
@@ -653,7 +650,7 @@ def performance_dashboard():
         border: 1px solid rgba(255,255,255,0.1);
     ">
         <h3 style="margin: 0; color: #e2e8f0;">
-            {get_svg_icon('wave', 24, '#667eea')} Welcome back, {user_data.get('full_name', 'Student')}!
+            Welcome, {user_data.get('full_name', 'Student')}!
         </h3>
         <p style="margin: 0.5rem 0 0 0; color: rgba(255,255,255,0.8);">
             Here's your comprehensive performance analysis and learning insights.
@@ -698,11 +695,7 @@ def performance_dashboard():
         render_no_data_dashboard(user_data)
         return
     
-    # Action buttons
-    st.markdown("---")
-    st.markdown(icon_text("rocket", "Quick Actions", 20), unsafe_allow_html=True)
-    
-    render_action_buttons("horizontal")
+
 
 # Consolidated no-data dashboard with demo features
 def render_no_data_dashboard(user_data: Dict[str, Any]):

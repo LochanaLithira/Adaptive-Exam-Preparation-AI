@@ -13,8 +13,110 @@ from utils.api_config import (
     PLANNER_AGENT_ENDPOINT
 )
 import json
+from utils.subscription import is_current_user_premium
+
+def show_premium_gate():
+    """Show premium feature gate for Study Planner"""
+    # Premium gate container with glass effect and gradient
+    # Add custom CSS
+    st.markdown(
+        """
+        <style>
+        .premium-container {
+            background: linear-gradient(135deg, rgba(16, 24, 39, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            margin: 1rem 0;
+            text-align: center;
+        }
+        .premium-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 0.5rem 0;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            height: 90%;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    # Main premium container
+    st.markdown("""<div class="premium-container">
+        <div class="premium-badge"> PREMIUM FEATURE</div>
+        <h1 style="color: white; margin-bottom: 1rem;">Study Planner</h1>
+        <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 2rem;">
+            Unlock the Study Planner to create personalized learning schedules, track your progress, 
+            and optimize your study time with AI-powered recommendations.
+        </p>
+    </div>""", unsafe_allow_html=True)
+    
+    # Create feature cards with st.columns instead of HTML grid for better reliability
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="feature-card">
+            <h3 style="color: #e2e8f0;"> Study Schedule</h3>
+            <p style="color: rgba(255,255,255,0.7);">Create custom study plans tailored to your goals</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="feature-card">
+            <h3 style="color: #e2e8f0;"> AI Recommendations</h3>
+            <p style="color: rgba(255,255,255,0.7);">Get personalized study suggestions</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    with col2:
+        st.markdown("""
+        <div class="feature-card">
+            <h3 style="color: #e2e8f0;"> Goal Setting</h3>
+            <p style="color: rgba(255,255,255,0.7);">Set and track your learning objectives</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="feature-card">
+            <h3 style="color: #e2e8f0;"> Progress Tracking</h3>
+            <p style="color: rgba(255,255,255,0.7);">Visualize your learning journey</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button(" Upgrade to Premium", type="primary", use_container_width=True):
+            st.session_state.current_page = "subscription"
+            st.rerun()
 
 def run_planner_ui():
+    # Check if user has premium subscription
+    is_premium = is_current_user_premium()
+    
+    # If user is not premium, show premium gate and exit
+    if not is_premium:
+        st.markdown("##  Study Planner")
+        show_premium_gate()
+        return
+    
+    # --- Only premium users proceed past this point ---
+    
     # --- Load environment variables from root directory ---
     PROJECT_ROOT = Path(__file__).resolve().parent.parent
     dotenv_path = PROJECT_ROOT / ".env"
@@ -53,7 +155,7 @@ def run_planner_ui():
         st.stop()
 
     # --- Header ---
-    st.markdown("<h1 style='text-align: center; margin-top:25px'>🗓️ Personalized Study Planner</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; margin-top:25px'> Personalized Study Planner</h1>", unsafe_allow_html=True)
     st.markdown("<h6 style='text-align: center;'>Plan your studies efficiently, quicker and smarter!</h6>", unsafe_allow_html=True)
 
         # --- Planner Page ---
@@ -68,22 +170,22 @@ def run_planner_ui():
             st.stop()
 
         # Normal planner inputs and generator
-        if st.button("📋 View All Saved Plans"):
+        if st.button(" View All Saved Plans"):
             st.session_state["show_saved_plans"] = True
             st.rerun()
 
         # --- Select study dates ---
         st.session_state.free_days = select_study_dates()
         all_filled = all(d['date'] is not None and d['available_time'] is not None for d in st.session_state.free_days)
-        generate_clicked = st.button("📥 Generate your Personalized Plan", width="stretch")
+        generate_clicked = st.button(" Generate your Personalized Plan", width="stretch")
 
         if generate_clicked:
             if not all_filled:
-                st.warning("⚠️ Please select a date and available time for all days before generating the plan.")
+                st.warning(" Please select a date and available time for all days before generating the plan.")
             else:
                 # Show loading message
                 loading_msg = st.empty()
-                loading_msg.info("🔄 Generating your personalized study plan...")
+                loading_msg.info(" Generating your personalized study plan...")
 
                 with st.spinner('Please wait...'):
                     # --- Serialize free days ---

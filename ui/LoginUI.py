@@ -143,7 +143,7 @@ def show_professional_header():
     st.markdown(f"""
     <div style="text-align: center; margin-bottom: 2rem; background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%); padding: 2rem; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1);">
         <h1 style="color: #e2e8f0; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 15px;">
-            {get_svg_icon('graduation', 32, '#3182ce')} Adaptive Exam Prep AI
+            {get_svg_icon('graduation', 32, '#3182ce')} StudyAura
         </h1>
         <p style="color: #a0aec0; font-size: 18px; margin: 0; font-style: italic;">
             Intelligent Learning. Personalized Growth. Academic Excellence.

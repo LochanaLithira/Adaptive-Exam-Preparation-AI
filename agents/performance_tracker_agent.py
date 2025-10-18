@@ -191,14 +191,107 @@ def evaluate_mcq(answers: dict, correct_answers: dict):
 def generate_feedback_with_llm_detailed(questions_details: list):
     explanations = {}
     
-    # Generate explanations for wrong answers with topic context
-    for question in questions_details:
-        if not question.is_correct:
-            explanations[question.question_id] = llm_client.generate_explanation(
-                question.question_text, 
-                question.user_answer, 
-                question.correct_answer
-            )
+    # Filter to get only incorrect questions
+    wrong_questions = [q for q in questions_details if not q.is_correct]
+    
+    # If there are no wrong questions, return empty explanations
+    if not wrong_questions:
+        logger.info("No wrong answers to explain")
+        return explanations
+    
+    # If there's only one wrong answer, use the original approach
+    if len(wrong_questions) == 1:
+        q = wrong_questions[0]
+        explanations[q.question_id] = llm_client.generate_explanation(
+            q.question_text, 
+            q.user_answer, 
+            q.correct_answer
+        )
+        return explanations
+    
+    logger.info(f"Generating explanations for {len(wrong_questions)} wrong answers using batch processing")
+    
+    # BATCH PROCESSING: Build one prompt for all wrong questions
+    batch_prompt = "For each of the following questions, explain why the student's answer is incorrect and provide a clear explanation of the correct answer:\n\n"
+    
+    # Keep track of questions to map responses back correctly
+    for i, question in enumerate(wrong_questions, 1):
+        batch_prompt += f"Question {i}: {question.question_text}\n"
+        batch_prompt += f"Student answered: {question.user_answer}\n"
+        batch_prompt += f"Correct answer: {question.correct_answer}\n\n"
+    
+    batch_prompt += "Provide numbered explanations for each question above. Format each explanation as 'Explanation 1:', 'Explanation 2:', etc., followed by your detailed explanation."
+    
+    try:
+        # Make a single LLM call for all questions
+        logger.info("Making batch LLM call for explanations")
+        response = llm_client.client.models.generate_content(
+            model=llm_client.model,
+            contents=batch_prompt
+        )
+        
+        full_explanation = getattr(response, "text", None) or str(response)
+        logger.info("Successfully received batch explanations from LLM")
+        
+        # Parse the combined response back into individual explanations
+        import re
+        # Use regex to split by "Explanation X:" headers
+        explanation_parts = re.split(r"Explanation (\d+):", full_explanation)
+        
+        # The first item will be any text before the first "Explanation X:" - discard it
+        if explanation_parts and explanation_parts[0].strip():
+            logger.info(f"Discarded prefix text: {explanation_parts[0][:50]}...")
+        
+        # Process the split parts (first part is empty or intro text)
+        for i in range(1, len(explanation_parts), 2):
+            try:
+                question_num = int(explanation_parts[i]) - 1  # Convert to zero-based index
+                if 0 <= question_num < len(wrong_questions):
+                    explanation_text = explanation_parts[i+1].strip()
+                    question_id = wrong_questions[question_num].question_id
+                    explanations[question_id] = explanation_text
+                    logger.info(f"Successfully parsed explanation for question {question_id}")
+            except (IndexError, ValueError) as e:
+                logger.error(f"Error parsing explanation part {i}: {str(e)}")
+        
+        # Check if we got explanations for all wrong answers
+        missing_explanations = [q.question_id for i, q in enumerate(wrong_questions) 
+                               if q.question_id not in explanations]
+        
+        # If any explanations are missing, fall back to individual processing for those
+        if missing_explanations:
+            logger.warning(f"Missing explanations for {len(missing_explanations)} questions. Falling back to individual processing.")
+            
+            for q in wrong_questions:
+                if q.question_id in missing_explanations:
+                    try:
+                        explanations[q.question_id] = llm_client.generate_explanation(
+                            q.question_text, 
+                            q.user_answer, 
+                            q.correct_answer
+                        )
+                        logger.info(f"Generated individual explanation for question {q.question_id}")
+                    except Exception as e:
+                        logger.error(f"Failed to generate individual explanation: {str(e)}")
+                        explanations[q.question_id] = "Could not generate explanation due to an error."
+            
+    except Exception as e:
+        logger.error(f"Error in batch explanation generation: {str(e)}")
+        
+        # Fallback to individual processing if batch fails
+        logger.info("Falling back to individual explanation generation for all questions")
+        
+        for question in wrong_questions:
+            try:
+                explanations[question.question_id] = llm_client.generate_explanation(
+                    question.question_text, 
+                    question.user_answer, 
+                    question.correct_answer
+                )
+                logger.info(f"Generated fallback explanation for question {question.question_id}")
+            except Exception as inner_e:
+                logger.error(f"Individual explanation failed for question {question.question_id}: {str(inner_e)}")
+                explanations[question.question_id] = "Could not generate explanation due to an error."
     
     return explanations
 

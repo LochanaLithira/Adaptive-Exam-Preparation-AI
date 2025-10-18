@@ -37,7 +37,8 @@ PLANNER_AGENT_PING_ENDPOINT = f"{PLANNER_AGENT_URL}/ping"
 # ==============================
 # API Timeout Configuration
 # ==============================
-DEFAULT_TIMEOUT = int(os.getenv("DEFAULT_API_TIMEOUT", "180"))  # 120 seconds (increased to handle LLM processing)
+DEFAULT_TIMEOUT = int(os.getenv("DEFAULT_API_TIMEOUT", "180"))  # 60 seconds for regular operations
+EXTENDED_TIMEOUT = int(os.getenv("EXTENDED_API_TIMEOUT", "180"))  # 180 seconds for LLM operations
 
 # ==============================
 # Function to verify services are running
