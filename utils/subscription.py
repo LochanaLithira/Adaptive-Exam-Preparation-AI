@@ -1,8 +1,3 @@
-"""
-Subscription Management Utilities for Adaptive Exam Preparation AI
-Handles user subscription status, upgrades, and feature access control
-"""
-
 import sys
 import os
 from datetime import datetime
