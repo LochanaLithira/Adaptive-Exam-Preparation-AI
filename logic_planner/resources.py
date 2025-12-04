@@ -1,4 +1,10 @@
+# logic_planner/resources.py
+import requests
+import streamlit as st
+
+# Expanded curated resources database
 resources = {
+    # Machine Learning Topics
     "Linear Regression": [
         {"type": "concept", "title": "StatQuest – Linear Regression", "url": "https://youtu.be/nk2CQITm_eo"},
         {"type": "practice", "title": "Kaggle: Linear Regression Exercises", "url": "https://www.kaggle.com/learn/intro-to-machine-learning"},
@@ -33,5 +39,177 @@ resources = {
         {"type": "concept", "title": "Random Forest Intuition (video)", "url": "https://youtu.be/J4Wdy0Wc_xQ"},
         {"type": "practice", "title": "Random Forest in Python (sklearn)", "url": "https://scikit-learn.org/stable/modules/ensemble.html#random-forests"},
         {"type": "read", "title": "Comprehensive Guide to Random Forests", "url": "https://towardsdatascience.com/random-forest-in-python-24d0893d51c0"}
+    ],
+    
+    # Mathematics Topics
+    "Algebra": [
+        {"type": "concept", "title": "Khan Academy - Algebra", "url": "https://www.khanacademy.org/math/algebra"},
+        {"type": "practice", "title": "IXL Algebra Practice", "url": "https://www.ixl.com/math/algebra-1"},
+        {"type": "read", "title": "Algebra Basics", "url": "https://www.mathsisfun.com/algebra/"}
+    ],
+    "Calculus": [
+        {"type": "concept", "title": "3Blue1Brown - Essence of Calculus", "url": "https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr"},
+        {"type": "practice", "title": "Paul's Online Calculus Notes", "url": "https://tutorial.math.lamar.edu/Classes/CalcI/CalcI.aspx"},
+        {"type": "read", "title": "Khan Academy - Calculus", "url": "https://www.khanacademy.org/math/calculus-1"}
+    ],
+    "Statistics": [
+        {"type": "concept", "title": "StatQuest - Statistics Fundamentals", "url": "https://www.youtube.com/playlist?list=PLblh5JKOoLUK0FLuzwntyYI10UQFUhsY9"},
+        {"type": "practice", "title": "Statistics Practice Problems", "url": "https://www.khanacademy.org/math/statistics-probability"},
+        {"type": "read", "title": "Statistics How To", "url": "https://www.statisticshowto.com/"}
+    ],
+    
+    # Programming Topics
+    "Python": [
+        {"type": "concept", "title": "Python for Beginners", "url": "https://www.youtube.com/watch?v=rfscVS0vtbw"},
+        {"type": "practice", "title": "Python Exercises", "url": "https://www.w3schools.com/python/python_exercises.asp"},
+        {"type": "read", "title": "Official Python Tutorial", "url": "https://docs.python.org/3/tutorial/"}
+    ],
+    "Data Structures": [
+        {"type": "concept", "title": "Data Structures Explained", "url": "https://www.youtube.com/watch?v=RBSGKlAvoiM"},
+        {"type": "practice", "title": "LeetCode Data Structures", "url": "https://leetcode.com/problemset/all/?topicSlugs=array"},
+        {"type": "read", "title": "GeeksforGeeks DS Guide", "url": "https://www.geeksforgeeks.org/data-structures/"}
+    ],
+    "Algorithms": [
+        {"type": "concept", "title": "Algorithms Visualization", "url": "https://visualgo.net/en"},
+        {"type": "practice", "title": "HackerRank Algorithms", "url": "https://www.hackerrank.com/domains/algorithms"},
+        {"type": "read", "title": "Algorithm Design Manual", "url": "https://www.algorist.com/"}
     ]
 }
+
+# Generic fallback resources by category
+fallback_resources = {
+    "concept": [
+        {"type": "concept", "title": "Khan Academy - {topic}", "url": "https://www.khanacademy.org/search?search_again=1&page_search_query={topic}"},
+        {"type": "concept", "title": "Coursera - {topic}", "url": "https://www.coursera.org/search?query={topic}"},
+    ],
+    "practice": [
+        {"type": "practice", "title": "Practice on Brilliant", "url": "https://brilliant.org/courses/"},
+        {"type": "practice", "title": "Exercises on W3Schools", "url": "https://www.w3schools.com/"},
+    ],
+    "read": [
+        {"type": "read", "title": "Wikipedia - {topic}", "url": "https://en.wikipedia.org/wiki/{topic}"},
+        {"type": "read", "title": "GeeksforGeeks - {topic}", "url": "https://www.geeksforgeeks.org/?s={topic}"},
+    ]
+}
+
+
+def fetch_youtube_videos(query, api_key, max_results=2):
+    """
+    Fetch YouTube videos for a given query.
+    Returns list of video resources.
+    """
+    try:
+        url = "https://www.googleapis.com/youtube/v3/search"
+        params = {
+            "part": "snippet",
+            "q": query,
+            "type": "video",
+            "maxResults": max_results,
+            "key": api_key,
+            "relevanceLanguage": "en",
+            "safeSearch": "strict"
+        }
+        
+        response = requests.get(url, params=params, timeout=5)
+        
+        if response.status_code == 200:
+            items = response.json().get("items", [])
+            return [
+                {
+                    "title": video["snippet"]["title"],
+                    "url": f"https://www.youtube.com/watch?v={video['id']['videoId']}",
+                    "type": "video"
+                }
+                for video in items
+            ]
+        else:
+            print(f"YouTube API returned status code: {response.status_code}")
+            return []
+            
+    except requests.exceptions.Timeout:
+        print("YouTube API request timed out")
+        return []
+    except Exception as e:
+        print(f"Error fetching YouTube videos: {e}")
+        return []
+
+
+def fetch_resources_with_fallback(topic, subject="General", youtube_api_key=None):
+    """
+    Fetch learning resources with multiple sources and fallback mechanisms.
+    
+    Priority:
+    1. Curated local resources (if available)
+    2. YouTube API (if key provided)
+    3. Generic educational platform resources
+    
+    Args:
+        topic: The topic to fetch resources for
+        subject: The subject category (for context)
+        youtube_api_key: Optional YouTube API key
+    
+    Returns:
+        List of resource dictionaries with title, url, and type
+    """
+    collected_resources = []
+    
+    # 1. Check curated resources first (highest quality)
+    if topic in resources:
+        collected_resources.extend(resources[topic])
+    
+    # 2. Try YouTube API if key provided and we need more resources
+    if youtube_api_key and len(collected_resources) < 3:
+        try:
+            search_query = f"{subject} {topic} tutorial" if subject != "General" else f"{topic} tutorial"
+            youtube_videos = fetch_youtube_videos(
+                search_query, 
+                youtube_api_key, 
+                max_results=min(2, 3 - len(collected_resources))
+            )
+            collected_resources.extend(youtube_videos)
+        except Exception as e:
+            print(f"YouTube fetch failed for {topic}: {e}")
+    
+    # 3. Add generic fallback resources if still lacking
+    if len(collected_resources) < 3:
+        needed = 3 - len(collected_resources)
+        
+        # Add one resource from each fallback category
+        for category in ["concept", "practice", "read"]:
+            if needed <= 0:
+                break
+            
+            for fallback in fallback_resources.get(category, []):
+                fallback_resource = {
+                    "type": fallback["type"],
+                    "title": fallback["title"].replace("{topic}", topic),
+                    "url": fallback["url"].replace("{topic}", topic.replace(" ", "+"))
+                }
+                collected_resources.append(fallback_resource)
+                needed -= 1
+                break
+    
+    # 4. Ensure we have at least some resources
+    if not collected_resources:
+        collected_resources = [
+            {
+                "type": "read",
+                "title": f"Search Google for {topic}",
+                "url": f"https://www.google.com/search?q={topic.replace(' ', '+')}"
+            },
+            {
+                "type": "concept",
+                "title": f"YouTube search for {topic}",
+                "url": f"https://www.youtube.com/results?search_query={topic.replace(' ', '+')}"
+            }
+        ]
+    
+    # Remove duplicates based on URL
+    seen_urls = set()
+    unique_resources = []
+    for resource in collected_resources:
+        if resource["url"] not in seen_urls:
+            seen_urls.add(resource["url"])
+            unique_resources.append(resource)
+    
+    return unique_resources[:5]  # Return max 5 resources
