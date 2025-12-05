@@ -1,6 +1,8 @@
 # logic_planner/resources.py
 import requests
 import streamlit as st
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # Expanded curated resources database
 resources = {
@@ -93,12 +95,42 @@ fallback_resources = {
 }
 
 
-def fetch_youtube_videos(query, api_key, max_results=2):
+def create_session_with_timeout(timeout=3, max_retries=1):
     """
-    Fetch YouTube videos for a given query.
+    Create a requests session with timeout and retry configuration.
+    This prevents hanging requests.
+    """
+    session = requests.Session()
+    
+    # Configure retry strategy
+    retry_strategy = Retry(
+        total=max_retries,
+        backoff_factor=0.5,
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=["GET"]
+    )
+    
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    
+    return session
+
+
+def fetch_youtube_videos(query, api_key, max_results=2, timeout=3):
+    """
+    Fetch YouTube videos for a given query with strict timeout.
     Returns list of video resources.
     """
+    print(f"🔍 Attempting to fetch YouTube videos for: {query}")
+    
+    if not api_key:
+        print("⚠️ No YouTube API key provided")
+        return []
+    
     try:
+        print(f"📡 Making YouTube API request (timeout: {timeout}s)...")
+        
         url = "https://www.googleapis.com/youtube/v3/search"
         params = {
             "part": "snippet",
@@ -110,10 +142,12 @@ def fetch_youtube_videos(query, api_key, max_results=2):
             "safeSearch": "strict"
         }
         
-        response = requests.get(url, params=params, timeout=5)
+        response = requests.get(url, params=params, timeout=timeout)
+        print(f"✅ YouTube API responded with status: {response.status_code}")
         
         if response.status_code == 200:
             items = response.json().get("items", [])
+            print(f"📹 Found {len(items)} videos")
             return [
                 {
                     "title": video["snippet"]["title"],
@@ -122,74 +156,111 @@ def fetch_youtube_videos(query, api_key, max_results=2):
                 }
                 for video in items
             ]
+        elif response.status_code == 403:
+            print(f"❌ YouTube API quota exceeded or invalid key")
+            return []
         else:
-            print(f"YouTube API returned status code: {response.status_code}")
+            print(f"⚠️ YouTube API returned status code: {response.status_code}")
             return []
             
     except requests.exceptions.Timeout:
-        print("YouTube API request timed out")
+        print(f"⏱️ YouTube API request timed out after {timeout}s")
+        return []
+    except requests.exceptions.RequestException as e:
+        print(f"❌ YouTube API request error: {e}")
         return []
     except Exception as e:
-        print(f"Error fetching YouTube videos: {e}")
+        print(f"❌ Unexpected error fetching YouTube videos: {e}")
         return []
+    finally:
+        # Ensure session is closed
+        try:
+            session.close()
+        except:
+            pass
 
 
-def fetch_resources_with_fallback(topic, subject="General", youtube_api_key=None):
+def get_fallback_resources_for_topic(topic, subject="General"):
+    """
+    Get immediate fallback resources without any API calls.
+    This ensures we always have something to show.
+    """
+    fallback_list = []
+    
+    # Add one resource from each category
+    for category in ["concept", "practice", "read"]:
+        for fallback in fallback_resources.get(category, []):
+            fallback_resource = {
+                "type": fallback["type"],
+                "title": fallback["title"].replace("{topic}", topic),
+                "url": fallback["url"].replace("{topic}", topic.replace(" ", "+"))
+            }
+            fallback_list.append(fallback_resource)
+            break  # Only take one from each category
+    
+    # Add subject-specific search if provided
+    if subject != "General":
+        fallback_list.append({
+            "type": "video",
+            "title": f"YouTube: {subject} - {topic}",
+            "url": f"https://www.youtube.com/results?search_query={subject}+{topic}".replace(" ", "+")
+        })
+    
+    return fallback_list
+
+
+def fetch_resources_with_fallback(topic, subject="General", youtube_api_key=None, max_youtube_timeout=3):
     """
     Fetch learning resources with multiple sources and fallback mechanisms.
+    OPTIMIZED: Returns immediately if curated resources exist, only tries YouTube if needed.
     
     Priority:
-    1. Curated local resources (if available)
-    2. YouTube API (if key provided)
-    3. Generic educational platform resources
+    1. Curated local resources (if available) - INSTANT
+    2. YouTube API (with strict timeout) - if key provided and curated not available
+    3. Generic educational platform resources - INSTANT FALLBACK
     
     Args:
         topic: The topic to fetch resources for
         subject: The subject category (for context)
         youtube_api_key: Optional YouTube API key
+        max_youtube_timeout: Maximum seconds to wait for YouTube API (default: 3)
     
     Returns:
         List of resource dictionaries with title, url, and type
     """
     collected_resources = []
     
-    # 1. Check curated resources first (highest quality)
+    # 1. Check curated resources first (highest quality, INSTANT)
     if topic in resources:
         collected_resources.extend(resources[topic])
+        # If we have curated resources, return immediately without trying YouTube
+        return collected_resources[:5]
     
-    # 2. Try YouTube API if key provided and we need more resources
-    if youtube_api_key and len(collected_resources) < 3:
+    # 2. Only try YouTube API if:
+    #    - We have an API key
+    #    - We don't have enough curated resources
+    if youtube_api_key and len(collected_resources) < 2:
         try:
             search_query = f"{subject} {topic} tutorial" if subject != "General" else f"{topic} tutorial"
             youtube_videos = fetch_youtube_videos(
                 search_query, 
                 youtube_api_key, 
-                max_results=min(2, 3 - len(collected_resources))
+                max_results=2,  # Only get 2 videos max
+                timeout=max_youtube_timeout
             )
-            collected_resources.extend(youtube_videos)
-        except Exception as e:
-            print(f"YouTube fetch failed for {topic}: {e}")
-    
-    # 3. Add generic fallback resources if still lacking
-    if len(collected_resources) < 3:
-        needed = 3 - len(collected_resources)
-        
-        # Add one resource from each fallback category
-        for category in ["concept", "practice", "read"]:
-            if needed <= 0:
-                break
             
-            for fallback in fallback_resources.get(category, []):
-                fallback_resource = {
-                    "type": fallback["type"],
-                    "title": fallback["title"].replace("{topic}", topic),
-                    "url": fallback["url"].replace("{topic}", topic.replace(" ", "+"))
-                }
-                collected_resources.append(fallback_resource)
-                needed -= 1
-                break
+            if youtube_videos:
+                collected_resources.extend(youtube_videos)
+                
+        except Exception as e:
+            print(f"YouTube fetch completely failed for {topic}: {e}")
+            # Continue to fallback resources
     
-    # 4. Ensure we have at least some resources
+    # 3. Add generic fallback resources
+    fallback_list = get_fallback_resources_for_topic(topic, subject)
+    collected_resources.extend(fallback_list)
+    
+    # 4. Emergency fallback - if still empty
     if not collected_resources:
         collected_resources = [
             {
@@ -201,6 +272,11 @@ def fetch_resources_with_fallback(topic, subject="General", youtube_api_key=None
                 "type": "concept",
                 "title": f"YouTube search for {topic}",
                 "url": f"https://www.youtube.com/results?search_query={topic.replace(' ', '+')}"
+            },
+            {
+                "type": "practice",
+                "title": f"Khan Academy - {topic}",
+                "url": f"https://www.khanacademy.org/search?search_again=1&page_search_query={topic.replace(' ', '+')}"
             }
         ]
     

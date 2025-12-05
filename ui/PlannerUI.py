@@ -469,7 +469,30 @@ def run_planner_ui():
             update_progress(progress_bar, status_text, 85, "Fetching educational resources...")
             
             # Enhance plan with resources and schedules
+            # Add timeout protection using ThreadPoolExecutor
+            from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
+            
+            def safe_fetch_resources(topic_info, youtube_key):
+                """Wrapper function to safely fetch resources with timeout"""
+                try:
+                    return fetch_resources_with_fallback(
+                        topic_info["topic"],
+                        topic_info.get("subject", "General"),
+                        youtube_key,
+                        max_youtube_timeout=2  # Strict 2 second timeout for YouTube
+                    )
+                except Exception as e:
+                    print(f"Resource fetch error for {topic_info['topic']}: {e}")
+                    # Return basic fallback
+                    return [{
+                        "type": "read",
+                        "title": f"Search for {topic_info['topic']}",
+                        "url": f"https://www.google.com/search?q={topic_info['topic'].replace(' ', '+')}"
+                    }]
+            
             internal_plan = []
+            total_topics = sum(len(day_plan["topics"]) for day_plan in distributed_plan)
+            processed_topics = 0
             
             for day_plan in distributed_plan:
                 day_num = day_plan["day_num"]
@@ -477,12 +500,42 @@ def run_planner_ui():
                 available_time_slot = day_plan.get("available_time")
                 
                 for topic_info in day_plan["topics"]:
-                    # Fetch resources with fallback
-                    topic_resources = fetch_resources_with_fallback(
-                        topic_info["topic"],
-                        topic_info.get("subject", "General"),
-                        YOUTUBE_API_KEY
+                    # Update progress for each topic
+                    processed_topics += 1
+                    progress_percent = 85 + int((processed_topics / total_topics) * 10)
+                    update_progress(
+                        progress_bar, 
+                        status_text, 
+                        min(progress_percent, 94),
+                        f"Processing topic {processed_topics}/{total_topics}: {topic_info['topic'][:30]}..."
                     )
+                    
+                    # Fetch resources with strict timeout using ThreadPoolExecutor
+                    topic_resources = []
+                    try:
+                        with ThreadPoolExecutor(max_workers=1) as executor:
+                            future = executor.submit(
+                                safe_fetch_resources,
+                                topic_info,
+                                YOUTUBE_API_KEY
+                            )
+                            # Wait maximum 4 seconds total (includes 2s YouTube + processing)
+                            topic_resources = future.result(timeout=4)
+                    except FuturesTimeoutError:
+                        print(f"⏱️ Timeout fetching resources for {topic_info['topic']}, using fallback")
+                        # Provide instant fallback
+                        topic_resources = [{
+                            "type": "concept",
+                            "title": f"Learn {topic_info['topic']} on Khan Academy",
+                            "url": f"https://www.khanacademy.org/search?page_search_query={topic_info['topic'].replace(' ', '+')}"
+                        }]
+                    except Exception as e:
+                        print(f"❌ Error fetching resources for {topic_info['topic']}: {e}")
+                        topic_resources = [{
+                            "type": "read",
+                            "title": f"Search for {topic_info['topic']}",
+                            "url": f"https://www.google.com/search?q={topic_info['topic'].replace(' ', '+')}"
+                        }]
                     
                     # Create adaptive schedule based on complexity
                     # Estimate available time from slot
@@ -513,7 +566,7 @@ def run_planner_ui():
                     
                     internal_plan.append(plan_entry)
             
-            # Assign time slots to schedule items
+            # Continue with the rest of the plan processing...
             for entry in internal_plan:
                 day_info = next((d for d in st.session_state.free_days if str(d.get('date')) == entry['Date']), None)
                 
