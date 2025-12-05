@@ -193,14 +193,30 @@ async def get_plan(user_id: str):
             logger.warning(f"📋 Total quizzes in DB: {total_count}")
             logger.warning(f"📋 Sample quiz document: {sample_quiz}")
             
-            return {
-                "user_id": user_id,
-                "subjects": [],
-                "topics": [],
-                "weak_areas": [],  # Added for compatibility
-                "last_updated": None,
-                "message": "No quiz data found. Complete quizzes to generate a study plan."
+        return {
+            "user_id": user_id,
+            "subjects": [
+            {
+                "subject": "General",
+                "accuracy": 0,
+                "weak_areas": ["No quiz data"],
+                "total_topics": 1,
+                "attempts": 0
             }
+            ],
+            "topics": [
+            {
+                "name": "No quiz data",
+                "average_score": 0,
+                "attempts": 0,
+                "subject": "General",
+                "status": "weak"
+            }
+        ],
+        "weak_areas": ["No quiz data"],
+        "last_updated": None,
+        "message": "No quiz data found. Using default weak area."
+    }
         
         # Generate plan from quiz results - GROUP BY SUBJECT
         subjects_dict = {}

@@ -1,0 +1,192 @@
+[
+    {
+        "Day": 1,
+        "Date": "2025-12-06",
+        "Topic": "Unknown Topic",
+        "Subject": "MDPCC",
+        "Complexity": "high",
+        "Accuracy": 0.0,
+        "Weight": 100.0,
+        "Guidance": "\u26a0\ufe0f Unknown Topic needs significant attention. Start with fundamentals and build up gradually.",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 42,
+            "Review": 18
+        },
+        "Resources": [
+            {
+                "type": "concept",
+                "title": "Khan Academy - Unknown Topic",
+                "url": "https://www.khanacademy.org/search?search_again=1&page_search_query=Unknown+Topic"
+            },
+            {
+                "type": "practice",
+                "title": "Practice on Brilliant",
+                "url": "https://brilliant.org/courses/"
+            },
+            {
+                "type": "read",
+                "title": "Wikipedia - Unknown Topic",
+                "url": "https://en.wikipedia.org/wiki/Unknown+Topic"
+            },
+            {
+                "type": "video",
+                "title": "YouTube: MDPCC - Unknown Topic",
+                "url": "https://www.youtube.com/results?search_query=MDPCC+Unknown+Topic"
+            }
+        ],
+        "AvailableTime": "Morning (08:00AM)",
+        "Schedule": [
+            "Learn Unknown Topic (08:00 AM - 09:00 AM)",
+            "Break - 15 min",
+            "Practice Unknown Topic (09:15 AM - 09:57 AM)",
+            "Break - 15 min",
+            "Review Unknown Topic (10:12 AM - 10:30 AM)"
+        ]
+    },
+    {
+        "Day": 2,
+        "Date": "2025-12-07",
+        "Topic": "Unknown Topic",
+        "Subject": "MLOM",
+        "Complexity": "high",
+        "Accuracy": 0.0,
+        "Weight": 100.0,
+        "Guidance": "\u26a0\ufe0f Unknown Topic needs significant attention. Start with fundamentals and build up gradually.",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 42,
+            "Review": 18
+        },
+        "Resources": [
+            {
+                "title": "How to Make Good Eye Contact",
+                "url": "https://www.youtube.com/watch?v=J16YsLVQYoE",
+                "type": "video"
+            },
+            {
+                "title": "New Skills to learn at Home \u2728 #skills #aesthetic #trending",
+                "url": "https://www.youtube.com/watch?v=AL1O2qItEiM",
+                "type": "video"
+            },
+            {
+                "type": "concept",
+                "title": "Khan Academy - Unknown Topic",
+                "url": "https://www.khanacademy.org/search?search_again=1&page_search_query=Unknown+Topic"
+            },
+            {
+                "type": "practice",
+                "title": "Practice on Brilliant",
+                "url": "https://brilliant.org/courses/"
+            },
+            {
+                "type": "read",
+                "title": "Wikipedia - Unknown Topic",
+                "url": "https://en.wikipedia.org/wiki/Unknown+Topic"
+            }
+        ],
+        "AvailableTime": "Morning (08:00AM)",
+        "Schedule": [
+            "Learn Unknown Topic (08:00 AM - 09:00 AM)",
+            "Break - 15 min",
+            "Practice Unknown Topic (09:15 AM - 09:57 AM)",
+            "Break - 15 min",
+            "Review Unknown Topic (10:12 AM - 10:30 AM)"
+        ]
+    },
+    {
+        "Day": 3,
+        "Date": "2025-12-08",
+        "Topic": "Unknown Topic",
+        "Subject": "MDPCC",
+        "Complexity": "high",
+        "Accuracy": 0.0,
+        "Weight": 100.0,
+        "Guidance": "\u26a0\ufe0f Unknown Topic needs significant attention. Start with fundamentals and build up gradually.",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 42,
+            "Review": 18
+        },
+        "Resources": [
+            {
+                "type": "concept",
+                "title": "Khan Academy - Unknown Topic",
+                "url": "https://www.khanacademy.org/search?search_again=1&page_search_query=Unknown+Topic"
+            },
+            {
+                "type": "practice",
+                "title": "Practice on Brilliant",
+                "url": "https://brilliant.org/courses/"
+            },
+            {
+                "type": "read",
+                "title": "Wikipedia - Unknown Topic",
+                "url": "https://en.wikipedia.org/wiki/Unknown+Topic"
+            },
+            {
+                "type": "video",
+                "title": "YouTube: MDPCC - Unknown Topic",
+                "url": "https://www.youtube.com/results?search_query=MDPCC+Unknown+Topic"
+            }
+        ],
+        "AvailableTime": "Morning (08:00AM)",
+        "Schedule": [
+            "Learn Unknown Topic (08:00 AM - 09:00 AM)",
+            "Break - 15 min",
+            "Practice Unknown Topic (09:15 AM - 09:57 AM)",
+            "Break - 15 min",
+            "Review Unknown Topic (10:12 AM - 10:30 AM)"
+        ]
+    },
+    {
+        "Day": 4,
+        "Date": "2025-12-09",
+        "Topic": "Unknown Topic",
+        "Subject": "MLOM",
+        "Complexity": "high",
+        "Accuracy": 0.0,
+        "Weight": 100.0,
+        "Guidance": "\u26a0\ufe0f Unknown Topic needs significant attention. Start with fundamentals and build up gradually.",
+        "ScheduleMinutes": {
+            "Learn": 60,
+            "Practice": 42,
+            "Review": 18
+        },
+        "Resources": [
+            {
+                "title": "How to Make Good Eye Contact",
+                "url": "https://www.youtube.com/watch?v=J16YsLVQYoE",
+                "type": "video"
+            },
+            {
+                "title": "New Skills to learn at Home \u2728 #skills #aesthetic #trending",
+                "url": "https://www.youtube.com/watch?v=AL1O2qItEiM",
+                "type": "video"
+            },
+            {
+                "type": "concept",
+                "title": "Khan Academy - Unknown Topic",
+                "url": "https://www.khanacademy.org/search?search_again=1&page_search_query=Unknown+Topic"
+            },
+            {
+                "type": "practice",
+                "title": "Practice on Brilliant",
+                "url": "https://brilliant.org/courses/"
+            },
+            {
+                "type": "read",
+                "title": "Wikipedia - Unknown Topic",
+                "url": "https://en.wikipedia.org/wiki/Unknown+Topic"
+            }
+        ],
+        "AvailableTime": "Morning (08:00AM)",
+        "Schedule": [
+            "Learn Unknown Topic (08:00 AM - 09:00 AM)",
+            "Break - 15 min",
+            "Practice Unknown Topic (09:15 AM - 09:57 AM)",
+            "Break - 15 min",
+            "Review Unknown Topic (10:12 AM - 10:30 AM)"
+        ]
+    }
+]
